@@ -5,7 +5,9 @@ import { interpolateField, MAP_SIZE } from "@/lib/field";
 import type { Grid } from "@/lib/types";
 import { FieldRenderer, type RenderParams } from "@/lib/vision/renderer";
 
-export type VisionSource = { kind: "camera"; facing: "environment" | "user" } | { kind: "image"; src: string; hfovDeg: number };
+export type VisionSource =
+  | { kind: "camera"; facing: "environment" | "user" }
+  | { kind: "image"; src: string; hfovDeg: number; focus?: [number, number] };
 
 export interface VisionViewHandle {
   /** Current frame (their view) as a data URL, for the walk-through scans. */
@@ -46,6 +48,7 @@ export const VisionView = forwardRef<VisionViewHandle, Props>(function VisionVie
     wipe,
     night,
     mirror: source.kind === "camera" && source.facing === "user",
+    focus: source.kind === "image" ? source.focus : undefined,
   };
 
   // Renderer lifetime follows the canvas.
@@ -193,12 +196,15 @@ export const VisionView = forwardRef<VisionViewHandle, Props>(function VisionVie
       let cropH = sh;
       if (srcAspect > dstAspect) cropW = sh * dstAspect;
       else cropH = sw / dstAspect;
+      const [fx, fy] = paramsRef.current.focus ?? [0.5, 0.5];
+      const x0 = Math.min(sw - cropW, Math.max(0, fx * sw - cropW / 2));
+      const y0 = Math.min(sh - cropH, Math.max(0, fy * sh - cropH / 2));
       const scale = Math.min(1, maxDim / Math.max(cropW, cropH));
       const out = document.createElement("canvas");
       out.width = Math.round(cropW * scale);
       out.height = Math.round(cropH * scale);
       const ctx = out.getContext("2d", { willReadFrequently: true })!;
-      ctx.drawImage(el, (sw - cropW) / 2, (sh - cropH) / 2, cropW, cropH, 0, 0, out.width, out.height);
+      ctx.drawImage(el, x0, y0, cropW, cropH, 0, 0, out.width, out.height);
       return ctx.getImageData(0, 0, out.width, out.height);
     },
   }));

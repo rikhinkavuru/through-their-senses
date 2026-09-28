@@ -13,10 +13,11 @@ import type { AcceptedFix } from "@/lib/types";
 import { estimateDepth } from "@/lib/vision/depth-client";
 import { assess, edgeAtPoint, edgeContrast, findStepEdges, STEP_GUIDELINE, type HazardAssessment, type Segment, type ViewGeometry } from "@/lib/vision/hazards";
 
+// focus: the part of each photo to keep when the screen crops it (x, y from top-left).
 const SCENES = [
-  { id: "stairs", label: "Stairs", hfov: 55 },
-  { id: "hallway", label: "Hallway", hfov: 75 },
-  { id: "living-room", label: "Living room", hfov: 70 },
+  { id: "stairs", label: "Stairs", hfov: 55, focus: [0.6, 0.72] },
+  { id: "hallway", label: "Hallway", hfov: 75, focus: [0.5, 0.6] },
+  { id: "living-room", label: "Living room", hfov: 70, focus: [0.5, 0.55] },
 ] as const;
 type SceneId = (typeof SCENES)[number]["id"] | "camera";
 
@@ -85,7 +86,7 @@ export default function Walk() {
   const sceneInfo = SCENES.find((s) => s.id === scene);
   const cameraHfov = src[1] > src[0] ? 52 : 68;
   const hfov = sceneInfo ? sceneInfo.hfov : cameraHfov;
-  const source: VisionSource = scene === "camera" ? { kind: "camera", facing: "environment" } : { kind: "image", src: `/scenes/${scene}.jpg`, hfovDeg: hfov };
+  const source: VisionSource = scene === "camera" ? { kind: "camera", facing: "environment" } : { kind: "image", src: `/scenes/${scene}.jpg`, hfovDeg: hfov, focus: [...(sceneInfo?.focus ?? [0.5, 0.5])] as [number, number] };
   const verdictText = (v: HazardAssessment["verdict"]) => VERDICT_TEXT[v].replace("her", p.obj);
 
   function geometry(): ViewGeometry | null {
@@ -345,10 +346,15 @@ export default function Walk() {
                     </p>
                   </div>
                   <p className="mt-2 leading-relaxed">
-                    Edge contrast {pct(f.fixed ? Math.max(f.contrast, STRIP_CONTRAST) : f.contrast)}. Where it falls in {p.poss} vision, {p.subj} need{p.s} at least {pct(f.a.threshold)} just to
-                    notice it{f.a.verdict !== "visible" ? `, and about ${pct(f.a.threshold * 3)} to see it easily` : ""}.
+                    Edge contrast {pct(f.fixed ? Math.max(f.contrast, STRIP_CONTRAST) : f.contrast)}.{" "}
+                    {f.a.threshold >= 1
+                      ? `It falls where very little contrast gets through for ${p.obj}, so ${p.subj} will only see it by looking straight at it.`
+                      : `Where it falls in ${p.poss} vision, ${p.subj} need${p.s} at least ${pct(f.a.threshold)} contrast to notice it${
+                          f.a.verdict === "visible" ? "" : f.a.threshold * 3 >= 1 ? ", and even strong contrast will look faint there" : `, and about ${pct(f.a.threshold * 3)} to see it easily`
+                        }.`}
                     {f.a.region === "lower" && ` It sits in the lower part of ${p.poss} vision, where loss is linked to falls.`}
                     {f.kind === "step" && !f.fixed && f.a.belowGuideline && ` It is also below the ${STEP_GUIDELINE * 100}% recommended for step edges.`}
+                    {f.fixed && f.a.verdict !== "visible" && ` A strip still helps when ${p.subj} look${p.s} down at the step, but here scanning with ${p.poss} eyes and good light matter as much.`}
                   </p>
                   <div className="mt-3 flex flex-wrap gap-2">
                     <button

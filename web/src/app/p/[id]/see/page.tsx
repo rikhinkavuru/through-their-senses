@@ -10,11 +10,12 @@ import credits from "../../../../../public/scenes/credits.json";
 import { gridPoints, whatStillWorks } from "@/lib/field";
 import { cap } from "@/lib/pronouns";
 
+// focus: the part of each photo to keep when the screen crops it (x, y from top-left).
 const SCENES = [
-  { id: "hallway", label: "Hallway", hfov: 75 },
-  { id: "stairs", label: "Stairs", hfov: 55 },
-  { id: "living-room", label: "Living room", hfov: 70 },
-  { id: "dinner", label: "Dinner table", hfov: 50 },
+  { id: "hallway", label: "Hallway", hfov: 75, focus: [0.5, 0.55] },
+  { id: "stairs", label: "Stairs", hfov: 55, focus: [0.6, 0.72] },
+  { id: "living-room", label: "Living room", hfov: 70, focus: [0.5, 0.5] },
+  { id: "dinner", label: "Dinner table", hfov: 50, focus: [0.5, 0.45] },
 ] as const;
 
 type SceneId = (typeof SCENES)[number]["id"] | "camera";
@@ -64,7 +65,7 @@ export default function See() {
   const sceneInfo = SCENES.find((s) => s.id === scene);
   const cameraHfov = src[1] > src[0] ? 52 : 68;
   const hfov = sceneInfo ? sceneInfo.hfov : cameraHfov;
-  const source: VisionSource = scene === "camera" ? { kind: "camera", facing } : { kind: "image", src: `/scenes/${scene}.jpg`, hfovDeg: hfov };
+  const source: VisionSource = scene === "camera" ? { kind: "camera", facing } : { kind: "image", src: `/scenes/${scene}.jpg`, hfovDeg: hfov, focus: [...(sceneInfo?.focus ?? [0.5, 0.5])] as [number, number] };
 
   useEffect(() => {
     const el = stageRef.current;

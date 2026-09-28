@@ -75,7 +75,7 @@ function median(a: number[]): number {
  * against its local ramp (moving median) and its own noise (MAD), keep jumps that
  * are not immediately reversed (a thin rail rises then falls), and link bands.
  */
-export function findStepEdges(depth: Float32Array, w: number, h: number, maxEdges = 6): Segment[] {
+export function findStepEdges(depth: Float32Array, w: number, h: number, maxEdges = 6, debug?: { peaks?: number; chains?: number[] }): Segment[] {
   let lo = Infinity;
   let hi = -Infinity;
   for (const v of depth) {
@@ -86,9 +86,10 @@ export function findStepEdges(depth: Float32Array, w: number, h: number, maxEdge
   for (let i = 0; i < depth.length; i++) n[i] = (depth[i] - lo) / Math.max(1e-6, hi - lo);
   const d = blur(n, w, h, 1);
 
-  const bands = 24;
+  // Narrow bands keep diagonal edges sharp (a slanted edge smears across a wide band).
+  const bands = Math.max(24, Math.round(w / 10));
   const bw = Math.floor(w / bands);
-  const top = Math.round(h * 0.33);
+  const top = Math.round(h * 0.15);
   const win = Math.max(6, Math.round(h * 0.03));
   const back = Math.max(4, Math.round(h * 0.035));
   const peaks: { band: number; y: number; s: number }[] = [];
@@ -109,7 +110,7 @@ export function findStepEdges(depth: Float32Array, w: number, h: number, maxEdge
     }
     const tail = Array.from(excess.slice(top, h - 2));
     const noise = median(tail.map((v) => Math.abs(v))) * 1.4826;
-    const thr = Math.max(0.006, 3 * noise);
+    const thr = Math.max(0.004, 2.5 * noise);
     for (let y = top + 2; y < h - 2 - back; y++) {
       const v = excess[y];
       if (v < thr) continue;
@@ -126,6 +127,10 @@ export function findStepEdges(depth: Float32Array, w: number, h: number, maxEdge
   const used = new Set<number>();
   const segs: Segment[] = [];
   peaks.sort((a, b) => b.s - a.s);
+  if (debug) {
+    debug.peaks = peaks.length;
+    debug.chains = [];
+  }
   for (let i = 0; i < peaks.length; i++) {
     if (used.has(i)) continue;
     const chain = [peaks[i]];
@@ -138,7 +143,8 @@ export function findStepEdges(depth: Float32Array, w: number, h: number, maxEdge
         for (let j = 0; j < peaks.length; j++) {
           if (used.has(j) || peaks[j].band !== cur.band + dir) continue;
           const dy = Math.abs(peaks[j].y - cur.y);
-          if (dy <= Math.max(3, h * 0.025) && dy < bestD) {
+          // Allow steep chains: stairs seen from the side run diagonally across the frame.
+          if (dy <= Math.max(3, bw * 0.9) && dy < bestD) {
             best = j;
             bestD = dy;
           }
@@ -149,12 +155,13 @@ export function findStepEdges(depth: Float32Array, w: number, h: number, maxEdge
         cur = peaks[best];
       }
     }
+    debug?.chains?.push(chain.length);
     if (chain.length < Math.max(4, bands * 0.2)) continue;
     chain.sort((a, b) => a.band - b.band);
     const first = chain[0];
     const last = chain[chain.length - 1];
     const slope = Math.abs(last.y - first.y) / Math.max(1, (last.band - first.band + 1) * bw);
-    if (slope > 0.5) continue;
+    if (slope > 0.9) continue;
     segs.push({
       x0: (first.band * bw) / w,
       y0: first.y / h,

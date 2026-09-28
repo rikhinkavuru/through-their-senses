@@ -27,6 +27,8 @@ export interface RenderParams {
   night: boolean;
   /** Mirror horizontally (front camera). */
   mirror: boolean;
+  /** Point of the source (0-1, top-left origin) to keep in view when cropping. */
+  focus?: [number, number];
 }
 
 const MAX_WORK_DIM = 960;
@@ -335,6 +337,9 @@ export class FieldRenderer {
     let sy = 1;
     if (srcAspect > dstAspect) sx = dstAspect / srcAspect;
     else sy = srcAspect / dstAspect;
+    const [fx, fy] = params.focus ?? [0.5, 0.5];
+    const ox = Math.min(1 - sx, Math.max(0, fx - sx / 2));
+    const oy = Math.min(1 - sy, Math.max(0, 1 - fy - sy / 2)); // GL texture rows are flipped
     // Field of view of what is actually shown, after cropping.
     const shownHfov = 2 * Math.atan(Math.tan((params.hfovDeg * Math.PI) / 360) * sx);
 
@@ -346,7 +351,7 @@ export class FieldRenderer {
     const copy = this.progs.copy;
     this.pass(copy, this.gauss[0]);
     this.bind(0, this.src, copy.u.uSrc);
-    gl.uniform4f(copy.u.uCrop, sx, sy, (1 - sx) / 2, (1 - sy) / 2);
+    gl.uniform4f(copy.u.uCrop, sx, sy, ox, oy);
     gl.uniform1f(copy.u.uMirror, params.mirror ? 1 : 0);
     gl.uniform1f(copy.u.uDim, dim);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
@@ -365,7 +370,7 @@ export class FieldRenderer {
       const sp = this.progs.sources;
       this.pass(sp, this.srcPyr[0]);
       this.bind(0, this.src, sp.u.uSrc);
-      gl.uniform4f(sp.u.uCrop, sx, sy, (1 - sx) / 2, (1 - sy) / 2);
+      gl.uniform4f(sp.u.uCrop, sx, sy, ox, oy);
       gl.uniform1f(sp.u.uMirror, params.mirror ? 1 : 0);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
       for (let k = 1; k < this.srcPyr.length; k++) {
