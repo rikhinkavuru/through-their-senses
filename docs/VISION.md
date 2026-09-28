@@ -1,5 +1,7 @@
 # Through Their Senses: build vision (v2)
 
+> **Status (2026-09-28):** built and deployed at https://through-their-senses.vercel.app. See README.md for what shipped, the How it works page (/method) for methods, limits and validation, and docs/SUBMISSION.md for the Devpost text. Changes from this plan: follow-my-eyes, digits-in-noise and printout photos remain planned; hazard detection runs fully on-device (depth only, no object detector); the deployed proxy listener uses Whisper base.en to fit the free hosting tier; dim light now includes a glare veil.
+
 Working title. UnivaBio 2026 (theme: AI for Human Health). Deadline Oct 6, 2026, 11:45pm EDT.
 
 One sentence: an older adult and their family load her real visual field test and audiogram, see the world and hear conversation the way she does, and build a shared plan for her home and for how the family talks with her.
