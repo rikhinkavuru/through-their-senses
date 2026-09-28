@@ -52,7 +52,7 @@ We tested the proxy listener on the Clarity Prediction Challenge 2 evaluation se
 
 ### Challenges we ran into
 
-- **Recognisers hear too well, or do they?** Speech recognisers pick up sounds far quieter than any person can, so we added a noise floor at the human hearing threshold. A unit test then showed our first floor was 7 to 9 dB too high, and after fixing it the validation surprised us: on CPC2 the floor did not improve predictions, most likely because CPC2 listeners set their own playback volume. We wrote down a rule for choosing on the separate training set before running it (validation/SELECTION.md) rather than picking whatever scored best on the test set.
+- **Recognisers hear too well, or do they?** Speech recognisers pick up sounds far quieter than any person can, so we added a noise floor at the human hearing threshold. A unit test then showed our first floor was 7 to 9 dB too high, and after fixing it the validation surprised us: on CPC2 the floor did not improve predictions, most likely because CPC2 listeners set their own playback volume. We wrote down a rule for choosing on the separate training set before running it (validation/SELECTION.md) rather than picking whatever scored best on the test set. On training data the difference was within the tie margin, so the floor stayed, and we report the test result for the setting we didn't choose.
 - **Step edges seen at an angle.** Treads viewed from the side run diagonally, and averaging depth over wide bands smeared them out. Narrower bands and measuring each jump against the local floor ramp found them.
 - **The 500 MB limit.** The hearing service was 1.3 GB. We vendored the simulator, dropped audio-decoding and VAD dependencies we never call, and split speech synthesis into its own service.
 - **Representation.** Getting the framing right took as much work as the maths. We read the research on why disability simulations backfire and redesigned around it.
@@ -60,7 +60,7 @@ We tested the proxy listener on the Clarity Prediction Challenge 2 evaluation se
 ### Accomplishments that we’re proud of
 
 - A glaucoma renderer grounded in published perception research, from real patients' tests, running live on a phone camera.
-- A hearing model that beats the standard intelligibility index at predicting what real listeners with hearing loss understand.
+- A hearing model that predicts what real listeners with hearing loss understand better than the standard intelligibility index (significantly with Whisper small.en; on average with the smaller model the app deploys).
 - Every number in the app traces to a source, and untested regions are shown as untested.
 
 ### What we learned
