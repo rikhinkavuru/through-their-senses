@@ -1,0 +1,105 @@
+@import "tailwindcss";
+
+/*
+  Palette comes from the clinic's own instruments:
+  audiogram convention marks the right ear in red (O) and the left ear in blue (X);
+  perimetry printouts are greyscale on cool test-chart paper.
+*/
+:root {
+  --paper: #f3f4f0;
+  --paper-deep: #e8eae4;
+  --ink: #1c2226;
+  --graphite: #5d666b;
+  --chart: #d3d8d2;
+  --right-ear: #c4382e;
+  --left-ear: #2b5ba8;
+  --works: #2e6e4e;
+  --focus: #2b5ba8;
+  --camera: #0e1113;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper-deep: var(--paper-deep);
+  --color-ink: var(--ink);
+  --color-graphite: var(--graphite);
+  --color-chart: var(--chart);
+  --color-right-ear: var(--right-ear);
+  --color-left-ear: var(--left-ear);
+  --color-works: var(--works);
+  --color-camera: var(--camera);
+  --font-sans: var(--font-atkinson);
+  --text-display: 2.75rem;
+  --text-display--line-height: 1.08;
+  --text-title: 1.75rem;
+  --text-title--line-height: 1.2;
+  --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html {
+  background: var(--paper);
+  color: var(--ink);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-atkinson), system-ui, sans-serif;
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  font-feature-settings: "ss01";
+}
+
+html[data-large-text="true"] body {
+  font-size: 1.25rem;
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+::selection {
+  background: color-mix(in srgb, var(--left-ear) 22%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Faint audiogram-paper grid used behind charts. */
+.chart-paper {
+  background-image:
+    linear-gradient(var(--chart) 1px, transparent 1px),
+    linear-gradient(90deg, var(--chart) 1px, transparent 1px);
+  background-size: 24px 24px;
+  background-position: -1px -1px;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* View transition: the field map morphs into the camera overlay. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 260ms;
+  animation-timing-function: var(--ease-spring);
+}
+
+@media print {
+  html,
+  body {
+    background: white;
+  }
+  .no-print {
+    display: none !important;
+  }
+}

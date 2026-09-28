@@ -1,0 +1,382 @@
+{
+ "freqs": [
+  500,
+  1000,
+  2000,
+  3000,
+  4000,
+  6000,
+  8000
+ ],
+ "citation": "CDC/NCHS National Health and Nutrition Examination Survey 2017-2018, Audiometry (AUX_J). Public domain.",
+ "demo": [
+  {
+   "id": "nhanes-97662",
+   "age": 73,
+   "sex": "M",
+   "right": [
+    10,
+    30,
+    50,
+    50,
+    50,
+    60,
+    55
+   ],
+   "left": [
+    10,
+    40,
+    65,
+    60,
+    60,
+    60,
+    55
+   ],
+   "betterEar": "right",
+   "grade": "Moderate",
+   "pta4": 35.0,
+   "source": "NHANES 2017-2018 audiometry (CDC/NCHS), individual record"
+  },
+  {
+   "id": "nhanes-96309",
+   "age": 76,
+   "sex": "F",
+   "right": [
+    30,
+    30,
+    25,
+    30,
+    45,
+    70,
+    70
+   ],
+   "left": [
+    30,
+    30,
+    30,
+    45,
+    60,
+    85,
+    85
+   ],
+   "betterEar": "right",
+   "grade": "Mild",
+   "pta4": 32.5,
+   "source": "NHANES 2017-2018 audiometry (CDC/NCHS), individual record"
+  },
+  {
+   "id": "nhanes-99535",
+   "age": 72,
+   "sex": "M",
+   "right": [
+    30,
+    40,
+    40,
+    55,
+    60,
+    50,
+    55
+   ],
+   "left": [
+    20,
+    35,
+    30,
+    30,
+    50,
+    25,
+    45
+   ],
+   "betterEar": "left",
+   "grade": "Mild",
+   "pta4": 33.8,
+   "source": "NHANES 2017-2018 audiometry (CDC/NCHS), individual record"
+  },
+  {
+   "id": "nhanes-102306",
+   "age": 71,
+   "sex": "M",
+   "right": [
+    45,
+    45,
+    40,
+    45,
+    50,
+    80,
+    75
+   ],
+   "left": [
+    10,
+    15,
+    40,
+    70,
+    70,
+    65,
+    75
+   ],
+   "betterEar": "left",
+   "grade": "Mild",
+   "pta4": 33.8,
+   "source": "NHANES 2017-2018 audiometry (CDC/NCHS), individual record"
+  },
+  {
+   "id": "nhanes-99700",
+   "age": 70,
+   "sex": "M",
+   "right": [
+    15,
+    20,
+    20,
+    55,
+    80,
+    95,
+    90
+   ],
+   "left": [
+    15,
+    20,
+    55,
+    65,
+    80,
+    75,
+    85
+   ],
+   "betterEar": "right",
+   "grade": "Mild",
+   "pta4": 33.8,
+   "source": "NHANES 2017-2018 audiometry (CDC/NCHS), individual record"
+  },
+  {
+   "id": "nhanes-98125",
+   "age": 76,
+   "sex": "F",
+   "right": [
+    30,
+    35,
+    30,
+    30,
+    50,
+    70,
+    60
+   ],
+   "left": [
+    20,
+    25,
+    40,
+    45,
+    50,
+    60,
+    60
+   ],
+   "betterEar": "left",
+   "grade": "Mild",
+   "pta4": 33.8,
+   "source": "NHANES 2017-2018 audiometry (CDC/NCHS), individual record"
+  },
+  {
+   "id": "nhanes-95621",
+   "age": 73,
+   "sex": "M",
+   "right": [
+    20,
+    10,
+    55,
+    65,
+    60,
+    65,
+    70
+   ],
+   "left": [
+    35,
+    25,
+    70,
+    70,
+    75,
+    90,
+    80
+   ],
+   "betterEar": "right",
+   "grade": "Moderate",
+   "pta4": 36.2,
+   "source": "NHANES 2017-2018 audiometry (CDC/NCHS), individual record"
+  },
+  {
+   "id": "nhanes-95725",
+   "age": 70,
+   "sex": "M",
+   "right": [
+    15,
+    25,
+    40,
+    60,
+    65,
+    45,
+    60
+   ],
+   "left": [
+    20,
+    40,
+    60,
+    60,
+    70,
+    65,
+    65
+   ],
+   "betterEar": "right",
+   "grade": "Moderate",
+   "pta4": 36.2,
+   "source": "NHANES 2017-2018 audiometry (CDC/NCHS), individual record"
+  }
+ ],
+ "typical": [
+  {
+   "id": "nhanes-typical-0",
+   "label": "No hearing loss (typical profile 1)",
+   "grade": "No hearing loss",
+   "pta4": 12.0,
+   "right": [
+    10,
+    9,
+    13,
+    15,
+    16,
+    18,
+    20
+   ],
+   "left": [
+    10,
+    9,
+    13,
+    15,
+    16,
+    18,
+    20
+   ],
+   "source": "k-means centroid of NHANES 2017-2018 better-ear audiograms, ages 60-80"
+  },
+  {
+   "id": "nhanes-typical-1",
+   "label": "No hearing loss (typical profile 2)",
+   "grade": "No hearing loss",
+   "pta4": 18.2,
+   "right": [
+    14,
+    14,
+    18,
+    23,
+    27,
+    30,
+    37
+   ],
+   "left": [
+    14,
+    14,
+    18,
+    23,
+    27,
+    30,
+    37
+   ],
+   "source": "k-means centroid of NHANES 2017-2018 better-ear audiograms, ages 60-80"
+  },
+  {
+   "id": "nhanes-typical-2",
+   "label": "No hearing loss (typical profile 3)",
+   "grade": "No hearing loss",
+   "pta4": 18.2,
+   "right": [
+    11,
+    11,
+    17,
+    25,
+    33,
+    47,
+    63
+   ],
+   "left": [
+    11,
+    11,
+    17,
+    25,
+    33,
+    47,
+    63
+   ],
+   "source": "k-means centroid of NHANES 2017-2018 better-ear audiograms, ages 60-80"
+  },
+  {
+   "id": "nhanes-typical-3",
+   "label": "Mild (typical profile 4)",
+   "grade": "Mild",
+   "pta4": 31.0,
+   "right": [
+    21,
+    26,
+    33,
+    41,
+    43,
+    46,
+    53
+   ],
+   "left": [
+    21,
+    26,
+    33,
+    41,
+    43,
+    46,
+    53
+   ],
+   "source": "k-means centroid of NHANES 2017-2018 better-ear audiograms, ages 60-80"
+  },
+  {
+   "id": "nhanes-typical-4",
+   "label": "Mild (typical profile 5)",
+   "grade": "Mild",
+   "pta4": 31.6,
+   "right": [
+    16,
+    18,
+    33,
+    52,
+    59,
+    66,
+    72
+   ],
+   "left": [
+    16,
+    18,
+    33,
+    52,
+    59,
+    66,
+    72
+   ],
+   "source": "k-means centroid of NHANES 2017-2018 better-ear audiograms, ages 60-80"
+  },
+  {
+   "id": "nhanes-typical-5",
+   "label": "Moderate (typical profile 6)",
+   "grade": "Moderate",
+   "pta4": 48.1,
+   "right": [
+    35,
+    41,
+    53,
+    59,
+    62,
+    66,
+    72
+   ],
+   "left": [
+    35,
+    41,
+    53,
+    59,
+    62,
+    66,
+    72
+   ],
+   "source": "k-means centroid of NHANES 2017-2018 better-ear audiograms, ages 60-80"
+  }
+ ]
+}
