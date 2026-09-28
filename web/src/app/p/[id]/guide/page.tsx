@@ -119,7 +119,14 @@ export default function Guide() {
             <h2 className="text-title font-light">Changes at home</h2>
             {accepted.length === 0 && later.length === 0 ? (
               <p className="mt-2 text-graphite">
-                None chosen yet. <Link href={`${base}/walk`} className="no-print underline underline-offset-4">Walk through the house together</Link> to find edges worth marking.
+                None chosen yet.
+                <span className="no-print">
+                  {" "}
+                  <Link href={`${base}/walk`} className="underline underline-offset-4">
+                    Walk through the house together
+                  </Link>{" "}
+                  to find edges worth marking.
+                </span>
               </p>
             ) : (
               <>
@@ -154,7 +161,13 @@ export default function Guide() {
               placeholder={`Anything ${person.name} wants people to know`}
               className="no-print mt-3 block w-full rounded-xl border border-ink/20 bg-white p-4 leading-relaxed"
             />
-            <p className="hidden whitespace-pre-wrap leading-relaxed print:block">{person.notes || " "}</p>
+            <p className="hidden whitespace-pre-wrap leading-relaxed print:block">{person.notes}</p>
+            {/* Ruled lines for handwriting on the printed page. */}
+            <div className="hidden print:block" aria-hidden>
+              {Array.from({ length: person.notes ? 2 : 4 }, (_, i) => (
+                <div key={i} className="mt-7 border-b border-ink/30" />
+              ))}
+            </div>
           </section>
 
           <footer className="mt-12 border-t border-chart pt-4 text-sm leading-relaxed text-graphite">
