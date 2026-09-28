@@ -5,13 +5,23 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import os
+
 VAL = Path(__file__).resolve().parent
-DATA = VAL / "cpc2_data" / "clarity_CPC2_data" / "clarity_data"
+# CPC2_SPLIT=train selects the seeded 600-sentence training subset used for model
+# selection (validation/cpc2_train/subset600.txt); the default is the test split.
+SPLIT = os.environ.get("CPC2_SPLIT", "test")
+DATA = VAL / ("cpc2_train" if SPLIT == "train" else "cpc2_data") / "clarity_CPC2_data" / "clarity_data"
 TRACKS = (1, 2, 3)
 
 
 def load_records() -> list[dict]:
-    """All CPC2 test records (labels included), with a `track` field added."""
+    """CPC2 records (labels included), with a `track` field added."""
+    if SPLIT == "train":
+        keep = set((VAL / "cpc2_train" / "subset600.txt").read_text().split())
+        recs = [dict(r, track=1) for r in json.loads((DATA / "metadata" / "CEC2.train.1.json").read_text()) if r["signal"] in keep]
+        assert len(recs) == len(keep), "subset signals missing from train metadata"
+        return recs
     recs = []
     for t in TRACKS:
         for r in json.loads((DATA / f"CPC2.test_labels.{t}.json").read_text()):
