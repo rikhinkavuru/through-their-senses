@@ -44,9 +44,10 @@ ISO226_T = np.array([78.5, 68.7, 59.5, 51.1, 44.0, 37.5, 31.5, 26.5, 22.1, 17.9,
                      2.2, 2.4, 3.5, 1.7, -1.3, -4.2, -6.0, -5.4, -1.5, 6.0, 12.6, 13.9, 12.3])
 
 BABBLE_PATH = Path(__file__).resolve().parent / "assets" / "babble.wav"
-# The proxy listener model (validated on CPC2). A smaller model transcribes the clean
-# recording, which only needs to recover what was actually said.
-WHISPER_MODEL = os.environ.get("WHISPER_MODEL", "small.en").strip()
+# The proxy listener model. base.en is what the deployed app runs (validated on CPC2
+# alongside small.en, which scores slightly better but is too slow for the free tier).
+# The same model transcribes the clean recording, which only needs what was said.
+WHISPER_MODEL = os.environ.get("WHISPER_MODEL", "base.en").strip()
 REFERENCE_MODEL = os.environ.get("REFERENCE_MODEL", "base.en").strip()
 MODEL_DIR = Path(__file__).resolve().parents[1] / "models"
 

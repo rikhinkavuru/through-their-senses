@@ -48,7 +48,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-pool = ThreadPoolExecutor(max_workers=4)
+pool = ThreadPoolExecutor(max_workers=3)  # per-request work items
+# Separate pool for per-ear transcription, so items waiting on their ears can't starve it.
+asr_pool = ThreadPoolExecutor(max_workers=4)
 TOKEN = os.environ.get("HEARING_TOKEN", "")
 
 
@@ -125,6 +127,25 @@ def health() -> dict:
     return dict(ok=True, cpus=os.cpu_count())
 
 
+def _better_ear_listen(sim, ref: list[str], pta_better: str) -> tuple[list[str], list[dict], str]:
+    """Listen with each ear in parallel and keep the ear that catches more words.
+
+    This better-ear rule is the configuration validated on CPC2 (see validation/RESULTS.md).
+    Ties go to the ear with the better audiogram.
+    """
+    futures = {side: asr_pool.submit(transcribe, for_asr(sig)) for side, sig in sim.ears.items()}
+    best: tuple[int, int, str, list[str], list[dict]] | None = None
+    for side, fut in futures.items():
+        heard = _heard_tokens(fut.result())
+        rows = _alignment(ref, heard)
+        correct = sum(r["status"] == "heard" for r in rows)
+        key = (correct, 1 if side == pta_better else 0)
+        if best is None or key > best[:2]:
+            best = (key[0], key[1], side, heard, rows)
+    assert best is not None
+    return best[3], best[4], best[2]
+
+
 def _read_upload(raw: bytes) -> tuple[np.ndarray, int]:
     try:
         x, fs = sf.read(io.BytesIO(raw), dtype="float64")
@@ -179,8 +200,7 @@ async def hear(
             )
         ) + "\n"
         sim = simulate(x, fs, lis, snr_db, is_aided)
-        heard = _heard_tokens(transcribe(for_asr(sim.ears[ear])))
-        rows = _alignment(ref, heard)
+        heard, rows, ear_used = _better_ear_listen(sim, ref, ear)
         for row in rows:
             row["audibility"] = word_audibility(row["said"], thresholds, snr_db, is_aided)
         yield json.dumps(
@@ -190,6 +210,7 @@ async def hear(
                 words=rows,
                 herCorrect=sum(r["status"] == "heard" for r in rows),
                 total=len(rows),
+                earUsed=ear_used,
                 audio=dict(her=_wav_b64(np.stack([for_playback(sim.ears["left"]), for_playback(sim.ears["right"])]))),
             )
         ) + "\n"
@@ -221,8 +242,7 @@ def _score_one(item: ScoreItem, lis: Listener, snr_db: float | None, aided: bool
         x = x.mean(axis=1)
     sim = simulate(x, fs, lis, snr_db, aided)
     ref = normalize_words(item.text)
-    heard = _heard_tokens(transcribe(for_asr(sim.ears[lis.better_ear()])))
-    rows = _alignment(ref, heard)
+    heard, rows, _ = _better_ear_listen(sim, ref, lis.better_ear())
     correct = sum(r["status"] == "heard" for r in rows)
     return dict(text=item.text, correct=correct, total=len(ref), score=round(correct / max(1, len(ref)), 3), herText=_heard_text(heard), words=rows)
 

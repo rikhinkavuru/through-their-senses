@@ -79,7 +79,7 @@ export function Toggle({ on, onChange, children, dark = false }: { on: boolean; 
         className={`relative h-4 w-7 rounded-full transition-colors ${on ? (dark ? "bg-ink" : "bg-paper") : dark ? "bg-white/40" : "bg-ink/25"}`}
       >
         <span
-          className={`absolute top-0.5 h-3 w-3 rounded-full transition-transform duration-200 ease-[var(--ease-spring)] ${on ? "translate-x-3.5" : "translate-x-0.5"} ${
+          className={`absolute left-0.5 top-0.5 h-3 w-3 rounded-full transition-transform duration-200 ease-[var(--ease-spring)] ${on ? "translate-x-3" : "translate-x-0"} ${
             on ? (dark ? "bg-white" : "bg-ink") : "bg-white"
           }`}
         />

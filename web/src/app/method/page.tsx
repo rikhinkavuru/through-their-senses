@@ -120,7 +120,7 @@ export default function Method() {
           eight talkers of background chatter.
         </p>
         <p>
-          To say what the person probably heard, a speech recogniser (Whisper small.en) listens to the simulated sound. On its own it would pick up sounds far too quiet for anyone, so we add a noise
+          To say what the person probably heard, a speech recogniser (Whisper base.en) listens to the simulated sound with each ear, and we keep the ear that catches more. On its own it would pick up sounds far too quiet for anyone, so we add a noise
           floor at the normal hearing threshold (ISO 226:2003) first. Words it can’t make out with confidence are shown as “…” instead of a guess.
         </p>
         <p>
