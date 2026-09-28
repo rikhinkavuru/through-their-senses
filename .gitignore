@@ -24,3 +24,4 @@ hearing/models/
 tts/models/
 **/.env.local
 docs/one-pager/_render.html
+validation/cpc2_train/
