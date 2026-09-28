@@ -55,6 +55,13 @@ cd web && npm install && npm run dev
 
 `web/.env.local`: `HEARING_URL`, `TTS_URL`, and (for rewording) Vercel AI Gateway credentials. Rebuild the data with `data/scripts/build_fields.py` and `build_audiograms.py` (raw data downloads are described at the top of each script).
 
+## Tests
+
+- `cd web && npm test`: field layout and binocular merge, interpolation, contrast sensitivity and the TD threshold rule, hazard verdicts, and the step finder on a synthetic staircase.
+- `cd web && npm run test:gpu` (with `npm run dev` running): the WebGL renderer in headless Chromium. Typical vision renders unchanged, contrast falls monotonically with loss, deep loss removes fine detail, and mean brightness is preserved.
+- `cd web && npm run test:a11y`: axe-core WCAG 2.2 AA audit of every page (currently zero violations).
+- `cd hearing && uv run pytest`: text normalisation and alignment, letter-to-sound alignment, 65 dB SPL calibration, the ISO 226 noise floor, and MSBG attenuation.
+
 ## Honest limits
 
 The vision view is exact only while you look at the cross. The 24-2 test covers only the central 24–30 degrees. The proxy listener is validated on CPC2 listeners, not on the person in the profile, and speech recognisers do worse than people in heavy noise. Dim-light effects are approximations. It does not diagnose anything. Full list on the [How it works](https://through-their-senses.vercel.app/method) page.
