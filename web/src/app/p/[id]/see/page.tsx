@@ -96,7 +96,20 @@ export default function See() {
     <div className="fixed inset-0 bg-camera text-white">
       <div
         ref={stageRef}
-        className="absolute inset-0 touch-none select-none"
+        role="slider"
+        tabIndex={0}
+        aria-label={`Divider: your view on the left, ${person.name}’s on the right`}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-valuenow={Math.round(wipe * 100)}
+        aria-valuetext={`${Math.round((1 - wipe) * 100)}% of the screen shows ${person.name}’s view`}
+        onKeyDown={(e) => {
+          if (e.key === "ArrowLeft") setWipe((w) => Math.max(0, w - 0.05));
+          if (e.key === "ArrowRight") setWipe((w) => Math.min(1, w + 0.05));
+          if (e.key === "Home") setWipe(0);
+          if (e.key === "End") setWipe(1);
+        }}
+        className="absolute inset-0 touch-none select-none focus-visible:outline-offset-[-6px]"
         onPointerDown={(e) => {
           dragging.current = true;
           (e.target as Element).setPointerCapture?.(e.pointerId);

@@ -11,10 +11,8 @@ export function HeroSentence() {
   const [full, setFull] = useState(false);
   return (
     <figure>
-      <p
-        className="text-[2.35rem] leading-[1.18] font-light tracking-[-0.015em] sm:text-[3.1rem]"
-        aria-label="Could you pass the salt, please? It is six fifteen."
-      >
+      <p className="text-[2.35rem] leading-[1.18] font-light tracking-[-0.015em] sm:text-[3.1rem]">
+        <span className="sr-only">Could you pass the salt, please? It is six fifteen.</span>
         {data.map((w, wi) => (
           <span key={wi} aria-hidden>
             {w.word.split("").map((ch, ci) => {

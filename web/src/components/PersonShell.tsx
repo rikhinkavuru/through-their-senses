@@ -104,7 +104,9 @@ export function TabBar({ base, dark = false }: { base: string; dark?: boolean })
               <Link
                 href={href}
                 aria-current={active ? "page" : undefined}
-                className={`flex min-h-14 flex-col items-center justify-center gap-0.5 text-[0.78rem] transition-opacity ${active ? "font-bold opacity-100" : "opacity-60 hover:opacity-90"}`}
+                className={`flex min-h-14 flex-col items-center justify-center gap-0.5 text-[0.78rem] transition-colors ${
+                  active ? "font-bold" : dark ? "text-white/80 hover:text-white" : "text-graphite hover:text-ink"
+                }`}
               >
                 <TabIcon name={t.icon} />
                 {t.label}
