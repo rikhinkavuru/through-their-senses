@@ -12,6 +12,7 @@ validation/cpc2_data/
 .vercel
 *.log
 models/
+!web/public/models/
 .gstack/
 
 # validation intermediates (regenerable)
