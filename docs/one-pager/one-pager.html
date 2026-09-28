@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Through Their Senses · one page</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  @page { size: Letter; margin: 0; }
+  :root { --paper:#f3f4f0; --ink:#1c2226; --graphite:#5d666b; --chart:#d3d8d2; --red:#c4382e; --blue:#2b5ba8; --works:#2e6e4e; }
+  * { box-sizing: border-box; }
+  html, body { margin:0; background:var(--paper); color:var(--ink); font-family:"Atkinson Hyperlegible Next", system-ui, sans-serif; }
+  body { width:8.5in; height:11in; padding:0.5in 0.55in; font-size:9.6pt; line-height:1.42; }
+  header { display:flex; justify-content:space-between; align-items:baseline; }
+  .brand { font-weight:700; font-size:10pt; }
+  .links { color:var(--graphite); font-size:8.6pt; }
+  h1 { font-weight:300; font-size:25pt; line-height:1.08; letter-spacing:-0.02em; margin:0.14in 0 0.06in; max-width:7.4in; }
+  .lede { font-size:11pt; color:#394248; margin:0 0 0.12in; max-width:7in; }
+  figure { margin:0 0 0.1in; }
+  figure img { width:100%; height:1.55in; object-fit:cover; border-radius:10px; display:block; }
+  figcaption { color:var(--graphite); font-size:8pt; margin-top:4px; }
+  .grid { display:grid; grid-template-columns: 1fr 1fr; gap:0.12in 0.3in; }
+  h2 { font-size:10.5pt; margin:0 0 3px; }
+  p { margin:0 0 5px; }
+  .three { display:grid; grid-template-columns:repeat(3,1fr); gap:0.18in; margin:0.04in 0 0.1in; }
+  .three h3 { font-size:9.8pt; margin:0 0 2px; }
+  table { border-collapse:collapse; width:100%; font-size:8.8pt; font-variant-numeric:tabular-nums; }
+  th, td { text-align:left; padding:3px 6px 3px 0; border-bottom:1px solid var(--chart); }
+  th { color:var(--graphite); font-weight:400; }
+  td.num { white-space:nowrap; }
+  .ours td { font-weight:700; }
+  .limits { border-top:1px solid var(--chart); padding-top:6px; margin-top:0.1in; color:#394248; font-size:8.8pt; }
+  .foot { color:var(--graphite); font-size:7.8pt; margin-top:6px; }
+</style>
+</head>
+<body>
+  <header>
+    <span class="brand">Through Their Senses</span>
+    <span class="links">through-their-senses.vercel.app · github.com/rikhinkavuru/through-their-senses · UnivaBio 2026</span>
+  </header>
+  <h1>See the room and hear your voice the way someone with glaucoma and hearing loss does.</h1>
+  <p class="lede">From their own visual field test and audiogram. Then plan together what to change at home and how to talk with each other.</p>
+  <figure>
+    <img src="../../web/public/landing-see.jpg" alt="">
+    <figcaption>Left: a hallway as you see it. Right: as “Meera” sees it from a real visual field test. Nothing goes black; detail fades and objects disappear into their surroundings.</figcaption>
+  </figure>
+
+  <div class="grid">
+    <section>
+      <h2>The problem</h2>
+      <p>Public images of glaucoma show a black tunnel. When 50 patients compared pictures with their own sight, none chose it (Crabb 2013). Hearing loss, the largest modifiable dementia risk factor, is invisible, and families become someone’s ears and eyes with no guidance.</p>
+    </section>
+    <section>
+      <h2>Designed with dignity</h2>
+      <p>Simulations alone can make people rate disabled people as less capable (Silverman 2015). Every screen pairs the simulation with what still works and how people adapt, uses real patients’ words, and the person co-owns the plan.</p>
+    </section>
+  </div>
+
+  <div class="three">
+    <div><h3>See</h3><p>The camera through their field: Peli’s band-limited contrast model on the GPU, thresholds raised by 10<sup>−TD/10</sup> from their total deviation. Years slider, dim light and glare.</p></div>
+    <div><h3>Hear</h3><p>Their audiogram drives the Cambridge MSBG simulator; Whisper, behind a noise floor at the human hearing threshold, reports what they likely heard. Claude rewordings are kept only if they score better.</p></div>
+    <div><h3>Walk · Sit · Guide</h3><p>On-device depth finds step edges and compares their contrast with what their vision needs there. Seating by better ear and clear field. One editable page for the family.</p></div>
+  </div>
+
+  <section>
+    <h2>Does the hearing model match real people?</h2>
+    <p>Clarity Prediction Challenge 2 evaluation set: 897 sentences, 15 listeners with hearing loss, predicting the share of words each person repeated correctly.</p>
+    <table>
+      <tr><th>Method</th><th>RMSE</th><th>Correlation</th></tr>
+      <tr class="ours"><td>Our proxy listener (calibrated)</td><td class="num">{{OURS_RMSE}}</td><td class="num">{{OURS_R}}</td></tr>
+      <tr><td>Deployed configuration (Whisper base.en)</td><td class="num">{{BASE_RMSE}}</td><td class="num">{{BASE_R}}</td></tr>
+      <tr><td>HASPI, standard intelligibility index (calibrated)</td><td class="num">{{HASPI_RMSE}}</td><td class="num">{{HASPI_R}}</td></tr>
+      <tr><td>Best published system (trained on CPC2 data)</td><td class="num">25.1</td><td class="num">0.78</td></tr>
+    </table>
+  </section>
+
+  <p class="limits"><strong>Honest limits.</strong> The vision view is exact only while looking at the fixation cross; the 24-2 test covers the central 24–30°. The hearing model is validated on CPC2 listeners, not on the profiled person. Dim light and glare are approximations. Not a diagnostic tool. <strong>Next:</strong> webcam follow-my-eyes view, an in-app digits-in-noise hearing test, printout photos, and sessions with older adults, an optometrist, an audiologist and an OT.</p>
+  <p class="foot">Data: UWHVF (BSD-3) · NHANES 2017–18 audiometry · CPC2 (CC BY-SA 4.0) · quotes from Glen &amp; Crabb 2015 (CC BY 4.0). Code: pyClarity MSBG, faster-whisper, Kokoro, Depth Anything V2 Small, Next.js, Vercel.</p>
+</body>
+</html>

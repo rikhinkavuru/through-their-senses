@@ -18,6 +18,7 @@ interface Validation {
   n_listeners: number;
   ours_raw?: Metric;
   ours_cal?: Metric;
+  production_base_en?: { raw?: Metric; cal?: Metric };
   haspi_cal?: Metric;
   pta_cal?: Metric;
   mean_baseline?: Metric;
@@ -150,8 +151,9 @@ export default function Method() {
                 <tbody className="divide-y divide-chart">
                   {(
                     [
-                      ["Our proxy listener, calibrated", v.ours_cal],
-                      ["Our proxy listener, raw", v.ours_raw],
+                      ["Our proxy listener (Whisper small.en), calibrated", v.ours_cal],
+                      ["As deployed in the app (Whisper base.en), calibrated", v.production_base_en?.cal],
+                      ["Our proxy listener (small.en), uncalibrated", v.ours_raw],
                       ["HASPI (standard intelligibility index), calibrated", v.haspi_cal],
                       ["Audiogram average only", v.pta_cal],
                       ["Always guess the average", v.mean_baseline],

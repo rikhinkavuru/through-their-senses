@@ -23,3 +23,4 @@ validation/.venv/
 hearing/models/
 tts/models/
 **/.env.local
+docs/one-pager/_render.html

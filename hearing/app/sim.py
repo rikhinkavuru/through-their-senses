@@ -22,7 +22,7 @@ from functools import lru_cache
 from pathlib import Path
 
 import numpy as np
-from scipy.signal import fftconvolve, firwin2, resample_poly
+from scipy.signal import resample_poly
 
 from app.vendor.clarity.audiogram import Audiogram
 from app.vendor.clarity.msbg.msbg import Ear
@@ -121,25 +121,31 @@ def add_babble(x: np.ndarray, snr_db: float, seed: int = 0) -> np.ndarray:
     return x + seg
 
 
-@lru_cache(maxsize=1)
-def _threshold_filter() -> np.ndarray:
-    """FIR that shapes unit-variance white noise to the ISO 226 threshold.
+def _threshold_gain(freqs: np.ndarray) -> np.ndarray:
+    """Amplitude gain that shapes unit-variance white noise to the ISO 226 threshold.
 
     Target: each 1/3-octave band of the noise carries the power of a tone at the
     normal hearing threshold, so sounds below threshold sit at or below 0 dB SNR.
+    For unit-variance white noise the one-sided PSD is 2/fs per Hz, so a band of
+    width bw carries 2*bw/fs; the gain scales that to the target band power.
     """
-    f = np.linspace(0, MSBG_FS / 2, 2049)
-    fc = np.clip(f, ISO226_F[0], ISO226_F[-1])
+    fc = np.clip(freqs, ISO226_F[0], ISO226_F[-1])
     t_db = np.interp(np.log(fc), np.log(ISO226_F), ISO226_T)
     band_power = 10 ** ((t_db - EQUIV_0DB_SPL) / 10)
-    bw = np.maximum(fc, 1.0) * (2 ** (1 / 6) - 2 ** (-1 / 6))
-    gain = np.sqrt(band_power * MSBG_FS / (2 * bw))
-    return firwin2(2049, f, gain, fs=MSBG_FS)
+    bw = fc * (2 ** (1 / 6) - 2 ** (-1 / 6))
+    return np.sqrt(band_power * MSBG_FS / (2 * bw))
 
 
 def internal_noise(n: int, seed: int = 1) -> np.ndarray:
-    w = np.random.default_rng(seed).standard_normal(n + 2048)
-    return fftconvolve(w, _threshold_filter(), mode="same")[1024 : 1024 + n]
+    """Noise at the normal hearing threshold, shaped exactly in the frequency domain.
+
+    (An FIR design cannot follow a target that spans more than 40 dB: the large
+    low-frequency gain leaks into the mid frequencies.)
+    """
+    w = np.random.default_rng(seed).standard_normal(n)
+    spec = np.fft.rfft(w)
+    spec *= _threshold_gain(np.fft.rfftfreq(n, 1 / MSBG_FS))
+    return np.fft.irfft(spec, n)
 
 
 def nalr_gain(x: np.ndarray, ag: Audiogram) -> np.ndarray:

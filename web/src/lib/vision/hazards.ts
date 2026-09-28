@@ -117,9 +117,12 @@ export function findStepEdges(depth: Float32Array, w: number, h: number, maxEdge
       let isMax = true;
       for (let k = -3; k <= 3; k++) if (k && excess[y + k] > v) isMax = false;
       if (!isMax) continue;
-      let reversed = false;
-      for (let k = 3; k <= back + 3 && y + k < h - 2; k++) if (excess[y + k] < -0.6 * v) reversed = true;
-      if (!reversed) peaks.push({ band: b, y, s: v });
+      // A real step keeps the nearer surface for several rows; a thin rail or wire
+      // returns to the background right after it. Test on the profile itself.
+      const before = prof[Math.max(0, y - 3)];
+      const jump = prof[y + 2] - before;
+      const persist = prof[Math.min(h - 1, y + back)] - before;
+      if (persist >= 0.6 * jump) peaks.push({ band: b, y, s: v });
     }
   }
 
