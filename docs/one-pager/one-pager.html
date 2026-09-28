@@ -57,9 +57,9 @@
   </div>
 
   <div class="three">
-    <div><h3>See</h3><p>The camera through their field: Peli’s band-limited contrast model on the GPU, thresholds raised by 10<sup>−TD/10</sup> from their total deviation. Years slider, dim light and glare.</p></div>
-    <div><h3>Hear</h3><p>Their audiogram drives the Cambridge MSBG simulator; Whisper, behind a noise floor at the human hearing threshold, reports what they likely heard. Claude rewordings are kept only if they score better.</p></div>
-    <div><h3>Walk · Sit · Guide</h3><p>On-device depth finds step edges and compares their contrast with what their vision needs there. Seating by better ear and clear field. One editable page for the family.</p></div>
+    <div><h3>See</h3><p>The camera through their field: Peli’s band-limited contrast model on the GPU, thresholds raised by 10<sup>−TD/10</sup> from their total deviation. Years slider; evening and TV light with CIE glare; on a laptop it follows your eyes.</p></div>
+    <div><h3>Hear</h3><p>Their audiogram drives the Cambridge MSBG simulator; Whisper, behind a noise floor at the human hearing threshold, reports what they likely heard. No audiogram? A paired beep test on shared headphones gives one. Claude rewordings are kept only if they score better.</p></div>
+    <div><h3>Walk · Sit · Guide</h3><p>On-device depth finds step edges (0.56 false edges per stair-free room on held-out photos) and compares their contrast with what their vision needs there. Seating by better ear and clear field. One editable page for the family.</p></div>
   </div>
 
   <section>
@@ -74,7 +74,7 @@
     </table>
   </section>
 
-  <p class="limits"><strong>Honest limits.</strong> The vision view is exact only while looking at the fixation cross; the 24-2 test covers the central 24–30°. The hearing model is validated on CPC2 listeners, not on the profiled person. Dim light and glare are approximations. Not a diagnostic tool. <strong>Next:</strong> webcam follow-my-eyes view, an in-app digits-in-noise hearing test, printout photos, and sessions with older adults, an optometrist, an audiologist and an OT.</p>
-  <p class="foot">Data: UWHVF (BSD-3) · NHANES 2017–18 audiometry · CPC2 (CC BY-SA 4.0) · quotes from Glen &amp; Crabb 2015 (CC BY 4.0). Code: pyClarity MSBG, faster-whisper, Kokoro, Depth Anything V2 Small, Next.js, Vercel.</p>
+  <p class="limits"><strong>Honest limits.</strong> The vision view is exact only while looking at the fixation cross; the 24-2 test covers the central 24–30°. The hearing model is validated on CPC2 listeners, not on the profiled person. Dim light assumes lamp brightness; the in-app hearing test is about ±10 dB; printout reading is checked on synthetic printouts, and the person verifies every number. Not a diagnostic tool. <strong>Next:</strong> measure eye tracking across real webcams, test printout reading on real printouts, and sessions with older adults, an optometrist, an audiologist and an OT.</p>
+  <p class="foot">Data: UWHVF (BSD-3) · NHANES 2017–18 audiometry · CPC2 (CC BY-SA 4.0) · quotes from Glen &amp; Crabb 2015 (CC BY 4.0). Code: pyClarity MSBG, faster-whisper, Kokoro, Depth Anything V2 Small, MediaPipe, Next.js, Vercel.</p>
 </body>
 </html>

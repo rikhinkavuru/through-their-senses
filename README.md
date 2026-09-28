@@ -18,11 +18,12 @@ Disability simulations can backfire when shown alone, making people rate disable
 
 | Screen | What happens |
 |---|---|
-| **See** | The camera (or a sample room) through their visual field: detail and contrast fade where their field is weaker, and objects disappear into their surroundings where it’s weakest. Drag to compare with your view; scrub through years of tests; dim-light mode. |
+| **See** | The camera (or a sample room) through their visual field: detail and contrast fade where their field is weaker, and objects disappear into their surroundings where it’s weakest. Drag to compare with your view; scrub through years of tests; evening or TV light with glare. On a laptop, the view can follow your eyes through the webcam. |
 | **Hear** | Say a sentence. It plays through a model of their hearing; a speech recogniser listening through that model shows what they probably heard (in a quiet room, “I’ll pick you up at fifteen past six on Thursday” becomes “I’ll pick you up at *fifty* and have six on Thursday”). Letters fade by how audible each sound is. Quiet room or dinner table, with or without hearing aids. |
 | **Say it better** | Claude writes rewordings; each is spoken by one synthetic voice and scored by the same hearing model, and only the ones that come through better are shown. |
 | **Walk** | Aim the phone where they’d look while walking. An on-device depth model finds step edges; each edge’s contrast is compared with what their vision needs at that spot. Try a contrasting strip and see the verdict change; they decide what to do. |
 | **Sit** | Where to sit at the table so they can hear you and see your face: better-ear side, face in their clear field, not backlit. |
+| **Setup** | Enter a visual field by photographing the printout (Claude reads it; you check every number), typing it, or picking a close match. No audiogram? Two people take a beep test on the same headphones and the difference gives one. |
 | **Guide** | One printable page built from all of it, which they can edit before anyone sees it. |
 
 ## How it’s built
@@ -36,13 +37,17 @@ validation/ CPC2 validation of the proxy listener.
 docs/       Design spec (VISION.md).
 ```
 
-**Vision.** Visual fields from the UWHVF dataset (28,943 real tests) or typed from a Humphrey 24-2 printout. Both eyes merge with the best-location rule; a pointwise trend smooths test noise. The renderer implements Peli’s band-limited contrast model on the GPU: a Laplacian pyramid of each frame in linear light, local band contrast, and removal of contrast below the person’s threshold, where total deviation TD raises a normal contrast sensitivity threshold by 10^(−TD/10).
+**Vision.** Visual fields from the UWHVF dataset (28,943 real tests) or read from a Humphrey 24-2 printout (typed or photographed). Both eyes merge with the best-location rule; a pointwise trend smooths test noise. The renderer implements Peli’s band-limited contrast model on the GPU: a Laplacian pyramid of each frame in linear light, local band contrast, and removal of contrast below the person’s threshold, where total deviation TD raises a normal contrast sensitivity threshold by 10^(−TD/10).
 
-**Hearing.** Speech is calibrated to 65 dB SPL, optionally mixed with eight-talker babble and NAL-R hearing-aid gain, then run through MSBG per ear. A noise floor at the ISO 226 hearing threshold stops the recogniser from hearing sounds no person could. Whisper listens with each ear and the better ear wins. Results stream back in stages so the first appears in about two seconds.
+**Light, glare and gaze.** Evening and TV-light scenes use eye-level light measured in real homes (Miller & Kinzey 2018), Barten’s contrast sensitivity model, glaucoma’s diffuse loss deepening in dim light (Drum et al. 1986), and a per-texel CIE 146:2002 disability glare veil at the person’s age. Follow-my-eyes uses MediaPipe Face Landmarker on-device with a 13-dot calibration, measures its own held-out accuracy, and only follows when it is under 7°.
+
+**Hearing.** Speech is calibrated to 65 dB SPL, optionally mixed with eight-talker babble and NAL-R hearing-aid gain, then run through MSBG per ear. A noise floor at the ISO 226 hearing threshold stops the recogniser from hearing sounds no person could. Whisper listens with each ear and the better ear wins. Results stream back in stages so the first appears in about two seconds. The in-app hearing test is a paired tone test: a helper with typical hearing goes first on the same headphones, and the difference plus the ISO 7029 median for the helper’s age gives the audiogram (biological calibration, after Masalski et al. 2014).
 
 **Validation.** On the Clarity Prediction Challenge 2 evaluation set (897 sentences, 15 listeners with hearing loss), the proxy listener predicts how many words real listeners repeated correctly:
 - With Whisper small.en: RMSE 26.9, r 0.74, significantly better than HASPI, the standard intelligibility index (28.6, 0.70).
 - The deployed base.en: 27.7, 0.72, better than HASPI on average but within the margin of error.
+
+Newer parts were each checked on data they weren’t tuned on: step edges on 47 held-out Commons photos (false edges in rooms without steps 2.72 → 0.56 per photo; stairs found 21 → 19 of 22; [web/src/content/hazard-eval.json](web/src/content/hazard-eval.json)), and printout reading on 54 synthetic printouts made from real fields, read 3 times each (96.0% of numbers exact, 0.7% wrong, the rest left blank; [web/src/content/printout-eval.json](web/src/content/printout-eval.json)).
 
 The noise-floor setting was chosen on training sentences by a pre-registered rule ([validation/SELECTION.md](validation/SELECTION.md)). See [validation/RESULTS.md](validation/RESULTS.md).
 
@@ -61,15 +66,16 @@ cd web && npm install && npm run dev
 
 ## Tests
 
-- `cd web && npm test`: field layout and binocular merge, interpolation, contrast sensitivity and the TD threshold rule, hazard verdicts, and the step finder on a synthetic staircase.
+- `cd web && npm test`: field layout and binocular merge, interpolation, contrast sensitivity and the TD threshold rule, hazard verdicts, and the step finder on a synthetic staircase, the light and glare models, gaze regression, and the hearing test procedure with simulated listeners.
 - `cd web && npm run test:gpu` (with `npm run dev` running): the WebGL renderer in headless Chromium. Typical vision renders unchanged, contrast falls monotonically with loss, deep loss removes fine detail, and mean brightness is preserved.
 - `cd web && npm run test:a11y`: axe-core WCAG 2.2 AA audit of every page (currently zero violations).
+- `cd web && npx tsx scripts/hazard-eval.mts` and `npx tsx scripts/printout-eval.mts` (with `npm run dev` running): the step-edge and printout-reading evaluations.
 - `cd hearing && uv run pytest`: text normalisation and alignment, letter-to-sound alignment, 65 dB SPL calibration, the ISO 226 noise floor, and MSBG attenuation.
 
 ## Honest limits
 
-The vision view is exact only while you look at the cross. The 24-2 test covers only the central 24–30 degrees. The proxy listener is validated on CPC2 listeners, not on the person in the profile, and speech recognisers do worse than people in heavy noise. Dim-light effects are approximations. It does not diagnose anything. Full list on the [How it works](https://through-their-senses.vercel.app/method) page.
+The vision view is exact only while you look at the cross. The 24-2 test covers only the central 24–30 degrees. The proxy listener is validated on CPC2 listeners, not on the person in the profile, and speech recognisers do worse than people in heavy noise. Dim light and glare use published averages, with lamp brightness assumed. The in-app hearing test is an estimate (about ±10 dB), and printout reading was checked only on synthetic printouts, so every number is checked by the person. It does not diagnose anything. Full list on the [How it works](https://through-their-senses.vercel.app/method) page.
 
 ## Credits
 
-UWHVF (BSD-3-Clause) · NHANES 2017–2018 audiometry (public domain) · CPC2 (CC BY-SA 4.0) · Glen & Crabb 2015 quotes (CC BY 4.0) · pyClarity MSBG and NAL-R (MIT) · faster-whisper (MIT) · Kokoro-82M (Apache-2.0) · Depth Anything V2 Small (Apache-2.0) · Atkinson Hyperlegible Next (OFL) · photos from Wikimedia Commons (CC0 / CC BY-SA 4.0, credited in the app).
+UWHVF (BSD-3-Clause) · NHANES 2017–2018 audiometry (public domain) · CPC2 (CC BY-SA 4.0) · Glen & Crabb 2015 quotes (CC BY 4.0) · pyClarity MSBG and NAL-R (MIT) · faster-whisper (MIT) · Kokoro-82M (Apache-2.0) · Depth Anything V2 Small (Apache-2.0) · MediaPipe Face Landmarker (Apache-2.0) · Atkinson Hyperlegible Next (OFL) · photos from Wikimedia Commons (CC0 / CC BY-SA 4.0, credited in the app).
