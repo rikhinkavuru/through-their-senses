@@ -13,7 +13,11 @@ export async function POST(request: Request) {
     return Response.json({ error: "That recording is too long. Keep it to one sentence." }, { status: 413 });
   }
   try {
-    const res = await hearingFetch("/hear", { method: "POST", body: form });
+    const res = await hearingFetch("/hear", { method: "POST", body: form, timeoutMs: 120_000 });
+    if (res.ok && res.body) {
+      // Stages stream as newline-delimited JSON; pass them straight through.
+      return new Response(res.body, { headers: { "content-type": "application/x-ndjson", "cache-control": "no-store" } });
+    }
     const body = await res.json();
     if (!res.ok) {
       const detail = typeof body?.detail === "string" ? body.detail : "The hearing model could not process that recording.";

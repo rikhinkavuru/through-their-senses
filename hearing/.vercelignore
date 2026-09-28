@@ -1,5 +1,5 @@
 .venv
 __pycache__
 *.pyc
-scripts
-.python-version.bak
+models/faster-whisper-small.en
+models/int8-whisper-small.en

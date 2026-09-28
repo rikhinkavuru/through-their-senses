@@ -6,20 +6,23 @@ export interface PhonemeAudibility {
 
 export interface HeardWord {
   said: string;
-  heard: string | null;
-  status: "heard" | "misheard" | "unclear";
+  heard?: string | null;
+  /** Missing until the proxy listener has run. */
+  status?: "heard" | "misheard" | "unclear";
   audibility: { word: string; phonemes: PhonemeAudibility[]; letters: number[]; score: number };
 }
 
+/** Built up as the hearing service streams each stage. */
 export interface HearResult {
   said: string;
-  herText: string;
   words: HeardWord[];
-  herCorrect: number;
-  total: number;
   betterEar: "left" | "right";
+  audio: { you: string; her?: string };
+  herText?: string;
+  herCorrect?: number;
+  total?: number;
   typicalCorrect?: number;
-  audio: { you: string; her: string };
+  pending: { her: boolean; typical: boolean };
 }
 
 export interface Suggestion {

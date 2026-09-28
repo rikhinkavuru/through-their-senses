@@ -262,7 +262,9 @@ def main():
     res.update(block(recs, preds))
     if have_haspi:
         res["paired_ours_cal_minus_haspi_cal"] = paired_diff(preds["ours_cal"], preds["haspi_cal"], y)
+        res["paired_ours_raw_minus_haspi_cal"] = paired_diff(preds["ours_raw"], preds["haspi_cal"], y)
         res["haspi_raw_vs_ours_raw_spearman"] = float(spearmanr(hx, raw)[0])
+    res["paired_ours_cal_minus_pta_cal"] = paired_diff(preds["ours_cal"], preds["pta_cal"], y)
     res["published"] = dict(
         source="claritychallenge.org/docs/cpc2/cpc2_results (static/cpc2_results.json in github.com/claritychallenge/claritychallenge.github.io); pooled over test.1-3, 897 signals",
         cpc2_baseline_beHASPI=dict(rmse=28.7, pearson=0.70),
@@ -281,6 +283,17 @@ def main():
     off0 = load_cache("small.en__floor1__off+0")
     if all(r["signal"] in off0 for r in recs):
         ab["full_level_0dBFS=120dBSPL (CPC1-recipe as-is input)"] = block(recs, {"raw": (p := proxy_pred(recs, off0, lis)), "cal": cv_logistic(p, y, g)})
+
+    base_c = load_cache("base.en__floor1__off-20")
+    if all(r["signal"] in base_c for r in recs):
+        braw = proxy_pred(recs, base_c, lis)
+        bcal = cv_logistic(braw, y, g)
+        ab["full_base.en (deployable model)"] = block(recs, {"raw": braw, "cal": bcal})
+        ab["full_base.en (deployable model)"]["paired_base_minus_small_raw"] = paired_diff(braw, raw, y)
+        ab["full_base.en (deployable model)"]["paired_base_minus_small_cal"] = paired_diff(bcal, preds["ours_cal"], y)
+        if have_haspi:
+            ab["full_base.en (deployable model)"]["paired_base_cal_minus_haspi_cal"] = paired_diff(bcal, preds["haspi_cal"], y)
+        res["word_level_base.en"] = word_level(recs, base_c, lis)
 
     # ---------------- subset ablations (re-decoding)
     sub = subset(recs)
@@ -328,7 +341,10 @@ def main():
             for nm, d in v["results"].items():
                 print("  subset", nm, d if isinstance(d, str) else {kk: (round(dd['rmse'], 1), dd['pearson'] and round(dd['pearson'], 3)) for kk, dd in d.items() if isinstance(dd, dict)})
         else:
-            print("  full", k, {kk: (round(dd['rmse'], 1), dd['pearson'] and round(dd['pearson'], 3)) for kk, dd in v.items()})
+            print("  full", k, {kk: (round(dd['rmse'], 1), dd['pearson'] and round(dd['pearson'], 3)) for kk, dd in v.items() if 'rmse' in dd})
+            for kk, dd in v.items():
+                if kk.startswith("paired"):
+                    print("     ", kk, {a: (np.round(b, 2) if not isinstance(b, list) else np.round(b, 2).tolist()) for a, b in dd.items()})
     print(json.dumps(res["word_level"]))
     print(json.dumps(res["word_level_unclear_none"]))
 

@@ -46,8 +46,8 @@ ISO226_T = np.array([78.5, 68.7, 59.5, 51.1, 44.0, 37.5, 31.5, 26.5, 22.1, 17.9,
 BABBLE_PATH = Path(__file__).resolve().parent / "assets" / "babble.wav"
 # The proxy listener model (validated on CPC2). A smaller model transcribes the clean
 # recording, which only needs to recover what was actually said.
-WHISPER_MODEL = os.environ.get("WHISPER_MODEL", "small.en")
-REFERENCE_MODEL = os.environ.get("REFERENCE_MODEL", "base.en")
+WHISPER_MODEL = os.environ.get("WHISPER_MODEL", "small.en").strip()
+REFERENCE_MODEL = os.environ.get("REFERENCE_MODEL", "base.en").strip()
 MODEL_DIR = Path(__file__).resolve().parents[1] / "models"
 
 
@@ -153,19 +153,26 @@ class SimResult:
     ears: dict[str, np.ndarray]  # MSBG output per ear, same calibration
 
 
-def simulate(audio: np.ndarray, fs: int, listener: Listener, snr_db: float | None = None, aided: bool = False) -> SimResult:
+def simulate(
+    audio: np.ndarray,
+    fs: int,
+    listener: Listener,
+    snr_db: float | None = None,
+    aided: bool = False,
+    ears: tuple[str, ...] = ("left", "right"),
+) -> SimResult:
     x = to_fs(np.asarray(audio, dtype=float), fs, MSBG_FS)
     x = set_spl(x, MSBG_FS, SPEECH_SPL)
     if snr_db is not None:
         x = add_babble(x, snr_db)
-    ears = {}
-    for side in ("left", "right"):
+    out: dict[str, np.ndarray] = {}
+    for side in ears:
         ag = listener.audiogram(side)
         y = nalr_gain(x, ag) if aided else x
         ear = Ear(src_pos="ff", sample_rate=MSBG_FS)
         ear.set_audiogram(ag)
-        ears[side] = np.asarray(ear.process(y)[0])
-    return SimResult(calibrated=x, ears=ears)
+        out[side] = np.asarray(ear.process(y)[0])
+    return SimResult(calibrated=x, ears=out)
 
 
 def for_asr(sig: np.ndarray, with_floor: bool = True) -> np.ndarray:
@@ -180,7 +187,7 @@ def for_playback(sig: np.ndarray) -> np.ndarray:
 
 @lru_cache(maxsize=2)
 def whisper(name: str = WHISPER_MODEL):
-    from faster_whisper import WhisperModel
+    from app.vendor.faster_whisper import WhisperModel
 
     # num_workers lets the service transcribe several recordings in parallel.
     return WhisperModel(_model_path(name), device="cpu", compute_type="int8", num_workers=3)

@@ -18,6 +18,7 @@ import numpy as np
 import soundfile as sf
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 
 from app.phonemes import word_audibility
@@ -54,7 +55,7 @@ TOKEN = os.environ.get("HEARING_TOKEN", "")
 @app.middleware("http")
 async def require_token(request, call_next):
     """When HEARING_TOKEN is set, only the web app (which holds it) may call the service."""
-    if TOKEN and request.url.path != "/health" and request.headers.get("authorization") != f"Bearer {TOKEN}":
+    if TOKEN and request.url.path not in ("/health", "/warm") and request.headers.get("authorization") != f"Bearer {TOKEN}":
         from fastapi.responses import JSONResponse
 
         return JSONResponse({"detail": "unauthorized"}, status_code=401)
@@ -108,20 +109,23 @@ def _heard_text(heard: list[str]) -> str:
     return " ".join(text)
 
 
-@app.get("/health")
-def health() -> dict:
+@app.get("/warm")
+def warm() -> dict:
+    """Load models ahead of the first recording (the Hear screen calls this on open)."""
+    from app.sim import REFERENCE_MODEL as ref_model, WHISPER_MODEL, _babble, whisper
+
+    whisper(WHISPER_MODEL)
+    whisper(ref_model)
+    _babble()
     return dict(ok=True)
 
 
-@app.post("/hear")
-async def hear(
-    audio: UploadFile = File(...),
-    left: str = Form(...),
-    right: str = Form(...),
-    snr: str = Form(""),
-    aided: str = Form("false"),
-) -> dict:
-    raw = await audio.read()
+@app.get("/health")
+def health() -> dict:
+    return dict(ok=True, cpus=os.cpu_count())
+
+
+def _read_upload(raw: bytes) -> tuple[np.ndarray, int]:
     try:
         x, fs = sf.read(io.BytesIO(raw), dtype="float64")
     except Exception as e:  # noqa: BLE001
@@ -132,48 +136,70 @@ async def hear(
         x = x[: int(MAX_SECONDS * fs)]
     if np.sqrt(np.mean(x**2)) < 1e-4:
         raise HTTPException(422, "recording is silent")
+    return x, fs
 
+
+@app.post("/hear")
+async def hear(
+    audio: UploadFile = File(...),
+    left: str = Form(...),
+    right: str = Form(...),
+    snr: str = Form(""),
+    aided: str = Form("false"),
+):
+    """Stream newline-delimited JSON events as each stage finishes:
+
+    said   what was said, with per-letter audibility (fast: reference transcript)
+    her    what she likely heard, word alignment and her playback audio
+    typical  (noise only) how many words a listener with typical hearing catches
+    done
+    """
+    x, fs = _read_upload(await audio.read())
     lis = _listener(json.loads(left), json.loads(right))
     snr_db = float(snr) if snr not in ("", "null", "none") else None
     is_aided = aided.lower() == "true"
     ear = lis.better_ear()
+    thresholds = lis.left if ear == "left" else lis.right
 
     clean = set_spl(to_fs(x, fs, MSBG_FS), MSBG_FS, SPEECH_SPL)
     scene = add_babble(clean, snr_db) if snr_db is not None else clean
-    sim = simulate(x, fs, lis, snr_db, is_aided)
-
-    jobs = {
-        "said": pool.submit(transcribe, for_asr(clean), None, REFERENCE_MODEL),
-        "her": pool.submit(transcribe, for_asr(sim.ears[ear])),
-    }
-    if snr_db is not None:
-        # Same chain, same scene, same noise; only the audiogram differs (0 dB HL).
-        typical = simulate(x, fs, Listener(left=[0.0] * 7, right=[0.0] * 7), snr_db, False)
-        jobs["typical"] = pool.submit(transcribe, for_asr(typical.ears["right"]))
-    res = {k: v.result() for k, v in jobs.items()}
-
-    ref = normalize_words(" ".join(w["word"] for w in res["said"]))
+    said_words = transcribe(for_asr(clean), None, REFERENCE_MODEL)
+    ref = normalize_words(" ".join(w["word"] for w in said_words))
     if not ref:
         raise HTTPException(422, "no speech detected")
-    heard = _heard_tokens(res["her"])
-    rows = _alignment(ref, heard)
-    thresholds = lis.left if ear == "left" else lis.right
-    for row in rows:
-        row["audibility"] = word_audibility(row["said"], thresholds, snr_db, is_aided)
 
-    out = dict(
-        said=" ".join(ref),
-        herText=_heard_text(heard),
-        words=rows,
-        herCorrect=sum(r["status"] == "heard" for r in rows),
-        total=len(rows),
-        betterEar=ear,
-        audio=dict(you=_wav_b64(for_playback(scene)), her=_wav_b64(np.stack([for_playback(sim.ears["left"]), for_playback(sim.ears["right"])]))),
-    )
-    if "typical" in res:
-        typ = _heard_tokens(res["typical"])
-        out["typicalCorrect"] = words_correct(ref, typ)
-    return out
+    def events():
+        yield json.dumps(
+            dict(
+                type="said",
+                said=" ".join(ref),
+                words=[dict(said=r, audibility=word_audibility(r, thresholds, snr_db, is_aided)) for r in ref],
+                betterEar=ear,
+                audio=dict(you=_wav_b64(for_playback(scene))),
+            )
+        ) + "\n"
+        sim = simulate(x, fs, lis, snr_db, is_aided)
+        heard = _heard_tokens(transcribe(for_asr(sim.ears[ear])))
+        rows = _alignment(ref, heard)
+        for row in rows:
+            row["audibility"] = word_audibility(row["said"], thresholds, snr_db, is_aided)
+        yield json.dumps(
+            dict(
+                type="her",
+                herText=_heard_text(heard),
+                words=rows,
+                herCorrect=sum(r["status"] == "heard" for r in rows),
+                total=len(rows),
+                audio=dict(her=_wav_b64(np.stack([for_playback(sim.ears["left"]), for_playback(sim.ears["right"])]))),
+            )
+        ) + "\n"
+        if snr_db is not None:
+            # Same chain, same scene, same noise; only the audiogram differs (0 dB HL), so one ear is enough.
+            typ = simulate(x, fs, Listener(left=[0.0] * 7, right=[0.0] * 7), snr_db, False, ears=("right",))
+            yield json.dumps(dict(type="typical", typicalCorrect=words_correct(ref, _heard_tokens(transcribe(for_asr(typ.ears["right"])))))) + "\n"
+        yield json.dumps(dict(type="done")) + "\n"
+
+    return StreamingResponse(events(), media_type="application/x-ndjson")
 
 
 class ScoreItem(BaseModel):

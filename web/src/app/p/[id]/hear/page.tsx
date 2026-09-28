@@ -25,7 +25,7 @@ type Phase = { kind: "idle" } | { kind: "recording"; started: number } | { kind:
 
 function FadedWord({ w, selected, onSelect }: { w: HeardWord; selected: boolean; onSelect: () => void }) {
   const letters = w.said.split("");
-  const miss = w.status !== "heard";
+  const miss = w.status !== undefined && w.status !== "heard";
   return (
     <button
       onClick={onSelect}
@@ -71,9 +71,38 @@ export default function Hear() {
       fd.append("snr", snr === null ? "" : String(snr));
       fd.append("aided", String(aided));
       const res = await fetch("/api/hear", { method: "POST", body: fd });
-      const body = await res.json();
-      if (!res.ok) throw new Error(body.error ?? "Something went wrong.");
-      setPhase({ kind: "done", result: body as HearResult });
+      if (!res.ok || !res.body || !res.headers.get("content-type")?.includes("ndjson")) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error ?? "Something went wrong.");
+      }
+      // Stages arrive one per line: said, her, typical (in noise), done.
+      const reader = res.body.getReader();
+      const dec = new TextDecoder();
+      let buf = "";
+      const acc: { r: HearResult | null } = { r: null };
+      for (;;) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buf += dec.decode(value, { stream: true });
+        let nl: number;
+        while ((nl = buf.indexOf("\n")) >= 0) {
+          const line = buf.slice(0, nl).trim();
+          buf = buf.slice(nl + 1);
+          if (!line) continue;
+          const ev = JSON.parse(line);
+          if (ev.type === "said") {
+            acc.r = { said: ev.said, words: ev.words, betterEar: ev.betterEar, audio: { you: ev.audio.you }, pending: { her: true, typical: snr !== null } };
+          } else if (ev.type === "her" && acc.r) {
+            acc.r = { ...acc.r, words: ev.words, herText: ev.herText, herCorrect: ev.herCorrect, total: ev.total, audio: { ...acc.r.audio, her: ev.audio.her }, pending: { ...acc.r.pending, her: false } };
+          } else if (ev.type === "typical" && acc.r) {
+            acc.r = { ...acc.r, typicalCorrect: ev.typicalCorrect, pending: { ...acc.r.pending, typical: false } };
+          } else if (ev.type === "done" && acc.r) {
+            acc.r = { ...acc.r, pending: { her: false, typical: false } };
+          }
+          if (acc.r) setPhase({ kind: "done", result: acc.r });
+        }
+      }
+      if (!acc.r) throw new Error("The hearing model didn’t return a result. Try again.");
     } catch (e) {
       setPhase({ kind: "error", message: e instanceof Error ? e.message : "Something went wrong." });
     }
@@ -104,9 +133,13 @@ export default function Hear() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
 
-  useEffect(() => () => {
-    recRef.current?.cancel();
-    stopPlay.current?.();
+  useEffect(() => {
+    // Wake the hearing model now so the first recording doesn't wait for a cold start.
+    fetch("/api/warm", { method: "POST" }).catch(() => {});
+    return () => {
+      recRef.current?.cancel();
+      stopPlay.current?.();
+    };
   }, []);
 
   async function beginRecording() {
@@ -295,6 +328,9 @@ export default function Hear() {
             )}
 
             <p className="mt-8 text-sm text-graphite">What {person.name} likely hears</p>
+            {result.pending.her ? (
+              <p className="mt-2 animate-pulse text-[1.1rem] text-graphite">Listening through {person.name}’s hearing…</p>
+            ) : (
             <p className="mt-1 text-[2rem] font-light leading-[1.25] tracking-[-0.01em]">
               {result.words.map((w, i) => (
                 <span key={i}>
@@ -309,28 +345,39 @@ export default function Hear() {
               ))}
             </p>
 
-            <p className="mt-6 text-[1.1rem] leading-relaxed">
-              {cap(p.subj)} caught <strong className="tabular">{result.herCorrect}</strong> of <span className="tabular">{result.total}</span> words
-              {typeof result.typicalCorrect === "number" && (
-                <>
-                  . Someone with typical hearing at the same table: <strong className="tabular">{result.typicalCorrect}</strong> of {result.total}
-                </>
-              )}
-              .
-            </p>
+            )}
+
+            {!result.pending.her && (
+              <p className="mt-6 text-[1.1rem] leading-relaxed">
+                {cap(p.subj)} caught <strong className="tabular">{result.herCorrect}</strong> of <span className="tabular">{result.total}</span> words
+                {typeof result.typicalCorrect === "number" ? (
+                  <>
+                    . Someone with typical hearing at the same table: <strong className="tabular">{result.typicalCorrect}</strong> of {result.total}.
+                  </>
+                ) : result.pending.typical ? (
+                  <span className="text-graphite">. Checking typical hearing at the same table…</span>
+                ) : (
+                  "."
+                )}
+              </p>
+            )}
 
             <div className="mt-5 flex flex-wrap gap-3">
               <Button kind="secondary" onClick={() => play("you", result.audio.you)} aria-pressed={playing === "you"}>
                 {playing === "you" ? "Stop" : "Play as you hear it"}
               </Button>
-              <Button kind="secondary" onClick={() => play("her", result.audio.her)} aria-pressed={playing === "her"}>
+              <Button kind="secondary" onClick={() => result.audio.her && play("her", result.audio.her)} disabled={!result.audio.her} aria-pressed={playing === "her"}>
                 {playing === "her" ? "Stop" : `Play as ${p.subj} hear${p.s} it`}
               </Button>
             </div>
             <p className="mt-2 text-sm text-graphite">Use headphones: the left and right ears are simulated separately. Both play at the same volume, so the quietness is real.</p>
 
             <div className="mt-10 border-t border-chart pt-8">
-              {reword.state === "idle" && <Button onClick={() => askReword(result)}>Help me say it more clearly</Button>}
+              {reword.state === "idle" && (
+                <Button onClick={() => askReword(result)} disabled={result.pending.her}>
+                  Help me say it more clearly
+                </Button>
+              )}
               {reword.state === "loading" && <p className="text-graphite">Writing a few versions and checking each one against {person.name}’s hearing…</p>}
               {reword.state === "error" && <p className="text-graphite">{reword.message}</p>}
               {reword.state === "done" && reword.data && (

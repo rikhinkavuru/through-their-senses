@@ -52,13 +52,13 @@ def _init(cfg: dict) -> None:
     import logging
 
     logging.getLogger("app.vendor").setLevel(logging.WARNING)
-    logging.getLogger("faster_whisper").setLevel(logging.WARNING)
-    from faster_whisper import WhisperModel
+    logging.getLogger("app.vendor.faster_whisper").setLevel(logging.WARNING)
+    from app.vendor.faster_whisper import WhisperModel
 
     from app import sim
 
     _MODEL = WhisperModel(cfg["model"], device="cpu", compute_type="int8", cpu_threads=cfg["threads"], num_workers=1)
-    sim.whisper = lambda: _MODEL  # production transcribe() looks this up at call time
+    sim.whisper = lambda *a, **k: _MODEL  # production transcribe() looks this up at call time
 
 
 def _msbg(signal: str, ag: dict) -> dict[str, np.ndarray]:
