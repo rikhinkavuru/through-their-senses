@@ -19,11 +19,17 @@ import numpy as np
 import analyze as A
 from cpc2_common import VAL, load_listeners, load_records, read_jsonl
 
-SMALL = "small.en__floor1__off-20__floorv2"
-BASE = "base.en__floor1__off-20__floorv2"
+# The noise-floor setting was chosen on the CPC2 training split by the pre-registered
+# rule in SELECTION.md (select_floor.py -> selection_result.json). The other setting is
+# reported on the full test set as the alternative.
+_SEL = json.loads((VAL / "selection_result.json").read_text())
+FLOOR_ON = {"small": "small.en__floor1__off-20__floorv2", "base": "base.en__floor1__off-20__floorv2"}
+FLOOR_OFF_C = {"small": "small.en__floor0__off-20", "base": "base.en__floor0__off-20"}
+CHOSE_OFF = _SEL["winner"] == "B_floor_off"
+CHOSEN, ALT = (FLOOR_OFF_C, FLOOR_ON) if CHOSE_OFF else (FLOOR_ON, FLOOR_OFF_C)
+SMALL, BASE = CHOSEN["small"], CHOSEN["base"]
 SMALL_V1 = "small.en__floor1__off-20"
 BASE_V1 = "base.en__floor1__off-20"
-FLOOR_OFF = "small.en__floor0__off-20"
 KEYS = ("rmse", "pearson", "spearman", "rmse_ci", "pearson_ci", "spearman_ci", "n")
 
 
@@ -55,7 +61,9 @@ def main() -> None:
     res: dict = dict(
         n_signals=len(recs),
         n_listeners=len(set(g)),
-        floor_version="v2 (exact ISO 226 shaping; v1 FIR floor superseded)",
+        floor_version=("internal noise floor OFF" if CHOSE_OFF else "internal noise floor ON (v2, exact ISO 226 shaping)")
+        + "; chosen on the CPC2 training split by the pre-registered rule (SELECTION.md)",
+        selection=dict(winner=_SEL["winner"], train_n=_SEL["n"], train_results={k: {"cal_rmse": v["cal"]["rmse"], "cal_pearson": v["cal"]["pearson"]} for k, v in _SEL["results"].items()}),
         cv="5-fold GroupKFold by listener; logistic 100/(1+exp(-k(x-x0))) fit per training fold",
         bootstrap=f"{A.N_BOOT} resamples of signals, seed {A.BOOT_SEED}, percentile 95% CI",
         ours_raw=slim(A.with_ci(s_raw, y)),
@@ -79,11 +87,11 @@ def main() -> None:
     )
 
     ab: dict = {}
-    ab["ear_rule_pta_better (small.en v2)"] = {
+    ab["ear_rule_pta_better (small.en)"] = {
         "cal": slim(A.with_ci(A.cv_logistic(p := A.proxy_pred(recs, small, lis, rule="pta_better"), y, g), y)),
         "raw": slim(A.with_ci(p, y)),
     }
-    ab["unclear_threshold_none (small.en v2)"] = {
+    ab["unclear_threshold_none (small.en)"] = {
         "cal": slim(A.with_ci(A.cv_logistic(p := A.proxy_pred(recs, small, lis, thresh=0.0), y, g), y)),
         "raw": slim(A.with_ci(p, y)),
     }
@@ -92,24 +100,13 @@ def main() -> None:
         if all(r["signal"] in c for r in recs):
             p = A.proxy_pred(recs, c, lis)
             ab[label] = {"raw": slim(A.with_ci(p, y)), "cal": slim(A.with_ci(A.cv_logistic(p, y, g), y))}
-    # Floor on vs off on the fixed 400-signal subset (the floor-off run exists only there).
-    sub = A.subset(recs)
-    ys = np.array([r["correctness"] for r in sub])
-    gs = np.array([r["listener"] for r in sub])
-    off = A.load_cache(FLOOR_OFF)
-    if all(r["signal"] in off for r in sub):
-        p_on = A.proxy_pred(sub, small, lis)
-        p_off = A.proxy_pred(sub, off, lis)
-        ab["subset400_floor_on_v2_vs_off"] = dict(
-            n=len(sub),
-            on_raw=slim(A.with_ci(p_on, ys)),
-            off_raw=slim(A.with_ci(p_off, ys)),
-            on_cal=slim(A.with_ci(A.cv_logistic(p_on, ys, gs), ys)),
-            off_cal=slim(A.with_ci(A.cv_logistic(p_off, ys, gs), ys)),
-            mean_pred_on=float(p_on.mean()),
-            mean_pred_off=float(p_off.mean()),
-            label_mean=float(ys.mean()),
-        )
+    # The setting not chosen, on the full test set.
+    alt_label = "alternative: floor ON (v2)" if CHOSE_OFF else "alternative: floor OFF"
+    for model in ("small", "base"):
+        c = A.load_cache(ALT[model])
+        if all(r["signal"] in c for r in recs):
+            p = A.proxy_pred(recs, c, lis)
+            ab[f"{alt_label}, {model}.en"] = {"raw": slim(A.with_ci(p, y)), "cal": slim(A.with_ci(A.cv_logistic(p, y, g), y))}
     res["ablations"] = ab
     res["label_mean"] = float(y.mean())
     res["ours_raw_mean_pred"] = float(s_raw.mean())

@@ -182,7 +182,14 @@ def simulate(
     return SimResult(calibrated=x, ears=out)
 
 
-def for_asr(sig: np.ndarray, with_floor: bool = True) -> np.ndarray:
+# Whether the proxy listener adds the internal noise floor. Chosen on the CPC2 training
+# split by the pre-registered rule in validation/SELECTION.md.
+PROXY_FLOOR = True
+
+
+def for_asr(sig: np.ndarray, with_floor: bool | None = None) -> np.ndarray:
+    if with_floor is None:
+        with_floor = PROXY_FLOOR
     y = sig + internal_noise(len(sig)) if with_floor else sig
     y = to_fs(y, MSBG_FS, ASR_FS)
     return (y / (np.abs(y).max() + 1e-12) * 0.5).astype(np.float32)

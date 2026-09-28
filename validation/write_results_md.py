@@ -37,13 +37,35 @@ lines = [
     "",
     f"- **Data:** Clarity Prediction Challenge 2 (CPC2) evaluation split, tracks 1–3 pooled: {r['n_signals']} hearing-aid-processed sentences in noise, "
     f"{r['n_listeners']} listeners with hearing loss, each with an audiogram and the share of words they repeated correctly (CC BY-SA 4.0).",
-    "- **Proxy listener (production code, `hearing/app`):** Cambridge MSBG hearing loss simulation with the listener's audiogram per ear → internal noise floor at the "
-    "ISO 226:2003 threshold → Whisper; words with probability < 0.4 count as unclear; prediction = better ear (max over ears) share of prompt words correct.",
+    "- **Proxy listener (production code, `hearing/app`):** Cambridge MSBG hearing loss simulation with the listener's audiogram per ear → Whisper; words with probability "
+    "< 0.4 count as unclear; prediction = better ear (max over ears) share of prompt words correct. Whether to add an internal noise floor at the ISO 226 threshold before "
+    "Whisper was decided on the training split (below).",
     "- **Levels:** in Clarity data 0 dBFS corresponds to 100 dB SPL (https://claritychallenge.org/docs/cec2/data/cec2_data); our MSBG wrapper treats 0 dBFS as 120 dB SPL, "
     "so inputs are offset by −20 dB to present the same sound pressure.",
     f"- **Calibration:** {r['cv']}. Only two numbers are fitted per fold; nothing is trained on CPC2 otherwise.",
     f"- **Uncertainty:** {r['bootstrap']}.",
     f"- **Noise floor:** {r['floor_version']}.",
+    "",
+    "## Model selection (training split)",
+    "",
+    "Before looking further at the test set, the noise-floor setting was chosen by a rule written down in advance (`SELECTION.md`, committed before the run): "
+    f"Whisper base.en on a seeded subset of {r['selection']['train_n']} CPC2 training sentences, floor on vs off, lower listener-grouped-CV RMSE wins, ties within 0.5 points keep the floor.",
+    "",
+    "| Training candidate | Calibrated RMSE | Pearson r |",
+    "|---|---|---|",
+    *[f"| {k} | {v['cal_rmse']:.2f} | {v['cal_pearson']:.3f} |" for k, v in r["selection"]["train_results"].items()],
+    "",
+    f"**Chosen:** {r['selection']['winner']}. The other setting is reported on the test set under Ablations.",
+    "",
+    *(
+        [
+            "Stated plainly: on the test set the setting that was not chosen scores better "
+            + ", ".join(f"({k.split(', ')[1]}: RMSE {v['cal']['rmse']:.1f}, r {v['cal']['pearson']:.2f})" for k, v in ab.items() if k.startswith("alternative"))
+            + ". It was not adopted because the decision was made on training data, where the two were within the pre-registered tie margin; switching now would be choosing on test labels."
+        ]
+        if any(k.startswith("alternative") for k in ab)
+        else []
+    ),
     "",
     "## Results",
     "",
@@ -92,7 +114,8 @@ lines += [
     "A unit test (`hearing/tests/test_sim.py`) found that the first version of the internal noise floor, an FIR filter design, sat 7–9 dB above the ISO 226 threshold "
     "between 250 and 4000 Hz because the filter could not follow a target spanning more than 40 dB. It was replaced with exact frequency-domain shaping "
     "(band levels now within about 1.5 dB of ISO 226) and the production configurations were decoded again. The earlier results are kept above as "
-    "“floor_v1_superseded”.",
+    "“floor_v1_superseded”. The corrected floor then scored worse than no floor on the test set, which is why the setting was re-decided on the training split "
+    "instead of being picked from test results.",
     "",
     "## Limits",
     "",

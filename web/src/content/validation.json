@@ -1,0 +1,202 @@
+{
+ "n_signals": 897,
+ "n_listeners": 15,
+ "ours_raw": {
+  "rmse": 30.099212232695223,
+  "pearson": 0.7438700696056157,
+  "spearman": 0.7517282912124437,
+  "rmse_ci": [
+   28.31430653226718,
+   31.94159886552909
+  ],
+  "pearson_ci": [
+   0.711422057372143,
+   0.7745967062969379
+  ],
+  "spearman_ci": [
+   0.7187523063257136,
+   0.7809429421272308
+  ],
+  "n": 897
+ },
+ "ours_cal": {
+  "rmse": 26.896716261525572,
+  "pearson": 0.7380802499464254,
+  "spearman": 0.7362519388239437,
+  "rmse_ci": [
+   25.5421215998679,
+   28.263099967132856
+  ],
+  "pearson_ci": [
+   0.7042505757882414,
+   0.7709342809580747
+  ],
+  "spearman_ci": [
+   0.7023979867095679,
+   0.7666848617101957
+  ],
+  "n": 897
+ },
+ "production_base_en": {
+  "raw": {
+   "rmse": 34.00252754186369,
+   "pearson": 0.7167113821903099,
+   "spearman": 0.7255308017751119,
+   "rmse_ci": [
+    32.21192568802148,
+    35.80886054840361
+   ],
+   "pearson_ci": [
+    0.6842586069877975,
+    0.7468227514053197
+   ],
+   "spearman_ci": [
+    0.6894881071238548,
+    0.7580251677591255
+   ],
+   "n": 897
+  },
+  "cal": {
+   "rmse": 27.65176658971077,
+   "pearson": 0.7201333337579956,
+   "spearman": 0.7058231862610724,
+   "rmse_ci": [
+    26.296401276050712,
+    29.023915456981225
+   ],
+   "pearson_ci": [
+    0.6843785190438184,
+    0.7537694588462773
+   ],
+   "spearman_ci": [
+    0.6664589732032696,
+    0.7413863670168794
+   ],
+   "n": 897
+  }
+ },
+ "haspi_cal": {
+  "rmse": 28.615639128418476,
+  "pearson": 0.6960114441218836,
+  "spearman": 0.7005993121603002,
+  "rmse_ci": [
+   27.15661296257792,
+   30.038875503203677
+  ],
+  "pearson_ci": [
+   0.6577803910650685,
+   0.7347820414119667
+  ],
+  "spearman_ci": [
+   0.6634533074802571,
+   0.7365029992968155
+  ],
+  "n": 897
+ },
+ "pta_cal": {
+  "rmse": 39.44048525432098,
+  "pearson": 0.1455945095928684,
+  "spearman": 0.16482654898620502,
+  "rmse_ci": [
+   38.40972834782613,
+   40.39981727950375
+  ],
+  "pearson_ci": [
+   0.08137216780100595,
+   0.2122324260259585
+  ],
+  "spearman_ci": [
+   0.10108012583981943,
+   0.2310472925106088
+  ],
+  "n": 897
+ },
+ "mean_baseline": {
+  "rmse": 40.103198044233444,
+  "pearson": -0.15010167900487598,
+  "spearman": -0.1500580941531849,
+  "rmse_ci": [
+   39.1244383268442,
+   41.01521940276748
+  ],
+  "pearson_ci": [
+   -0.21435756462327235,
+   -0.08762677086031828
+  ],
+  "spearman_ci": [
+   -0.21560040475469663,
+   -0.08723715817396073
+  ],
+  "n": 897
+ },
+ "published": {
+  "source": "claritychallenge.org/docs/cpc2/cpc2_results; pooled over test.1-3, 897 signals",
+  "cpc2_baseline_beHASPI": {
+   "rmse": 28.7,
+   "pearson": 0.7
+  },
+  "top_E011_cuervo_marxer": {
+   "rmse": 25.1,
+   "pearson": 0.78
+  },
+  "E002_mogridge_whisper": {
+   "rmse": 25.3,
+   "pearson": 0.77
+  },
+  "note": "Published systems were trained on the CPC2 training set; ours uses only a 2-parameter logistic fitted with listener-grouped CV on the test set."
+ },
+ "word_level": {
+  "n_signals": 423,
+  "n_words": 3577,
+  "tp": 1249,
+  "fp": 839,
+  "fn": 352,
+  "tn": 1137,
+  "precision": 0.5981800766283525,
+  "recall": 0.7801374141161774,
+  "f1": 0.6771482786663052,
+  "listener_miss_rate": 0.4475817724350014,
+  "proxy_miss_rate": 0.5837293821638244,
+  "precision_if_random_within_sentence": 0.5229727315575015,
+  "response_rescoring_agrees_with_hits": 0.9899665551839465
+ },
+ "alternative": {
+  "alternative: floor OFF, small.en": {
+   "rmse": 24.71774049388032,
+   "pearson": 0.7845604868914514,
+   "spearman": 0.7749706063983111,
+   "rmse_ci": [
+    23.23947433656167,
+    26.151359029123064
+   ],
+   "pearson_ci": [
+    0.7537547333986093,
+    0.8141149066778831
+   ],
+   "spearman_ci": [
+    0.7447497684285259,
+    0.80243427272389
+   ],
+   "n": 897
+  },
+  "alternative: floor OFF, base.en": {
+   "rmse": 25.066578052741107,
+   "pearson": 0.7774442897913297,
+   "spearman": 0.7723251164577223,
+   "rmse_ci": [
+    23.603849226793056,
+    26.452095400085515
+   ],
+   "pearson_ci": [
+    0.7442500737152105,
+    0.8073163062196852
+   ],
+   "spearman_ci": [
+    0.7416600795459332,
+    0.7996255469281628
+   ],
+   "n": 897
+  }
+ },
+ "summary": "Without any training beyond a two-number calibration, the proxy listener's predictions track what real listeners understood (correlation 0.74) more closely than HASPI does (0.70), with lower error (26.9 vs 28.6 percentage points). The best published systems, trained on CPC2 data, reach 25.1 and 0.78."
+}

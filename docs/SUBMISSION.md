@@ -1,6 +1,6 @@
 # Submission package (UnivaBio 2026)
 
-Everything to paste into Devpost, plus the demo video script. Numbers marked ⟨VAL⟩ come from validation/results.json; they are filled in below once the run completes. Written as "we": change to "I" if you are entering solo.
+Everything to paste into Devpost, plus the demo video script. Numbers come from validation/results.json. Written as "we": change to "I" if you are entering solo.
 
 ---
 
@@ -44,7 +44,11 @@ Research shows disability simulations can backfire, making people see disabled p
 
 ### How we checked it
 
-We tested the proxy listener on the Clarity Prediction Challenge 2 evaluation set: 897 sentences heard by 15 listeners with hearing loss, with their audiograms and what they actually repeated back. The calibrated proxy listener (Whisper small.en) predicted how many words each person got right with RMSE 26.9 and correlation 0.74 (preliminary; final configuration pending the pre-registered training-set choice). HASPI, the standard intelligibility index, scored 28.6 and 0.70 on the same sentences. The best published systems, which were trained on CPC2 data, reach RMSE 25.1 and r 0.78. Ours uses no training beyond a two-number calibration with listener-grouped cross-validation. The deployed app runs a smaller Whisper model (base.en): 27.7 and 0.72.
+We tested the proxy listener on the Clarity Prediction Challenge 2 evaluation set: 897 sentences heard by 15 listeners with hearing loss, with their audiograms and what they actually repeated back.
+- With Whisper small.en, the calibrated proxy listener predicted how many words each person got right with RMSE 26.9 and correlation 0.74. HASPI, the standard intelligibility index, scored 28.6 and 0.70 on the same sentences. The improvement is statistically clear: the paired RMSE difference is −1.7, 95% CI −3.3 to −0.2.
+- The deployed app runs the smaller base.en to fit free hosting. It scores 27.7 and 0.72: better than HASPI on average, but within the margin of error.
+- The best published systems, trained on CPC2 training data, reach 25.1 and 0.78. Ours uses no training beyond a two-number calibration with listener-grouped cross-validation.
+- One design choice, whether to add a noise floor at the human hearing threshold, was decided on separate training sentences by a rule we committed before running it. We report the setting we didn't choose too, because on the test set it would have scored better. Full details are in validation/RESULTS.md.
 
 ### Challenges we ran into
 

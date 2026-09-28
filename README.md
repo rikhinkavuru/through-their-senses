@@ -40,7 +40,11 @@ docs/       Design spec (VISION.md).
 
 **Hearing.** Speech is calibrated to 65 dB SPL, optionally mixed with eight-talker babble and NAL-R hearing-aid gain, then run through MSBG per ear. A noise floor at the ISO 226 hearing threshold stops the recogniser from hearing sounds no person could. Whisper listens with each ear and the better ear wins. Results stream back in stages so the first appears in about two seconds.
 
-**Validation.** On the Clarity Prediction Challenge 2 evaluation set (897 sentences, 15 listeners with hearing loss), the proxy listener predicts how many words real listeners repeated correctly better than HASPI, the standard intelligibility index. See [validation/RESULTS.md](validation/RESULTS.md).
+**Validation.** On the Clarity Prediction Challenge 2 evaluation set (897 sentences, 15 listeners with hearing loss), the proxy listener predicts how many words real listeners repeated correctly:
+- With Whisper small.en: RMSE 26.9, r 0.74, significantly better than HASPI, the standard intelligibility index (28.6, 0.70).
+- The deployed base.en: 27.7, 0.72, better than HASPI on average but within the margin of error.
+
+The noise-floor setting was chosen on training sentences by a pre-registered rule ([validation/SELECTION.md](validation/SELECTION.md)). See [validation/RESULTS.md](validation/RESULTS.md).
 
 ## Run locally
 

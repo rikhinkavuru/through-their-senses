@@ -24,6 +24,7 @@ interface Validation {
   mean_baseline?: Metric;
   published?: Record<string, unknown>;
   word_level?: Record<string, number>;
+  alternative?: Record<string, Metric>;
   summary?: string;
 }
 
@@ -154,6 +155,7 @@ export default function Method() {
                       ["Our proxy listener (Whisper small.en), calibrated", v.ours_cal],
                       ["As deployed in the app (Whisper base.en), calibrated", v.production_base_en?.cal],
                       ["Our proxy listener (small.en), uncalibrated", v.ours_raw],
+                      ["Without the noise floor, small.en (not chosen, see below)", v.alternative?.["alternative: floor OFF, small.en"]],
                       ["HASPI (standard intelligibility index), calibrated", v.haspi_cal],
                       ["Audiogram average only", v.pta_cal],
                       ["Always guess the average", v.mean_baseline],
@@ -177,6 +179,11 @@ export default function Method() {
               </table>
             </div>
             {v.summary && <p>{v.summary}</p>}
+            <p>
+              Whether to add the hearing-threshold noise floor was decided on separate CPC2 training sentences by a rule we wrote down before running it: the floor stays unless
+              removing it lowers error by more than half a point. It lowered it by 0.3, so the floor stayed. On the test set, removing it would have scored better. We report that
+              rather than switch, because choosing on test results would overstate how well the model works.
+            </p>
             <p className="text-sm text-graphite">
               Calibrated means a logistic mapping fitted with 5-fold cross-validation that keeps each listener’s sentences in one fold. Brackets are 95% bootstrap intervals. Full details are in the
               repository’s validation/RESULTS.md.

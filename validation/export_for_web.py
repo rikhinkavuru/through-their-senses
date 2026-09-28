@@ -7,6 +7,9 @@ HERE = Path(__file__).resolve().parent
 res = json.loads((HERE / "results.json").read_text())
 keep = ["n_signals", "n_listeners", "ours_raw", "ours_cal", "production_base_en", "haspi_cal", "pta_cal", "mean_baseline", "published", "word_level"]
 out = {k: res[k] for k in keep if k in res}
+alt = {k: v for k, v in res.get("ablations", {}).items() if k.startswith("alternative")}
+if alt:
+    out["alternative"] = {k: v["cal"] for k, v in alt.items()}
 ours, haspi = res.get("ours_cal", {}), res.get("haspi_cal", {})
 if ours and haspi:
     out["summary"] = (

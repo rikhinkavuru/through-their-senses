@@ -67,7 +67,7 @@
     <p>Clarity Prediction Challenge 2 evaluation set: 897 sentences, 15 listeners with hearing loss, predicting the share of words each person repeated correctly.</p>
     <table>
       <tr><th>Method</th><th>RMSE</th><th>Correlation</th></tr>
-      <tr class="ours"><td>Our proxy listener (calibrated)</td><td class="num">{{OURS_RMSE}}</td><td class="num">{{OURS_R}}</td></tr>
+      <tr class="ours"><td>Our proxy listener, Whisper small.en (calibrated)</td><td class="num">{{OURS_RMSE}}</td><td class="num">{{OURS_R}}</td></tr>
       <tr><td>Deployed configuration (Whisper base.en)</td><td class="num">{{BASE_RMSE}}</td><td class="num">{{BASE_R}}</td></tr>
       <tr><td>HASPI, standard intelligibility index (calibrated)</td><td class="num">{{HASPI_RMSE}}</td><td class="num">{{HASPI_R}}</td></tr>
       <tr><td>Best published system (trained on CPC2 data)</td><td class="num">25.1</td><td class="num">0.78</td></tr>
