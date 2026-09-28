@@ -2,7 +2,7 @@
 
 POST /hear   one recorded utterance -> aligned "what she likely hears", per-letter
              audibility, and playback audio (you vs her, same gain)
-POST /score  candidate sentences -> proxy-listener score for each (TTS, same voice)
+POST /score_audio  sentences spoken by the TTS service -> proxy-listener score for each
 GET  /health
 """
 
@@ -13,7 +13,6 @@ import io
 import json
 import os
 from concurrent.futures import ThreadPoolExecutor
-from functools import lru_cache
 
 import numpy as np
 import soundfile as sf
@@ -24,6 +23,7 @@ from pydantic import BaseModel, Field
 from app.phonemes import word_audibility
 from app.sim import (
     MSBG_FS,
+    REFERENCE_MODEL,
     SPEECH_SPL,
     Listener,
     add_babble,
@@ -48,6 +48,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 pool = ThreadPoolExecutor(max_workers=4)
+TOKEN = os.environ.get("HEARING_TOKEN", "")
+
+
+@app.middleware("http")
+async def require_token(request, call_next):
+    """When HEARING_TOKEN is set, only the web app (which holds it) may call the service."""
+    if TOKEN and request.url.path != "/health" and request.headers.get("authorization") != f"Bearer {TOKEN}":
+        from fastapi.responses import JSONResponse
+
+        return JSONResponse({"detail": "unauthorized"}, status_code=401)
+    return await call_next(request)
 
 
 def _wav_b64(sig: np.ndarray, fs_in: int = MSBG_FS) -> str:
@@ -132,7 +143,7 @@ async def hear(
     sim = simulate(x, fs, lis, snr_db, is_aided)
 
     jobs = {
-        "said": pool.submit(transcribe, for_asr(clean)),
+        "said": pool.submit(transcribe, for_asr(clean), None, REFERENCE_MODEL),
         "her": pool.submit(transcribe, for_asr(sim.ears[ear])),
     }
     if snr_db is not None:
@@ -165,35 +176,34 @@ async def hear(
     return out
 
 
+class ScoreItem(BaseModel):
+    text: str = Field(min_length=1, max_length=300)
+    wav: str = Field(description="base64 WAV of the sentence spoken by the TTS service")
+
+
 class ScoreRequest(BaseModel):
-    sentences: list[str] = Field(min_length=1, max_length=6)
+    items: list[ScoreItem] = Field(min_length=1, max_length=6)
     left: list[float]
     right: list[float]
     snr: float | None = None
     aided: bool = False
-    voice: str = "af_heart"
 
 
-@lru_cache(maxsize=1)
-def _tts():
-    from kokoro_onnx import Kokoro
-
-    base = os.path.join(os.path.dirname(os.path.dirname(__file__)), "models")
-    return Kokoro(os.path.join(base, "kokoro-v1.0.int8.onnx"), os.path.join(base, "voices-v1.0.bin"))
-
-
-def _score_one(text: str, lis: Listener, snr_db: float | None, aided: bool, voice: str) -> dict:
-    samples, fs = _tts().create(text, voice=voice, speed=1.0, lang="en-us")
-    sim = simulate(np.asarray(samples, dtype=float), fs, lis, snr_db, aided)
-    ref = normalize_words(text)
+def _score_one(item: ScoreItem, lis: Listener, snr_db: float | None, aided: bool) -> dict:
+    x, fs = sf.read(io.BytesIO(base64.b64decode(item.wav)), dtype="float64")
+    if x.ndim > 1:
+        x = x.mean(axis=1)
+    sim = simulate(x, fs, lis, snr_db, aided)
+    ref = normalize_words(item.text)
     heard = _heard_tokens(transcribe(for_asr(sim.ears[lis.better_ear()])))
     rows = _alignment(ref, heard)
     correct = sum(r["status"] == "heard" for r in rows)
-    return dict(text=text, correct=correct, total=len(ref), score=round(correct / max(1, len(ref)), 3), herText=_heard_text(heard), words=rows)
+    return dict(text=item.text, correct=correct, total=len(ref), score=round(correct / max(1, len(ref)), 3), herText=_heard_text(heard), words=rows)
 
 
-@app.post("/score")
-def score(req: ScoreRequest) -> dict:
+@app.post("/score_audio")
+def score_audio(req: ScoreRequest) -> dict:
+    """Score sentences already spoken by the TTS service, through this listener's hearing."""
     lis = _listener(req.left, req.right)
-    futures = [pool.submit(_score_one, s, lis, req.snr, req.aided, req.voice) for s in req.sentences]
+    futures = [pool.submit(_score_one, it, lis, req.snr, req.aided) for it in req.items]
     return dict(results=[f.result() for f in futures])

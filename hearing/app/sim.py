@@ -44,7 +44,17 @@ ISO226_T = np.array([78.5, 68.7, 59.5, 51.1, 44.0, 37.5, 31.5, 26.5, 22.1, 17.9,
                      2.2, 2.4, 3.5, 1.7, -1.3, -4.2, -6.0, -5.4, -1.5, 6.0, 12.6, 13.9, 12.3])
 
 BABBLE_PATH = Path(__file__).resolve().parent / "assets" / "babble.wav"
+# The proxy listener model (validated on CPC2). A smaller model transcribes the clean
+# recording, which only needs to recover what was actually said.
 WHISPER_MODEL = os.environ.get("WHISPER_MODEL", "small.en")
+REFERENCE_MODEL = os.environ.get("REFERENCE_MODEL", "base.en")
+MODEL_DIR = Path(__file__).resolve().parents[1] / "models"
+
+
+def _model_path(name: str) -> str:
+    """Prefer a bundled copy (deployments), fall back to the Hugging Face name (dev)."""
+    local = MODEL_DIR / f"faster-whisper-{name}"
+    return str(local) if (local / "model.bin").exists() else name
 
 
 @dataclass
@@ -168,21 +178,21 @@ def for_playback(sig: np.ndarray) -> np.ndarray:
     return np.clip(sig * 10 ** (PLAYBACK_GAIN_DB / 20), -1, 1).astype(np.float32)
 
 
-@lru_cache(maxsize=1)
-def whisper():
+@lru_cache(maxsize=2)
+def whisper(name: str = WHISPER_MODEL):
     from faster_whisper import WhisperModel
 
-    # num_workers lets the service transcribe "what was said" and "what she heard" in parallel.
-    return WhisperModel(WHISPER_MODEL, device="cpu", compute_type="int8", num_workers=3)
+    # num_workers lets the service transcribe several recordings in parallel.
+    return WhisperModel(_model_path(name), device="cpu", compute_type="int8", num_workers=3)
 
 
-def transcribe(audio16k: np.ndarray, prompt: str | None = None) -> list[dict]:
+def transcribe(audio16k: np.ndarray, prompt: str | None = None, model: str = WHISPER_MODEL) -> list[dict]:
     """Return words with timestamps and probabilities.
 
     No initial prompt and no previous-text conditioning: the proxy listener should
     not be told what was said.
     """
-    segments, _ = whisper().transcribe(
+    segments, _ = whisper(model).transcribe(
         audio16k,
         language="en",
         beam_size=5,

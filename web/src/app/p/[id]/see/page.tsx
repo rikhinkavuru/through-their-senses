@@ -6,6 +6,7 @@ import { TabBar, usePersonCtx } from "@/components/PersonShell";
 import { HelpSheet, QuoteBlock, Toggle } from "@/components/ui";
 import { VisionView, type VisionSource, type VisionViewHandle } from "@/components/vision/VisionView";
 import { quoteFor } from "@/content/quotes";
+import credits from "../../../../../public/scenes/credits.json";
 import { gridPoints, whatStillWorks } from "@/lib/field";
 import { cap } from "@/lib/pronouns";
 
@@ -164,6 +165,15 @@ export default function See() {
               said it looks like the black tunnel usually shown (Crabb et al., 2013).
             </p>
             <p>Night mode is an approximation of how dim light makes this worse. It is not measured for {p.obj}.</p>
+                      {scene !== "camera" &&
+              (() => {
+                const c = credits.find((x) => x.id === scene);
+                return c ? (
+                  <p className="text-sm text-graphite">
+                    Photo by {c.artist}, {c.license}, via Wikimedia Commons.
+                  </p>
+                ) : null;
+              })()}
           </HelpSheet>
         </div>
         <div className="mt-3 flex justify-between px-1 text-[0.95rem] font-bold [text-shadow:0_1px_6px_rgba(0,0,0,0.7)]">

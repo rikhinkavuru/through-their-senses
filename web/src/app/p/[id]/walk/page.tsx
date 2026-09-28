@@ -6,6 +6,7 @@ import { TabBar, usePersonCtx } from "@/components/PersonShell";
 import { HelpSheet, QuoteBlock, Toggle } from "@/components/ui";
 import { VisionView, type VisionSource, type VisionViewHandle } from "@/components/vision/VisionView";
 import { quoteFor } from "@/content/quotes";
+import credits from "../../../../../public/scenes/credits.json";
 import { interpolateField, sampleMap } from "@/lib/field";
 import { cap } from "@/lib/pronouns";
 import type { AcceptedFix } from "@/lib/types";
@@ -269,6 +270,15 @@ export default function Walk() {
               for anyone with low vision.
             </p>
             <p>It can mistake a railing or a table edge for a step. Mark those “not a hazard”. Tap anything else to check it.</p>
+                      {scene !== "camera" &&
+              (() => {
+                const c = credits.find((x) => x.id === scene);
+                return c ? (
+                  <p className="text-sm text-graphite">
+                    Photo by {c.artist}, {c.license}, via Wikimedia Commons.
+                  </p>
+                ) : null;
+              })()}
           </HelpSheet>
         </div>
         <p className="mt-3 max-w-md text-[0.98rem] font-bold [text-shadow:0_1px_6px_rgba(0,0,0,0.7)]">

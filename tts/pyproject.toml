@@ -1,0 +1,16 @@
+[project]
+name = "tts"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.141.1",
+    "kokoro-onnx>=0.6.1",
+    "numpy>=2.5.3",
+    "soundfile>=0.14.0",
+    "uvicorn[standard]>=0.54.0",
+]
+
+[dependency-groups]
+dev = [
+    "scipy>=1.18.1",
+]

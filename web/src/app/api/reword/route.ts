@@ -1,6 +1,6 @@
 import { generateText, Output } from "ai";
 import { z } from "zod";
-import { hearingFetch } from "@/lib/server/hearing";
+import { hearingFetch, ttsFetch } from "@/lib/server/hearing";
 
 export const maxDuration = 60;
 
@@ -51,10 +51,21 @@ export async function POST(request: Request) {
   }
 
   try {
-    const res = await hearingFetch("/score", {
+    // Speak the original and every candidate in the same synthetic voice, then run all of
+    // them through this person's hearing model, so the comparison is fair.
+    const sentences = [b.sentence, ...candidates.map((c) => c.text)];
+    const tts = await ttsFetch("/tts", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ sentences: [b.sentence, ...candidates.map((c) => c.text)], left: b.left, right: b.right, snr: b.snr, aided: b.aided }),
+      body: JSON.stringify({ sentences, voice: "af_heart" }),
+      timeoutMs: 40_000,
+    });
+    if (!tts.ok) throw new Error(`tts ${tts.status}`);
+    const { results: spoken } = (await tts.json()) as { results: { text: string; wav: string }[] };
+    const res = await hearingFetch("/score_audio", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ items: spoken, left: b.left, right: b.right, snr: b.snr, aided: b.aided }),
       timeoutMs: 55_000,
     });
     if (!res.ok) throw new Error(`score ${res.status}`);

@@ -11,7 +11,7 @@ import soundfile as sf
 from kokoro_onnx import Kokoro
 
 ROOT = Path(__file__).resolve().parents[1]
-OUT = ROOT / "app" / "assets" / "babble.wav"
+OUT = ROOT.parent / "hearing" / "app" / "assets" / "babble.wav"
 SENTENCES = [
     "Did you see the game last night, it went into overtime.",
     "We should try that new place on Main Street next weekend.",

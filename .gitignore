@@ -18,3 +18,8 @@ models/
 validation/msbg_cache/
 validation/cache/
 validation/.venv/
+
+# models and local env
+hearing/models/
+tts/models/
+**/.env.local
