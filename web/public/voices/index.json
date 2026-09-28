@@ -1,0 +1,22 @@
+[
+ {
+  "id": "pickup",
+  "text": "I'll pick you up at fifteen past six on Thursday.",
+  "voice": "am_michael"
+ },
+ {
+  "id": "pills",
+  "text": "Your pills are on the shelf next to the sink.",
+  "voice": "af_sarah"
+ },
+ {
+  "id": "soup",
+  "text": "Do you want soup or salad with your fish?",
+  "voice": "am_adam"
+ },
+ {
+  "id": "doctor",
+  "text": "The doctor's office moved your appointment to Friday.",
+  "voice": "af_heart"
+ }
+]

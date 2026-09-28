@@ -136,7 +136,9 @@ async def hear(
         "her": pool.submit(transcribe, for_asr(sim.ears[ear])),
     }
     if snr_db is not None:
-        jobs["typical"] = pool.submit(transcribe, for_asr(scene))
+        # Same chain, same scene, same noise; only the audiogram differs (0 dB HL).
+        typical = simulate(x, fs, Listener(left=[0.0] * 7, right=[0.0] * 7), snr_db, False)
+        jobs["typical"] = pool.submit(transcribe, for_asr(typical.ears["right"]))
     res = {k: v.result() for k, v in jobs.items()}
 
     ref = normalize_words(" ".join(w["word"] for w in res["said"]))

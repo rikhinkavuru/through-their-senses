@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { betterEar, FAMILIAR_SOUNDS, FREQS, SPEECH_SOUNDS, thresholdAt } from "@/lib/audiogram";
+import { betterEar, FREQS, SPEECH_SOUNDS, thresholdAt } from "@/lib/audiogram";
 import type { Audiogram } from "@/lib/types";
 
 const W = 340;
@@ -104,11 +104,7 @@ export function AudiogramChart({ audiogram, onChange, showSounds = true, classNa
 
       {showSounds && (
         <g fontSize="10">
-          {FAMILIAR_SOUNDS.map((s) => (
-            <text key={s.label} x={x(s.f)} y={y(s.db) + 3} textAnchor="middle" fill="var(--ink)" fillOpacity={heard(s.f, s.db) ? 0.85 : 0.32}>
-              {s.label}
-            </text>
-          ))}
+
           {SPEECH_SOUNDS.map((s) => {
             const ok = heard(s.f, s.db);
             return (

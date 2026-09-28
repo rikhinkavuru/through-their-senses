@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useMemo, useState } from "react";
+import { useId, useMemo, useSyncExternalStore } from "react";
 import { gridPoints, interpolateField, MAP_EXTENT, MAP_SIZE, X_DEG, Y_DEG } from "@/lib/field";
 import type { Grid } from "@/lib/types";
 
@@ -11,6 +11,8 @@ function tdToGrey(td: number): [number, number, number] {
   const ink = [28, 34, 38];
   return paper.map((p, i) => Math.round(p + (ink[i] - p) * Math.pow(t, 0.8))) as [number, number, number];
 }
+
+const noopSubscribe = () => () => {};
 
 function heatmapUrl(grid: Grid): string {
   const map = interpolateField(grid);
@@ -39,10 +41,11 @@ interface Props {
 
 /** One binocular map of someone's field, centred on where they look. */
 export function FieldMap({ grid, size = 280, showDots = true, showLabels = true, className, title }: Props) {
-  const [url, setUrl] = useState<string | null>(null);
   const hatchId = useId().replace(/:/g, "");
   const pts = useMemo(() => gridPoints(grid), [grid]);
-  useEffect(() => setUrl(heatmapUrl(grid)), [grid]);
+  // The heatmap is drawn with a canvas, so only after hydration.
+  const hydrated = useSyncExternalStore(noopSubscribe, () => true, () => false);
+  const url = useMemo(() => (hydrated ? heatmapUrl(grid) : null), [grid, hydrated]);
   const E = MAP_EXTENT;
   const pad = showLabels ? 9 : 1;
 

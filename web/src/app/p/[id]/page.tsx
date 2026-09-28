@@ -7,7 +7,7 @@ import { FieldMap } from "@/components/FieldMap";
 import { TabBar, usePersonCtx } from "@/components/PersonShell";
 import { ButtonLink, HelpSheet, QuoteBlock, SourceNote } from "@/components/ui";
 import { quoteFor } from "@/content/quotes";
-import { describeHearing } from "@/lib/audiogram";
+import { describeHearing, soundsHeard } from "@/lib/audiogram";
 import { summarize, whatStillWorks } from "@/lib/field";
 import { cap } from "@/lib/pronouns";
 
@@ -116,6 +116,21 @@ export default function About() {
           </div>
           <AudiogramChart audiogram={person.audiogram} className="mt-5 w-full max-w-md" title={`${person.name}'s hearing test`} />
           <p className="mt-4 leading-relaxed">{describeHearing(person.audiogram, p)}</p>
+          {(() => {
+            const s = soundsHeard(person.audiogram);
+            return (
+              <dl className="mt-4 grid gap-3 sm:grid-cols-2">
+                <div>
+                  <dt className="text-sm text-graphite">Too quiet for {p.obj}</dt>
+                  <dd className="mt-1">{s.missed.length ? s.missed.join(", ") : "none of the everyday sounds we list"}</dd>
+                </div>
+                <div>
+                  <dt className="text-sm text-graphite">{cap(p.subj)} can still hear</dt>
+                  <dd className="mt-1">{s.heard.join(", ")}</dd>
+                </div>
+              </dl>
+            );
+          })()}
           <ButtonLink href={`${base}/hear`} className="mt-6">
             Hear your voice as {p.subj} do{p.s === "s" ? "es" : ""}
           </ButtonLink>

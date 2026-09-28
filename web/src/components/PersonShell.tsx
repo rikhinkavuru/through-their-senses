@@ -119,7 +119,8 @@ export function TabBar({ base, dark = false }: { base: string; dark?: boolean })
 
 export function PersonShell({ id, children }: { id: string; children: ReactNode }) {
   const person = usePerson(id);
-  const field = useField(person?.fieldId);
+  const libraryField = useField(person && !person.customField ? person.fieldId : undefined);
+  const field = person?.customField ?? libraryField;
   const [visit, setVisit] = useState<number | null>(null);
 
   const value = useMemo<PersonCtx | null>(() => {

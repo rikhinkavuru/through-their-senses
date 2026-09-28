@@ -122,3 +122,40 @@ export function lossWords(td: number): string {
   if (td > -20) return "much harder to see";
   return "very little gets through here";
 }
+
+/**
+ * 24-2 layout as printed on a Humphrey report, per eye, in visual-field orientation
+ * (as the patient sees it). Row lengths 4,6,8,9,9,8,6,4. Right eye spans x = -27..21
+ * (shared columns 0..8), left eye x = -21..27 (shared columns 1..9). The blind spot
+ * sits at x = +15 (right eye) or -15 (left eye), y = +-3.
+ */
+export const PRINTOUT_ROWS: { right: number[]; left: number[] }[] = [
+  { right: [3, 4, 5, 6], left: [4, 5, 6, 7] },
+  { right: [2, 3, 4, 5, 6, 7], left: [3, 4, 5, 6, 7, 8] },
+  { right: [1, 2, 3, 4, 5, 6, 7, 8], left: [2, 3, 4, 5, 6, 7, 8, 9] },
+  { right: [0, 1, 2, 3, 4, 5, 6, 7, 8], left: [1, 2, 3, 4, 5, 6, 7, 8, 9] },
+  { right: [0, 1, 2, 3, 4, 5, 6, 7, 8], left: [1, 2, 3, 4, 5, 6, 7, 8, 9] },
+  { right: [1, 2, 3, 4, 5, 6, 7, 8], left: [2, 3, 4, 5, 6, 7, 8, 9] },
+  { right: [2, 3, 4, 5, 6, 7], left: [3, 4, 5, 6, 7, 8] },
+  { right: [3, 4, 5, 6], left: [4, 5, 6, 7] },
+];
+
+export function isBlindSpot(eye: "right" | "left", row: number, col: number): boolean {
+  return (row === 3 || row === 4) && col === (eye === "right" ? 7 : 2);
+}
+
+export function emptyGrid(): Grid {
+  return Array.from({ length: 8 }, () => Array.from({ length: 10 }, () => null));
+}
+
+/** Best-location binocular merge (Crabb and Viswanathan 1998). */
+export function mergeBinocular(right: Grid, left: Grid): Grid {
+  return right.map((row, r) =>
+    row.map((v, c) => {
+      const l = left[r][c];
+      if (v === null) return l;
+      if (l === null) return v;
+      return Math.max(v, l);
+    }),
+  );
+}

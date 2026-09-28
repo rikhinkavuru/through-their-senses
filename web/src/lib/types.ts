@@ -66,11 +66,16 @@ export interface Person {
   pronouns: import("./pronouns").PronounSet;
   setup: SetupMode;
   setupBy?: string;
+  /** Library field (UWHVF) id, used when customField is absent. */
   fieldId: string;
+  /** Field entered by hand from the person's own printout. */
+  customField?: FieldProfile;
   audiogram: Audiogram;
   strategies: string[];
   fixes: AcceptedFix[];
   seating?: { note: string };
+  /** Rewordings that the hearing model showed come through better. */
+  phrases?: string[];
   notes: string;
   createdAt: string;
   isExample?: boolean;

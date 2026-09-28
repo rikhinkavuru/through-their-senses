@@ -55,19 +55,31 @@ export const FAMILIAR_SOUNDS: { label: string; f: number; db: number }[] = [
   { label: "phone ring", f: 2200, db: 80 },
 ];
 
-/** Speech sounds on the same axes (the "speech banana"). */
+/**
+ * Speech sounds on the same axes (the "speech banana"), nudged apart slightly so the
+ * labels stay legible; positions are approximate by nature.
+ */
 export const SPEECH_SOUNDS: { label: string; f: number; db: number }[] = [
-  { label: "m", f: 500, db: 45 },
+  { label: "m", f: 350, db: 48 },
   { label: "oo", f: 600, db: 50 },
-  { label: "a", f: 900, db: 55 },
-  { label: "ee", f: 2000, db: 42 },
-  { label: "sh", f: 3000, db: 35 },
-  { label: "t", f: 3000, db: 30 },
-  { label: "k", f: 2500, db: 32 },
-  { label: "s", f: 5000, db: 25 },
-  { label: "f", f: 5000, db: 15 },
-  { label: "th", f: 5600, db: 12 },
+  { label: "a", f: 900, db: 57 },
+  { label: "ee", f: 1800, db: 43 },
+  { label: "k", f: 2300, db: 33 },
+  { label: "sh", f: 3000, db: 42 },
+  { label: "t", f: 3800, db: 24 },
+  { label: "s", f: 5300, db: 28 },
+  { label: "f", f: 4500, db: 14 },
+  { label: "th", f: 6500, db: 12 },
 ];
+
+/** Split everyday sounds into ones the better ear can and can't hear. */
+export function soundsHeard(a: Audiogram): { heard: string[]; missed: string[] } {
+  const t = a[betterEar(a)];
+  const heard: string[] = [];
+  const missed: string[] = [];
+  for (const s of FAMILIAR_SOUNDS) (s.db >= thresholdAt(t, s.f) ? heard : missed).push(s.label);
+  return { heard, missed };
+}
 
 export function describeHearing(a: Audiogram, p: Pronouns): string {
   const ear = betterEar(a);
