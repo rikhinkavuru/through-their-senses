@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { HeroSentence } from "@/components/HeroSentence";
 import { SavedPeople } from "@/components/SavedPeople";
@@ -36,6 +37,20 @@ export default function Home() {
         </div>
         <SavedPeople />
       </section>
+
+      <figure className="mt-16 -mx-5 sm:mx-0">
+        <Image
+          src="/landing-see.jpg"
+          alt="A hallway split in two. On the left, as you would see it. On the right, as Meera sees it from her own visual field test: below where she is looking, the brick wall and a carving fade into the surrounding colour."
+          width={1600}
+          height={556}
+          className="w-full sm:rounded-2xl"
+          priority
+        />
+        <figcaption className="mt-3 px-5 text-sm text-graphite sm:px-0">
+          Left, a hallway as you see it. Right, as Meera sees it from her real test results: nothing goes black, things fade and disappear into what surrounds them.
+        </figcaption>
+      </figure>
 
       <section className="mt-20 border-t border-chart pt-10" aria-label="What you can do">
         <dl className="grid gap-x-10 gap-y-8 sm:grid-cols-2">

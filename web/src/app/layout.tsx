@@ -11,6 +11,7 @@ const atkinson = Atkinson_Hyperlegible_Next({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://through-their-senses.vercel.app"),
   title: "Through Their Senses",
   description:
     "See the world and hear conversation the way someone with glaucoma and hearing loss does, from their real test results, and plan together what to change.",
