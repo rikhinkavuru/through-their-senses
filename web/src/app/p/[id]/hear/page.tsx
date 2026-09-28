@@ -55,10 +55,19 @@ export default function Hear() {
   const [elapsed, setElapsed] = useState(0);
   const recRef = useRef<Recorder | null>(null);
   const stopPlay = useRef<(() => void) | null>(null);
+  // Each analysis gets a number; results from anything but the latest are dropped.
+  const reqSeq = useRef(0);
+  const abortRef = useRef<AbortController | null>(null);
+  const starting = useRef(false);
 
   const snr = scene === "dinner" ? DINNER_SNR : null;
 
   async function analyse(blob: Blob, label: string) {
+    const seq = ++reqSeq.current;
+    abortRef.current?.abort();
+    const ac = new AbortController();
+    abortRef.current = ac;
+    const stale = () => seq !== reqSeq.current;
     setLastInput({ blob, label });
     setPhase({ kind: "listening", label });
     setSelected(null);
@@ -70,7 +79,8 @@ export default function Hear() {
       fd.append("right", JSON.stringify(person.audiogram.right));
       fd.append("snr", snr === null ? "" : String(snr));
       fd.append("aided", String(aided));
-      const res = await fetch("/api/hear", { method: "POST", body: fd });
+      const res = await fetch("/api/hear", { method: "POST", body: fd, signal: ac.signal });
+      if (stale()) return;
       if (!res.ok || !res.body || !res.headers.get("content-type")?.includes("ndjson")) {
         const body = await res.json().catch(() => ({}));
         throw new Error(body.error ?? "Something went wrong.");
@@ -82,6 +92,10 @@ export default function Hear() {
       const acc: { r: HearResult | null } = { r: null };
       for (;;) {
         const { value, done } = await reader.read();
+        if (stale()) {
+          reader.cancel().catch(() => {});
+          return;
+        }
         if (done) break;
         buf += dec.decode(value, { stream: true });
         let nl: number;
@@ -104,6 +118,7 @@ export default function Hear() {
       }
       if (!acc.r) throw new Error("The hearing model didn’t return a result. Try again.");
     } catch (e) {
+      if (stale() || ac.signal.aborted) return;
       setPhase({ kind: "error", message: e instanceof Error ? e.message : "Something went wrong." });
     }
   }
@@ -112,7 +127,7 @@ export default function Hear() {
   const settingKey = `${scene}-${aided}`;
   const prevSetting = useRef(settingKey);
   useEffect(() => {
-    if (prevSetting.current !== settingKey && lastInput && phase.kind === "done") analyse(lastInput.blob, lastInput.label);
+    if (prevSetting.current !== settingKey && lastInput && (phase.kind === "done" || phase.kind === "listening")) analyse(lastInput.blob, lastInput.label);
     prevSetting.current = settingKey;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [settingKey]);
@@ -143,12 +158,16 @@ export default function Hear() {
   }, []);
 
   async function beginRecording() {
+    if (starting.current || recRef.current) return; // a second tap while the mic opens
+    starting.current = true;
     stopPlay.current?.();
     try {
       recRef.current = await startRecording();
       setPhase({ kind: "recording", started: performance.now() });
     } catch {
       setPhase({ kind: "error", message: "The microphone is blocked or missing. Allow it in your browser settings, or try one of the sample sentences." });
+    } finally {
+      starting.current = false;
     }
   }
 
@@ -184,6 +203,7 @@ export default function Hear() {
   }
 
   async function askReword(r: HearResult) {
+    const seq = reqSeq.current;
     setReword({ state: "loading" });
     try {
       const res = await fetch("/api/reword", {
@@ -192,9 +212,11 @@ export default function Hear() {
         body: JSON.stringify({ sentence: r.said, missed: missedWords(r), hardSounds: hardSounds(r), left: person.audiogram.left, right: person.audiogram.right, snr, aided }),
       });
       const body = await res.json();
+      if (seq !== reqSeq.current) return; // a newer sentence or setting replaced this one
       if (!res.ok) throw new Error(body.error);
       setReword({ state: "done", data: body });
     } catch (e) {
+      if (seq !== reqSeq.current) return;
       setReword({ state: "error", message: e instanceof Error ? e.message : "Couldn’t get suggestions." });
     }
   }

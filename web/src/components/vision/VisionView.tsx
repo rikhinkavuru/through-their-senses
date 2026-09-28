@@ -67,9 +67,37 @@ export const VisionView = forwardRef<VisionViewHandle, Props>(function VisionVie
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const gridRef = useRef(grid);
   useEffect(() => {
+    gridRef.current = grid;
     rendererRef.current?.setField(interpolateField(grid), MAP_SIZE);
   }, [grid]);
+
+  // Phones can drop the GPU context in the background; rebuild when it comes back.
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const lost = (e: Event) => {
+      e.preventDefault();
+      rendererRef.current = null;
+    };
+    const restored = () => {
+      try {
+        const r = new FieldRenderer(canvas);
+        r.setField(interpolateField(gridRef.current), MAP_SIZE);
+        rendererRef.current = r;
+      } catch (err) {
+        onError?.(err instanceof Error ? err.message : "Could not restart the renderer.");
+      }
+    };
+    canvas.addEventListener("webglcontextlost", lost);
+    canvas.addEventListener("webglcontextrestored", restored);
+    return () => {
+      canvas.removeEventListener("webglcontextlost", lost);
+      canvas.removeEventListener("webglcontextrestored", restored);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Keep the drawing buffer matched to the element size and pixel density.
   useEffect(() => {

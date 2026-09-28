@@ -13,6 +13,10 @@ function load() {
       if (p.status === "progress") self.postMessage({ type: "progress", loaded: p.loaded ?? 0, total: p.total ?? 0, file: p.file });
     },
   }) as Promise<DepthEstimationPipeline>;
+  // A failed download must not poison every later scan.
+  loading.catch(() => {
+    loading = null;
+  });
   return loading;
 }
 

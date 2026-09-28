@@ -124,9 +124,10 @@ export default function Walk() {
         () => setStatus("Looking for steps and edges…"),
       );
       const segs = findStepEdges(d.depth, d.width, d.height);
+      const scanId = Date.now().toString(36); // unique per scan, so decisions from other spots are kept
       const list = segs.map((seg, i) => {
         const contrast = edgeContrast(img, seg);
-        return { id: `edge-${i}`, kind: "step" as const, seg, contrast, a: judge(seg, contrast, "step", geo), fixed: false, dismissed: false };
+        return { id: `${scanId}-edge-${i}`, kind: "step" as const, seg, contrast, a: judge(seg, contrast, "step", geo), fixed: false, dismissed: false };
       });
       // Lower-field hazards first (inferior field loss predicts falls), then least visible.
       const rank = { hidden: 0, hard: 1, visible: 2 };

@@ -51,7 +51,10 @@ export default function See() {
     return sc && (sc === "camera" || SCENES.some((x) => x.id === sc)) ? (sc as SceneId) : "hallway";
   });
   const [facing] = useState<"environment" | "user">("environment");
-  const [wipe, setWipe] = useState(() => (param("wipe") !== null ? Math.min(1, Math.max(0, Number(param("wipe")))) : 0.5));
+  const [wipe, setWipe] = useState(() => {
+    const w = Number(param("wipe"));
+    return param("wipe") !== null && Number.isFinite(w) ? Math.min(1, Math.max(0, w)) : 0.5;
+  });
   const [night, setNight] = useState(() => param("night") === "1");
   const [showPoints, setShowPoints] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -74,6 +77,16 @@ export default function See() {
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
+
+  // ?visit=N picks an earlier test (applied once; the slider owns it afterwards).
+  const visitParam = useRef(param("visit"));
+  useEffect(() => {
+    const v = Number(visitParam.current);
+    if (visitParam.current !== null && Number.isInteger(v)) {
+      visitParam.current = null;
+      setVisit(Math.min(field.visits.length - 1, Math.max(0, v)));
+    }
+  }, [field.visits.length, setVisit]);
 
   // Test points fade after the arrival moment unless kept on.
   useEffect(() => {

@@ -172,13 +172,13 @@ def _read_upload(raw: bytes) -> tuple[np.ndarray, int]:
         x = x.mean(axis=1)
     if len(x) / fs > MAX_SECONDS:
         x = x[: int(MAX_SECONDS * fs)]
-    if np.sqrt(np.mean(x**2)) < 1e-4:
+    if len(x) == 0 or np.sqrt(np.mean(x**2)) < 1e-4:
         raise HTTPException(422, "recording is silent")
     return x, fs
 
 
 @app.post("/hear")
-async def hear(
+def hear(
     audio: UploadFile = File(...),
     left: str = Form(...),
     right: str = Form(...),
@@ -192,7 +192,8 @@ async def hear(
     typical  (noise only) how many words a listener with typical hearing catches
     done
     """
-    x, fs = _read_upload(await audio.read())
+    # A plain def: FastAPI runs it in a worker thread, so transcription never blocks the event loop.
+    x, fs = _read_upload(audio.file.read())
     lis = _listener(json.loads(left), json.loads(right))
     snr_db = float(snr) if snr not in ("", "null", "none") else None
     is_aided = aided.lower() == "true"
