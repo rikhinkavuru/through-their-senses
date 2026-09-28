@@ -57,7 +57,7 @@ cd tts && uv sync && uv run uvicorn app.main:app --port 8766
 cd web && npm install && npm run dev
 ```
 
-`web/.env.local`: `HEARING_URL`, `TTS_URL`, and (for rewording) Vercel AI Gateway credentials. Rebuild the data with `data/scripts/build_fields.py` and `build_audiograms.py` (raw data downloads are described at the top of each script).
+`web/.env.local`: `HEARING_URL`, `TTS_URL`, and for rewording either `ANTHROPIC_API_KEY` (a workspace-scoped key) or Vercel AI Gateway credentials. Rebuild the data with `data/scripts/build_fields.py` and `build_audiograms.py` (raw data downloads are described at the top of each script).
 
 ## Tests
 

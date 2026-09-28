@@ -80,7 +80,7 @@ Accuracy and dignity are the same problem. The black tunnel is both wrong and ha
 |---|---|
 | See (field renderer, years slider, dim light and glare) | Working (dim light and glare are approximations) |
 | Hear (MSBG + proxy listener, noise, hearing aids, playback) | Working, validated on CPC2 |
-| Say it better (Claude + scoring) | Working (needs the AI Gateway enabled on the Vercel account) |
+| Say it better (Claude + scoring) | Working |
 | Walk (on-device step edges and verdicts) | Working; can mistake rails or table edges for steps |
 | Sit, Guide, setup with printout entry | Working |
 | Follow-my-eyes, digits-in-noise test, printout photo | Planned |
