@@ -101,7 +101,7 @@ export default function Method() {
         </p>
         <p>
           The renderer follows Peli’s model of contrast in images (Peli, 1990). Each camera frame is split into detail levels, from fine to coarse. At every pixel we compute how much contrast each level
-          carries, and remove any contrast weaker than that person’s threshold at that point in their field. A loss of TD decibels raises the threshold by 10<sup>−TD/10</sup> over a normal contrast
+          carries, remove any contrast weaker than that person’s threshold at that point in their field, and reduce the rest by the threshold so detail fades smoothly. A loss of TD decibels raises the threshold by 10<sup>−TD/10</sup> over a normal contrast
           sensitivity curve. Where loss is deep, every level is removed except the coarsest: objects disappear into the colour around them.
         </p>
         <p>
