@@ -48,6 +48,17 @@ export interface Audiogram {
   right: number[];
   source: string;
   sourceId?: string;
+  /** Present when the audiogram was measured in the app rather than typed in. */
+  measured?: {
+    method: "tone-test";
+    helperAge: number;
+    /** No response at the loudest level: the value is a lower bound. */
+    atLeast: { right: boolean[]; left: boolean[] };
+    falseAlarms: number;
+    catchTrials: number;
+    /** Digits-in-noise check, when taken: speech reception thresholds in dB SNR. */
+    din?: { person: number; helper: number; predictedDiff?: number };
+  };
 }
 
 export type SetupMode = "self" | "together" | "for";
