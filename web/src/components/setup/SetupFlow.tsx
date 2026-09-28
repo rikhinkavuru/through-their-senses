@@ -156,9 +156,9 @@ export function SetupFlow() {
             <div className="mt-3 space-y-2" role="radiogroup" aria-label="Who is setting this up">
               {(
                 [
-                  ["together", `We’re doing this together with ${who}`],
-                  ["self", `${cap(who)} is setting it up`],
-                  ["for", `I’m setting it up for ${who}`],
+                  ["together", name.trim() ? `We’re doing this together with ${name.trim()}` : "We’re doing this together"],
+                  ["self", name.trim() ? `${name.trim()} is setting it up` : "The person it’s about is setting it up"],
+                  ["for", name.trim() ? `I’m setting it up for ${name.trim()}` : "I’m setting it up for someone else"],
                 ] as [SetupMode, string][]
               ).map(([v, label]) => (
                 <label key={v} className={`flex min-h-12 cursor-pointer items-center gap-3 rounded-xl border px-4 ${mode === v ? "border-ink bg-ink/[0.04]" : "border-ink/15"}`}>
@@ -176,7 +176,7 @@ export function SetupFlow() {
                 <label className="flex items-start gap-3">
                   <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-1 h-5 w-5 accent-ink" />
                   <span>
-                    {cap(who)} know{p.s} about this and agreed to share {p.poss} test results. The plan we make is {p.poss} to change.
+                    {name.trim() ? `${name.trim()} knows` : "They know"} about this and agreed to share {p.poss} test results. The plan we make is {p.poss} to change.
                   </span>
                 </label>
               </div>
