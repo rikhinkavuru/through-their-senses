@@ -63,7 +63,8 @@ export async function POST(request: Request) {
         "High-pitched, quiet consonants (s, f, th, t, k, sh, p) are hardest; vowels and low sounds (m, n, l, oo, ah) carry best. " +
         "Rewrite the sentence so it keeps exactly the same meaning and stays natural and warm, the way a person would actually say it. " +
         "Useful moves: add context that makes the key word predictable, replace hard-to-hear key words with clearer ones, say numbers and times in a way that can't be confused (fifteen vs fifty), and put the key information at the end. " +
-        "Never add new facts, never sound clinical or condescending, and keep each version under 20 words.",
+        "Never add new facts, never sound clinical or condescending, and keep each version under 20 words. " +
+        "Write it the way it would be said aloud: plain sentences, no dashes or parentheses.",
       prompt:
         `Sentence: "${b.sentence}"\n` +
         `Words the hearing model predicts they missed or misheard: ${b.missed.length ? b.missed.join(", ") : "none clearly, but some sounds were faint"}\n` +
