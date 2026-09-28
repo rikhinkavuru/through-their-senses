@@ -118,6 +118,7 @@ def main() -> None:
     ap.add_argument("--limit", type=int, default=0, help="debug: stop after N new signals")
     ap.add_argument("--workers", type=int, default=8)
     ap.add_argument("--threads", type=int, default=1, help="CTranslate2 threads per worker")
+    ap.add_argument("--suffix", default="", help="appended to the cache/config name (e.g. __floorv2 after the noise-floor fix)")
     a = ap.parse_args()
 
     recs = load_records()
@@ -126,7 +127,7 @@ def main() -> None:
     if a.subset:
         keep = subset_signals(recs, a.subset)
         todo = [r for r in todo if r["signal"] in keep]
-    name = config_name(a.model, not a.no_floor, a.level_offset_db)
+    name = config_name(a.model, not a.no_floor, a.level_offset_db) + a.suffix
     out = VAL / "cache" / f"{name}.jsonl"
     done = {r["signal"] for r in read_jsonl(out)}
     todo = [r for r in todo if r["signal"] not in done]

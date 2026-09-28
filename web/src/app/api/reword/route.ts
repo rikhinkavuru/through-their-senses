@@ -21,6 +21,21 @@ const Candidates = z.object({
     .max(5),
 });
 
+// Whether the AI model is reachable, cached per server instance for 10 minutes.
+let availability: { ok: boolean; at: number } | null = null;
+
+export async function GET() {
+  if (!availability || Date.now() - availability.at > 10 * 60_000) {
+    try {
+      await generateText({ model: "anthropic/claude-sonnet-5", prompt: "Reply with the word ok.", maxOutputTokens: 5 });
+      availability = { ok: true, at: Date.now() };
+    } catch {
+      availability = { ok: false, at: Date.now() };
+    }
+  }
+  return Response.json({ available: availability.ok });
+}
+
 export async function POST(request: Request) {
   const parsed = Body.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return Response.json({ error: "Bad request." }, { status: 400 });

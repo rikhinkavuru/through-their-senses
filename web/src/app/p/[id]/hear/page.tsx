@@ -52,6 +52,7 @@ export default function Hear() {
   const [playing, setPlaying] = useState<"you" | "her" | null>(null);
   const [reword, setReword] = useState<{ state: "idle" | "loading" | "done" | "error"; data?: RewordResult; message?: string }>({ state: "idle" });
   const [level, setLevel] = useState(0);
+  const [rewordAvailable, setRewordAvailable] = useState<boolean | null>(null);
   const [elapsed, setElapsed] = useState(0);
   const recRef = useRef<Recorder | null>(null);
   const stopPlay = useRef<(() => void) | null>(null);
@@ -151,6 +152,10 @@ export default function Hear() {
   useEffect(() => {
     // Wake the hearing model now so the first recording doesn't wait for a cold start.
     fetch("/api/warm", { method: "POST" }).catch(() => {});
+    fetch("/api/reword")
+      .then((r) => r.json())
+      .then((d) => setRewordAvailable(!!d.available))
+      .catch(() => setRewordAvailable(false));
     return () => {
       recRef.current?.cancel();
       stopPlay.current?.();
@@ -400,9 +405,14 @@ export default function Hear() {
 
             <div className="mt-10 border-t border-chart pt-8">
               {reword.state === "idle" && (
-                <Button onClick={() => askReword(result)} disabled={result.pending.her}>
-                  Help me say it more clearly
-                </Button>
+                <>
+                  <Button onClick={() => askReword(result)} disabled={result.pending.her || rewordAvailable === false}>
+                    Help me say it more clearly
+                  </Button>
+                  {rewordAvailable === false && (
+                    <p className="mt-2 text-sm text-graphite">Suggestions need an AI service that isn’t connected on this deployment yet. The tips below always apply.</p>
+                  )}
+                </>
               )}
               {reword.state === "loading" && <p className="text-graphite">Writing a few versions and checking each one against {person.name}’s hearing…</p>}
               {reword.state === "error" && <p className="text-graphite">{reword.message}</p>}
