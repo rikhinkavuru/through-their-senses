@@ -1,12 +1,19 @@
-import { anthropic } from "@ai-sdk/anthropic";
+import { createAnthropic } from "@ai-sdk/anthropic";
 import { generateText, Output } from "ai";
 import { z } from "zod";
 import { hearingFetch, ttsFetch } from "@/lib/server/hearing";
 
 export const maxDuration = 60;
 
-/** Claude directly when ANTHROPIC_API_KEY is set, otherwise through Vercel AI Gateway. */
-const model = () => (process.env.ANTHROPIC_API_KEY ? anthropic("claude-sonnet-5") : "anthropic/claude-sonnet-5");
+/**
+ * Claude directly when ANTHROPIC_API_KEY is set, otherwise through Vercel AI Gateway.
+ * Keys that aren't scoped to a workspace must name one via ANTHROPIC_WORKSPACE_ID.
+ */
+const model = () => {
+  if (!process.env.ANTHROPIC_API_KEY) return "anthropic/claude-sonnet-5";
+  const ws = process.env.ANTHROPIC_WORKSPACE_ID?.trim();
+  return createAnthropic({ headers: ws ? { "anthropic-workspace-id": ws } : undefined })("claude-sonnet-5");
+};
 
 const Body = z.object({
   sentence: z.string().min(1).max(300),
