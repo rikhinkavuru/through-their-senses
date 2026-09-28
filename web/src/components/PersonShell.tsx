@@ -4,6 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { createContext, useContext, useMemo, useState, type ReactNode } from "react";
 import { useField } from "@/lib/data";
+import { gridPoints } from "@/lib/field";
+import { diffuseLoss } from "@/lib/vision/light";
 import { updatePerson, usePerson } from "@/lib/people";
 import { pronouns, type Pronouns } from "@/lib/pronouns";
 import type { FieldProfile, Grid, Person } from "@/lib/types";
@@ -15,6 +17,10 @@ interface PersonCtx {
   visit: number;
   setVisit: (i: number) => void;
   grid: Grid;
+  /** Age at the chosen visit. */
+  age: number;
+  /** Diffuse component of the field loss at that visit (dB, <= 0), used for dim light. */
+  diffuseTd: number;
   p: Pronouns;
   update: (patch: Partial<Person>) => void;
   base: string;
@@ -134,6 +140,8 @@ export function PersonShell({ id, children }: { id: string; children: ReactNode 
       visit: v,
       setVisit,
       grid: field.visits[v].binocularFit,
+      age: field.visits[v].age,
+      diffuseTd: diffuseLoss(gridPoints(field.visits[v].binocularFit).map((q) => q.td)),
       p: pronouns(person.pronouns),
       update: (patch) => updatePerson(person.id, patch),
       base: `/p/${person.id}`,

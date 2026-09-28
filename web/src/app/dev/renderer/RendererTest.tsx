@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { emptyGrid, interpolateField, MAP_SIZE, PRINTOUT_ROWS } from "@/lib/field";
+import { ciePsf, SCENES, sourceRatio, VIEWER_AGE } from "@/lib/vision/light";
 import { FieldRenderer } from "@/lib/vision/renderer";
 
 const SIZE = 256;
@@ -26,6 +27,20 @@ function testImage(): HTMLCanvasElement {
       img.data.set([b, b, b, 255], (y * SIZE + x) * 4);
     }
   ctx.putImageData(img, 0, 0);
+  return c;
+}
+
+/** Glare test image: black, with one small white square (a lamp) in the middle. */
+const LAMP = 8;
+function lampImage(): HTMLCanvasElement {
+  const c = document.createElement("canvas");
+  c.width = SIZE;
+  c.height = SIZE;
+  const ctx = c.getContext("2d")!;
+  ctx.fillStyle = "#000";
+  ctx.fillRect(0, 0, SIZE, SIZE);
+  ctx.fillStyle = "#fff";
+  ctx.fillRect(SIZE / 2 - LAMP / 2, SIZE / 2 - LAMP / 2, LAMP, LAMP);
   return c;
 }
 
@@ -63,7 +78,7 @@ export function RendererTest() {
     const render = (td: number, wipe: number) => {
       r.setField(interpolateField(uniformGrid(td)), MAP_SIZE);
       // A narrow field of view keeps the whole image inside the tested 24-2 area.
-      r.render(src, SIZE, SIZE, { hfovDeg: 30, gaze: [0.5, 0.5], wipe, night: false, mirror: false });
+      r.render(src, SIZE, SIZE, { hfovDeg: 30, gaze: [0.5, 0.5], wipe, light: "day", age: 70, diffuseTd: 0, mirror: false });
       return read();
     };
     const original = render(0, 1); // wipe = 1: everything shows the typical view
@@ -77,14 +92,54 @@ export function RendererTest() {
     // Deep loss keeps only the coarsest low-pass level (filling-in), so fine detail should vanish.
     const deepFraction = levels[4].detail / s0.detail;
     const meanDrift = Math.max(...levels.map((l) => Math.abs(l.mean - s0.mean)));
+    // Glare: the veil beside a lamp should follow the CIE equation for the person's age
+    // (their side) and the viewer's age (your side).
+    r.setField(interpolateField(uniformGrid(0)), MAP_SIZE);
+    const glare = (wipe: number) => {
+      r.render(lampImage(), SIZE, SIZE, { hfovDeg: 30, gaze: [0.5, 0.5], wipe, light: "night", age: 70, diffuseTd: 0, mirror: false });
+      return read();
+    };
+    const theirs = glare(0);
+    const yours = glare(1);
+    const focalPx = SIZE / 2 / Math.tan((15 * Math.PI) / 180);
+    const lampSr = (LAMP / focalPx) ** 2;
+    const scale = sourceRatio("night") * SCENES.night.display * lampSr;
+    const lin = (b: number) => Math.pow(b / 255, 2.2);
+    const glarePoints = [3, 6, 10].map((deg) => {
+      const x = Math.round(SIZE / 2 + focalPx * Math.tan((deg * Math.PI) / 180));
+      const i = ((SIZE / 2) * SIZE + x) * 4;
+      return {
+        deg,
+        theirs: lin(theirs[i]),
+        expectedTheirs: scale * ciePsf(deg, 70),
+        yours: lin(yours[i]),
+        expectedYours: scale * ciePsf(deg, VIEWER_AGE),
+      };
+    });
+    const within = (a: number, b: number, tol: number) => Math.abs(a / b - 1) < tol;
+    // A glint too small to be a lamp (3 px) should add no glare.
+    const glint = document.createElement("canvas");
+    glint.width = SIZE;
+    glint.height = SIZE;
+    const gctx = glint.getContext("2d")!;
+    gctx.fillStyle = "#000";
+    gctx.fillRect(0, 0, SIZE, SIZE);
+    gctx.fillStyle = "#fff";
+    gctx.fillRect(SIZE / 2 - 1, SIZE / 2 - 1, 3, 3);
+    r.render(glint, SIZE, SIZE, { hfovDeg: 30, gaze: [0.5, 0.5], wipe: 0, light: "night", age: 70, diffuseTd: 0, mirror: false });
+    const gpx = read();
+    const glintVeil = lin(gpx[((SIZE / 2) * SIZE + Math.round(SIZE / 2 + focalPx * Math.tan((6 * Math.PI) / 180))) * 4]);
     const checks = {
+      glareFollowsCie: glarePoints.every((g) => within(g.theirs, g.expectedTheirs, 0.25) && within(g.yours, g.expectedYours, 0.25)),
+      glareGrowsWithAge: glarePoints.every((g) => g.theirs > 1.5 * g.yours),
+      glintsDoNotGlare: glintVeil < 0.002,
       identity: identityErr < 0.01,
       monotonic,
       deepRemovesFineDetail: deepFraction < 0.1,
       moderateKeepsSome: levels[2].rms > 0.05 * s0.rms,
       meanPreserved: meanDrift < 0.04,
     };
-    const result = { pass: Object.values(checks).every(Boolean), checks, identityErr, deepFraction, meanDrift, levels, originalRms: s0.rms };
+    const result = { pass: Object.values(checks).every(Boolean), checks, identityErr, deepFraction, meanDrift, levels, originalRms: s0.rms, glarePoints };
     (window as unknown as { __rendererTest: unknown }).__rendererTest = result;
     if (out.current) out.current.textContent = JSON.stringify(result, null, 1);
     r.dispose();

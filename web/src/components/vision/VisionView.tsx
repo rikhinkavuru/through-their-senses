@@ -3,11 +3,12 @@
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { interpolateField, MAP_SIZE } from "@/lib/field";
 import type { Grid } from "@/lib/types";
+import type { Light } from "@/lib/vision/light";
 import { FieldRenderer, type RenderParams } from "@/lib/vision/renderer";
 
 export type VisionSource =
   | { kind: "camera"; facing: "environment" | "user" }
-  | { kind: "image"; src: string; hfovDeg: number; focus?: [number, number] };
+  | { kind: "image"; src: string; hfovDeg: number; focus?: [number, number]; lamps?: [number, number, number, number][] };
 
 export interface VisionViewHandle {
   /** Current frame (their view) as a data URL, for the walk-through scans. */
@@ -21,7 +22,11 @@ interface Props {
   grid: Grid;
   source: VisionSource;
   wipe: number;
-  night: boolean;
+  light: Light;
+  /** Age of the person, for glare. */
+  age: number;
+  /** Diffuse component of their field loss (dB). */
+  diffuseTd: number;
   gaze?: [number, number];
   /** Camera horizontal field of view when using the camera, degrees. */
   cameraHfov?: number;
@@ -32,23 +37,26 @@ interface Props {
 }
 
 export const VisionView = forwardRef<VisionViewHandle, Props>(function VisionView(
-  { grid, source, wipe, night, gaze = [0.5, 0.5], cameraHfov = 66, className, onError, onReady, label },
+  { grid, source, wipe, light, age, diffuseTd, gaze = [0.5, 0.5], cameraHfov = 66, className, onError, onReady, label },
   ref,
 ) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rendererRef = useRef<FieldRenderer | null>(null);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
-  const paramsRef = useRef<RenderParams>({ hfovDeg: cameraHfov, gaze, wipe, night, mirror: false });
+  const paramsRef = useRef<RenderParams>({ hfovDeg: cameraHfov, gaze, wipe, light, age, diffuseTd, mirror: false });
   const [ready, setReady] = useState(false);
 
   paramsRef.current = {
     hfovDeg: source.kind === "image" ? source.hfovDeg : cameraHfov,
     gaze,
     wipe,
-    night,
+    light,
+    age,
+    diffuseTd,
     mirror: source.kind === "camera" && source.facing === "user",
     focus: source.kind === "image" ? source.focus : undefined,
+    lamps: source.kind === "image" ? (source.lamps ?? []) : undefined,
   };
 
   // Renderer lifetime follows the canvas.

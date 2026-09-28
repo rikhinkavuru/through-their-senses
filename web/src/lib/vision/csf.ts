@@ -31,19 +31,6 @@ export function thresholdMultiplier(td: number): number {
   return Math.pow(10, -Math.min(td, 0) / 10);
 }
 
-/**
- * Dim light: sensitivity falls in mesopic conditions for everyone, and glaucoma
- * patients reach a lower plateau and adapt more slowly (see VISION.md sources).
- * These factors are a defensible approximation, not a measurement for this person.
- */
-export const NIGHT = {
-  sceneLuminance: 0.22,
-  typicalFactor: 2.5,
-  glaucomaExtraFactor: 1.6,
-  /** Strength of the glare veil from bright sources (tuned visually; glare is a common complaint in glaucoma). */
-  glareGain: 0.2,
-};
-
 /** Weber contrast of an edge between two linear luminances. */
 export function weberContrast(a: number, b: number): number {
   const lo = Math.min(a, b);

@@ -1,0 +1,37 @@
+{
+ "generatedBy": "web/scripts/hazard-eval.mts",
+ "set": "web/scripts/hazard-set.json",
+ "rule": "STEP_RULE in src/lib/vision/hazards.ts",
+ "dev": {
+  "before": {
+   "stairPhotos": 12,
+   "stairPhotosWithAnEdge": 12,
+   "noStepPhotos": 20,
+   "noStepPhotosWithAFalseEdge": 20,
+   "falseEdgesPerNoStepPhoto": 2.95
+  },
+  "after": {
+   "stairPhotos": 12,
+   "stairPhotosWithAnEdge": 9,
+   "noStepPhotos": 20,
+   "noStepPhotosWithAFalseEdge": 6,
+   "falseEdgesPerNoStepPhoto": 0.45
+  }
+ },
+ "test": {
+  "before": {
+   "stairPhotos": 22,
+   "stairPhotosWithAnEdge": 21,
+   "noStepPhotos": 25,
+   "noStepPhotosWithAFalseEdge": 23,
+   "falseEdgesPerNoStepPhoto": 2.72
+  },
+  "after": {
+   "stairPhotos": 22,
+   "stairPhotosWithAnEdge": 19,
+   "noStepPhotos": 25,
+   "noStepPhotosWithAFalseEdge": 12,
+   "falseEdgesPerNoStepPhoto": 0.56
+  }
+ }
+}

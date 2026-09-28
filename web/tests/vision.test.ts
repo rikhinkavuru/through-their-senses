@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { normalThreshold, sensitivity, thresholdMultiplier, weberContrast } from "../src/lib/vision/csf";
-import { assess, edgeContrast, findStepEdges, STEP_GUIDELINE, toDegrees, type ViewGeometry } from "../src/lib/vision/hazards";
+import { assess, edgeContrast, findStepEdges, STEP_GUIDELINE, toDegrees, type ViewGeometry, looksLikeStep } from "../src/lib/vision/hazards";
 
 describe("contrast sensitivity", () => {
   it("peaks at mid spatial frequencies and falls at both ends", () => {
@@ -28,21 +28,32 @@ describe("hazard verdicts use the renderer's threshold model", () => {
     expect(y).toBeLessThan(0);
   });
   it("is visible with typical vision and hidden where loss is deep", () => {
-    const typical = assess(seg, 0.3, geo, () => 0, { night: false, isStep: true });
-    const deep = assess(seg, 0.3, geo, () => -25, { night: false, isStep: true });
+    const typical = assess(seg, 0.3, geo, () => 0, { light: "day", diffuseTd: 0, isStep: true });
+    const deep = assess(seg, 0.3, geo, () => -25, { light: "day", diffuseTd: 0, isStep: true });
     expect(typical.verdict).toBe("visible");
     expect(deep.verdict).toBe("hidden");
     expect(deep.threshold / typical.threshold).toBeCloseTo(thresholdMultiplier(-25), 3);
     expect(typical.region).toBe("lower");
   });
   it("flags step edges below the 50% guideline", () => {
-    expect(assess(seg, STEP_GUIDELINE - 0.01, geo, () => 0, { night: false, isStep: true }).belowGuideline).toBe(true);
-    expect(assess(seg, STEP_GUIDELINE + 0.01, geo, () => 0, { night: false, isStep: true }).belowGuideline).toBe(false);
+    expect(assess(seg, STEP_GUIDELINE - 0.01, geo, () => 0, { light: "day", diffuseTd: 0, isStep: true }).belowGuideline).toBe(true);
+    expect(assess(seg, STEP_GUIDELINE + 0.01, geo, () => 0, { light: "day", diffuseTd: 0, isStep: true }).belowGuideline).toBe(false);
   });
   it("gets harder in dim light", () => {
-    const day = assess(seg, 0.3, geo, () => -8, { night: false, isStep: true });
-    const night = assess(seg, 0.3, geo, () => -8, { night: true, isStep: true });
+    const day = assess(seg, 0.3, geo, () => -8, { light: "day", diffuseTd: 0, isStep: true });
+    const night = assess(seg, 0.3, geo, () => -8, { light: "night", diffuseTd: 0, isStep: true });
     expect(night.threshold).toBeGreaterThan(day.threshold);
+  });
+});
+
+describe("step rule", () => {
+  it("accepts two similar horizontal surfaces a small jump apart (a tread nosing)", () => {
+    expect(looksLikeStep(0.04, 1.0, 1.2)).toBe(true);
+  });
+  it("rejects a table edge (far side much lower, big jump) and a sofa back (wall beyond)", () => {
+    expect(looksLikeStep(0.25, 1.0, 1.2)).toBe(false);
+    expect(looksLikeStep(0.05, 0.1, 2.0)).toBe(false);
+    expect(looksLikeStep(0.05, 1.0, -0.5)).toBe(false);
   });
 });
 

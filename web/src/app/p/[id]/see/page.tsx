@@ -1,14 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState, ViewTransition } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore, ViewTransition } from "react";
 import { TabBar, usePersonCtx } from "@/components/PersonShell";
 import { HelpSheet, QuoteBlock, Toggle } from "@/components/ui";
+import { EyeFollow } from "@/components/vision/EyeFollow";
+import { LightPicker, lightFromUrl } from "@/components/vision/LightPicker";
 import { VisionView, type VisionSource, type VisionViewHandle } from "@/components/vision/VisionView";
+import { LAMPS } from "@/content/lamps";
 import { quoteFor } from "@/content/quotes";
 import credits from "../../../../../public/scenes/credits.json";
 import { gridPoints, whatStillWorks } from "@/lib/field";
 import { cap } from "@/lib/pronouns";
+import type { Light } from "@/lib/vision/light";
 
 // focus: the part of each photo to keep when the screen crops it (x, y from top-left).
 const SCENES = [
@@ -19,33 +23,41 @@ const SCENES = [
 ] as const;
 
 type SceneId = (typeof SCENES)[number]["id"] | "camera";
+/** Who moves the point of fixation: nobody (centre), a finger or mouse, or the viewer's eyes. */
+type Follow = "off" | "pointer" | "eyes";
+
+const noSubscribe = () => () => {};
+/** Webcam eye tracking is offered on computers (fine pointer) with camera access. */
+const canTrackEyes = () => window.matchMedia("(pointer: fine)").matches && !!navigator.mediaDevices?.getUserMedia;
 
 function param(name: string): string | null {
   return typeof window === "undefined" ? null : new URLSearchParams(window.location.search).get(name);
 }
 
-/** Where each tested point of the field lands on screen, given the shown field of view. */
+/** Horizontal field of view actually shown after the cover-crop, degrees. */
+function shownHfov(w: number, h: number, srcW: number, srcH: number, hfov: number): number {
+  if (!w || !h || !srcW || !srcH) return hfov;
+  const sx = srcW / srcH > w / h ? w / h / (srcW / srcH) : 1;
+  return (2 * Math.atan(Math.tan((hfov * Math.PI) / 360) * sx) * 180) / Math.PI;
+}
+
+/** Where each tested point of the field lands on screen, around the point of fixation. */
 function projectPoints(
   grid: ReturnType<typeof gridPoints>,
   w: number,
   h: number,
-  srcW: number,
-  srcH: number,
-  hfov: number,
+  shownDeg: number,
+  gaze: [number, number],
 ): { x: number; y: number; td: number }[] {
-  if (!w || !h || !srcW || !srcH) return [];
-  const srcAspect = srcW / srcH;
-  const dstAspect = w / h;
-  const sx = srcAspect > dstAspect ? dstAspect / srcAspect : 1;
-  const shown = 2 * Math.atan(Math.tan((hfov * Math.PI) / 360) * sx);
-  const f = w / 2 / Math.tan(shown / 2);
+  if (!w || !h) return [];
+  const f = w / 2 / Math.tan((shownDeg * Math.PI) / 360);
   const rad = Math.PI / 180;
-  return grid.map((p) => ({ x: w / 2 + f * Math.tan(p.x * rad), y: h / 2 - f * Math.tan(p.y * rad), td: p.td }));
+  return grid.map((p) => ({ x: gaze[0] * w + f * Math.tan(p.x * rad), y: gaze[1] * h - f * Math.tan(p.y * rad), td: p.td }));
 }
 
 export default function See() {
-  const { person, field, visit, setVisit, grid, p, base } = usePersonCtx();
-  // Deep links for filming and testing: ?scene=stairs&wipe=0&night=1&visit=0
+  const { person, field, visit, setVisit, grid, age: visitAge, diffuseTd, p, base } = usePersonCtx();
+  // Deep links for filming and testing: ?scene=stairs&wipe=0&light=night&visit=0
   const [scene, setScene] = useState<SceneId>(() => {
     const sc = param("scene");
     return sc && (sc === "camera" || SCENES.some((x) => x.id === sc)) ? (sc as SceneId) : "hallway";
@@ -55,7 +67,15 @@ export default function See() {
     const w = Number(param("wipe"));
     return param("wipe") !== null && Number.isFinite(w) ? Math.min(1, Math.max(0, w)) : 0.5;
   });
-  const [night, setNight] = useState(() => param("night") === "1");
+  const [light, setLight] = useState<Light>(lightFromUrl);
+  // ?follow=pointer&gx=0.3&gy=0.6 fixes the gaze somewhere else, for filming.
+  const [follow, setFollow] = useState<Follow>(() => (param("follow") === "pointer" ? "pointer" : "off"));
+  const [gaze, setGaze] = useState<[number, number]>(() => {
+    const gx = Number(param("gx"));
+    const gy = Number(param("gy"));
+    return param("gx") !== null && param("gy") !== null && Number.isFinite(gx + gy) ? [Math.min(1, Math.max(0, gx)), Math.min(1, Math.max(0, gy))] : [0.5, 0.5];
+  });
+  const eyesAvailable = useSyncExternalStore(noSubscribe, canTrackEyes, () => false);
   const [showPoints, setShowPoints] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [adaptOpen, setAdaptOpen] = useState(false);
@@ -68,7 +88,7 @@ export default function See() {
   const sceneInfo = SCENES.find((s) => s.id === scene);
   const cameraHfov = src[1] > src[0] ? 52 : 68;
   const hfov = sceneInfo ? sceneInfo.hfov : cameraHfov;
-  const source: VisionSource = scene === "camera" ? { kind: "camera", facing } : { kind: "image", src: `/scenes/${scene}.jpg`, hfovDeg: hfov, focus: [...(sceneInfo?.focus ?? [0.5, 0.5])] as [number, number] };
+  const source: VisionSource = scene === "camera" ? { kind: "camera", facing } : { kind: "image", src: `/scenes/${scene}.jpg`, hfovDeg: hfov, focus: [...(sceneInfo?.focus ?? [0.5, 0.5])] as [number, number], lamps: LAMPS[scene] };
 
   useEffect(() => {
     const el = stageRef.current;
@@ -101,7 +121,22 @@ export default function See() {
     setWipe(Math.min(1, Math.max(0, (clientX - r.left) / r.width)));
   }, []);
 
-  const points = projectPoints(gridPoints(grid), box.w, box.h, src[0], src[1], hfov);
+  const moveGaze = useCallback((clientX: number, clientY: number) => {
+    const el = stageRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    setGaze([Math.min(1, Math.max(0, (clientX - r.left) / r.width)), Math.min(1, Math.max(0, (clientY - r.top) / r.height))]);
+  }, []);
+
+  const changeFollow = (f: Follow) => {
+    setFollow(f);
+    if (f === "off") setGaze([0.5, 0.5]);
+  };
+
+  // While the gaze moves, the whole screen is their view: a divider would split the field.
+  const shownWipe = follow === "off" ? wipe : 0;
+  const shownDeg = shownHfov(box.w, box.h, src[0], src[1], hfov);
+  const points = projectPoints(gridPoints(grid), box.w, box.h, shownDeg, gaze);
   const age = Math.round(field.visits[visit].age);
   const works = whatStillWorks(grid, p);
 
@@ -111,12 +146,26 @@ export default function See() {
         ref={stageRef}
         role="slider"
         tabIndex={0}
-        aria-label={`Divider: your view on the left, ${person.name}’s on the right`}
+        aria-label={follow === "off" ? `Divider: your view on the left, ${person.name}’s on the right` : `Where ${person.name} is looking, across the screen`}
         aria-valuemin={0}
         aria-valuemax={100}
-        aria-valuenow={Math.round(wipe * 100)}
-        aria-valuetext={`${Math.round((1 - wipe) * 100)}% of the screen shows ${person.name}’s view`}
+        aria-valuenow={Math.round((follow === "off" ? wipe : gaze[0]) * 100)}
+        aria-valuetext={
+          follow === "off"
+            ? `${Math.round((1 - wipe) * 100)}% of the screen shows ${person.name}’s view`
+            : `Looking ${Math.round(gaze[0] * 100)}% across and ${Math.round(gaze[1] * 100)}% down`
+        }
         onKeyDown={(e) => {
+          if (follow !== "off") {
+            const step = 0.04;
+            const d: Record<string, [number, number]> = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, -step], ArrowDown: [0, step] };
+            const m = d[e.key];
+            if (m) {
+              e.preventDefault();
+              setGaze(([x, y]) => [Math.min(1, Math.max(0, x + m[0])), Math.min(1, Math.max(0, y + m[1]))]);
+            }
+            return;
+          }
           if (e.key === "ArrowLeft") setWipe((w) => Math.max(0, w - 0.05));
           if (e.key === "ArrowRight") setWipe((w) => Math.min(1, w + 0.05));
           if (e.key === "Home") setWipe(0);
@@ -124,11 +173,17 @@ export default function See() {
         }}
         className="absolute inset-0 touch-none select-none focus-visible:outline-offset-[-6px]"
         onPointerDown={(e) => {
+          if (follow === "eyes") return;
           dragging.current = true;
           (e.target as Element).setPointerCapture?.(e.pointerId);
-          moveWipe(e.clientX);
+          if (follow === "pointer") moveGaze(e.clientX, e.clientY);
+          else moveWipe(e.clientX);
         }}
-        onPointerMove={(e) => dragging.current && moveWipe(e.clientX)}
+        onPointerMove={(e) => {
+          // A mouse steers the gaze without pressing; a finger steers it while touching.
+          if (follow === "pointer" && (dragging.current || e.pointerType === "mouse")) moveGaze(e.clientX, e.clientY);
+          else if (follow === "off" && dragging.current) moveWipe(e.clientX);
+        }}
         onPointerUp={() => (dragging.current = false)}
         onPointerCancel={() => (dragging.current = false)}
       >
@@ -136,8 +191,11 @@ export default function See() {
           ref={viewRef}
           grid={grid}
           source={source}
-          wipe={wipe}
-          night={night}
+          wipe={shownWipe}
+          light={light}
+          age={visitAge}
+          diffuseTd={diffuseTd}
+          gaze={gaze}
           cameraHfov={cameraHfov}
           className="absolute inset-0 h-full w-full"
           label={`The ${scene === "camera" ? "camera view" : sceneInfo?.label.toLowerCase()} as ${person.name} sees it on the right of the divider, and as you see it on the left.`}
@@ -160,14 +218,28 @@ export default function See() {
           </svg>
         </ViewTransition>
 
-        {/* Fixation cross: the test assumes this is where she is looking. */}
-        <svg className="pointer-events-none absolute left-1/2 top-1/2 h-7 w-7 -translate-x-1/2 -translate-y-1/2" viewBox="-10 -10 20 20" aria-hidden>
-          <path d="M-7 0H7M0 -7V7" stroke="black" strokeOpacity="0.5" strokeWidth="4" strokeLinecap="round" />
-          <path d="M-7 0H7M0 -7V7" stroke="white" strokeWidth="2" strokeLinecap="round" />
+        {/* Fixation: a cross where the eyes should rest, or a ring where the tracker thinks they are. */}
+        <svg
+          className="pointer-events-none absolute h-7 w-7 -translate-x-1/2 -translate-y-1/2"
+          style={{ left: `${gaze[0] * 100}%`, top: `${gaze[1] * 100}%` }}
+          viewBox="-10 -10 20 20"
+          aria-hidden
+        >
+          {follow === "eyes" ? (
+            <>
+              <circle r="6" fill="none" stroke="black" strokeOpacity="0.45" strokeWidth="3.5" />
+              <circle r="6" fill="none" stroke="white" strokeWidth="1.5" />
+            </>
+          ) : (
+            <>
+              <path d="M-7 0H7M0 -7V7" stroke="black" strokeOpacity="0.5" strokeWidth="4" strokeLinecap="round" />
+              <path d="M-7 0H7M0 -7V7" stroke="white" strokeWidth="2" strokeLinecap="round" />
+            </>
+          )}
         </svg>
 
         {/* Wipe divider */}
-        {wipe > 0.005 && wipe < 0.995 && (
+        {shownWipe > 0.005 && shownWipe < 0.995 && (
           <div className="pointer-events-none absolute inset-y-0" style={{ left: `${wipe * 100}%` }}>
             <div className="absolute inset-y-0 -left-px w-0.5 bg-white/90 shadow-[0_0_12px_rgba(0,0,0,0.5)]" />
             <div className="absolute top-[42%] -left-6 grid h-12 w-12 place-items-center rounded-full bg-white text-ink shadow-lg">
@@ -193,16 +265,22 @@ export default function See() {
               Right of the divider is the room as {person.name} sees it, from {p.poss} own visual field tests. Left of it is how you see it. Drag anywhere to move the divider.
             </p>
             <p>
-              Keep your eyes on the cross in the middle: that is where {p.subj} {p.is} looking. The test measures {p.poss} vision with {p.poss} eyes held still, so this is exact only while you do the same.
+              Keep your eyes on the cross: that is where {p.subj} {p.is} looking. The test measures {p.poss} vision with {p.poss} eyes held still, so this is exact only while you do the same.
+            </p>
+            <p>
+              Look around moves the cross with your finger or mouse, and the weaker areas move with it, as they do for {p.obj}.
+              {eyesAvailable ? " On a computer with a webcam, Follow my eyes moves it with your eyes instead." : ""}
             </p>
             <p>
               Where {p.poss} vision is weaker, detail and contrast fade. Where it is very weak, things disappear into their surroundings. People with glaucoma describe it this way: 0 of 50 patients in one study
               said it looks like the black tunnel usually shown (Crabb et al., 2013).
             </p>
             <p>
-              Dim light is an approximation: vision needs more contrast in low light, and bright lamps or windows scatter light that washes out what is near them. It is not measured for {p.obj}.
+              Evening and Night use light levels measured in real homes: a lamp-lit living room, and a room lit only by a TV. Everyone needs more contrast in low light, fine detail most
+              (Barten’s model of contrast sensitivity), and glaucoma adds to it. Bright lamps and windows scatter light inside the eye, more with age, which veils what is near them (the CIE glare
+              standard, for {p.poss} age). These are models from research, not measured for {p.obj}.
             </p>
-                      {scene !== "camera" &&
+            {scene !== "camera" &&
               (() => {
                 const c = credits.find((x) => x.id === scene);
                 return c ? (
@@ -214,12 +292,22 @@ export default function See() {
           </HelpSheet>
         </div>
         <div className="mt-3 flex justify-between px-1 text-[0.95rem] font-bold [text-shadow:0_1px_6px_rgba(0,0,0,0.7)]">
-          <span style={{ opacity: wipe > 0.12 ? 1 : 0 }}>You</span>
-          <span style={{ opacity: wipe < 0.88 ? 1 : 0 }}>
+          <span style={{ opacity: shownWipe > 0.12 ? 1 : 0 }}>You</span>
+          <span style={{ opacity: shownWipe < 0.88 ? 1 : 0 }}>
             {person.name}, age {age}
           </span>
         </div>
       </div>
+
+      {follow === "pointer" && (
+        <p role="status" className="pointer-events-none absolute inset-x-4 top-[calc(max(0.75rem,env(safe-area-inset-top))+3.5rem)] mx-auto max-w-xl rounded-2xl bg-black/55 px-4 py-2.5 text-center text-[0.95rem] backdrop-blur-md">
+          {eyesAvailable ? "Move the mouse" : "Drag your finger"} and look at the cross. {cap(p.poss)} weaker areas move with it.
+        </p>
+      )}
+
+      {follow === "eyes" && (
+        <EyeFollow personName={person.name} degPerPx={box.w ? shownDeg / box.w : 0.05} onGaze={setGaze} onStop={() => changeFollow("off")} />
+      )}
 
       {error && (
         <p role="status" className="absolute inset-x-4 top-28 rounded-2xl bg-black/70 px-4 py-3 text-[0.95rem] backdrop-blur-md">
@@ -260,12 +348,18 @@ export default function See() {
             </label>
           )}
           <div className="flex flex-wrap gap-2">
-            <Toggle on={night} onChange={setNight} dark>
-              Dim light
-            </Toggle>
+            <LightPicker value={light} onChange={setLight} />
             <Toggle on={showPoints} onChange={setShowPoints} dark>
               Test points
             </Toggle>
+            <Toggle on={follow === "pointer"} onChange={(on) => changeFollow(on ? "pointer" : "off")} dark>
+              Look around
+            </Toggle>
+            {eyesAvailable && (
+              <Toggle on={follow === "eyes"} onChange={(on) => changeFollow(on ? "eyes" : "off")} dark>
+                Follow my eyes
+              </Toggle>
+            )}
             <button onClick={() => setAdaptOpen((o) => !o)} aria-expanded={adaptOpen} className="min-h-11 rounded-full bg-white/12 px-4 text-[0.95rem] backdrop-blur-md">
               How {p.subj} adapt{p.s}
             </button>
@@ -293,7 +387,7 @@ export default function See() {
               {cap(p.subj)} move{p.s} {p.poss} eyes and head to fill in what this still picture can’t: the fading here is what is missed at a single glance.
             </li>
           </ul>
-          <QuoteBlock className="mt-5" quote={quoteFor(night ? "light" : "scanning")} />
+          <QuoteBlock className="mt-5" quote={quoteFor(light !== "day" ? "light" : "scanning")} />
         </div>
       )}
 

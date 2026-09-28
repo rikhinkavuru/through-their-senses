@@ -1,0 +1,795 @@
+{
+ "note": "Hazard finder evaluation set: Wikimedia Commons thumbnails (640 px), labelled by hand. step = step edges visible from this viewpoint; none = no step edge (tables, counters, benches, sofas, handrails on flat floors or walls). Images are downloaded on demand, not stored in the repo. The dev split was used to choose the filtering rules; the test split was labelled before the finder was run on it and was not used for tuning.",
+ "items": [
+  {
+   "id": "009",
+   "label": "step",
+   "title": "File:Bookshop stairs (13166830833).jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2e/Bookshop_stairs_%2813166830833%29.jpg/960px-Bookshop_stairs_%2813166830833%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Bookshop_stairs_(13166830833).jpg",
+   "license": "CC BY 2.0",
+   "artist": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/4694",
+   "split": "dev"
+  },
+  {
+   "id": "010",
+   "label": "step",
+   "title": "File:Boston Public Library, McKim Building Boston Public Library-1534420.jpeg",
+   "thumb": "https://upload.wikimedia.org/wikipedia/commons/6/60/Boston_Public_Library%2C_McKim_Building_Boston_Public_Library-1534420.jpeg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+   "page": "https://commons.wikimedia.org/wiki/File:Boston_Public_Library,_McKim_Building_Boston_Public_Library-1534420.jpeg",
+   "license": "CC BY-SA 3.0",
+   "artist": "Yelsa",
+   "split": "dev"
+  },
+  {
+   "id": "011",
+   "label": "step",
+   "title": "File:Botanical Garden in Putrajaya, Malaysia 38.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/44/Botanical_Garden_in_Putrajaya%2C_Malaysia_38.jpg/960px-Botanical_Garden_in_Putrajaya%2C_Malaysia_38.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Botanical_Garden_in_Putrajaya,_Malaysia_38.jpg",
+   "license": "CC BY-SA 4.0",
+   "artist": "F",
+   "split": "dev"
+  },
+  {
+   "id": "012",
+   "label": "step",
+   "title": "File:Brodsworth Hall interior (9269).jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/ca/Brodsworth_Hall_interior_%289269%29.jpg/960px-Brodsworth_Hall_interior_%289269%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Brodsworth_Hall_interior_(9269).jpg",
+   "license": "CC BY-SA 4.0",
+   "artist": "Nil",
+   "split": "dev"
+  },
+  {
+   "id": "013",
+   "label": "step",
+   "title": "File:Brodsworth Hall kitchen (9270).jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/68/Brodsworth_Hall_kitchen_%289270%29.jpg/960px-Brodsworth_Hall_kitchen_%289270%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Brodsworth_Hall_kitchen_(9270).jpg",
+   "license": "CC BY-SA 4.0",
+   "artist": "Nil",
+   "split": "dev"
+  },
+  {
+   "id": "015",
+   "label": "step",
+   "title": "File:Brutarchitekt, Pfahlstra\u00dfe 27, Eichst\u00e4tt, Bummerlbr\u00e4u, Treppe im Innenbereich.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f6/Brutarchitekt%2C_Pfahlstra%C3%9Fe_27%2C_Eichst%C3%A4tt%2C_Bummerlbr%C3%A4u%2C_Treppe_im_Innenbereich.jpg/960px-Brutarchitekt%2C_Pfahlstra%C3%9Fe_27%2C_Eichst%C3%A4tt%2C_Bummerlbr%C3%A4u%2C_Treppe_im_Innenbereich.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Brutarchitekt,_Pfahlstra%C3%9Fe_27,_Eichst%C3%A4tt,_Bummerlbr%C3%A4u,_Treppe_im_Innenbereich.jpg",
+   "license": "CC BY-SA 4.0",
+   "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Brutarchitekt&amp;action",
+   "split": "dev"
+  },
+  {
+   "id": "018",
+   "label": "step",
+   "title": "File:Casa Rosada (7), AA 2014.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/66/Casa_Rosada_%287%29%2C_AA_2014.jpg/960px-Casa_Rosada_%287%29%2C_AA_2014.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Casa_Rosada_(7),_AA_2014.jpg",
+   "license": "CC BY 4.0",
+   "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Green_Mostaza\" title=\"User:Green Most",
+   "split": "dev"
+  },
+  {
+   "id": "045",
+   "label": "step",
+   "title": "File:Footsteps to Newcastle Hill - geograph.org.uk - 4853750.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9f/Footsteps_to_Newcastle_Hill_-_geograph.org.uk_-_4853750.jpg/960px-Footsteps_to_Newcastle_Hill_-_geograph.org.uk_-_4853750.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Footsteps_to_Newcastle_Hill_-_geograph.org.uk_-_4853750.jpg",
+   "license": "CC BY-SA 2.0",
+   "artist": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.geograph.org.uk/profil",
+   "split": "dev"
+  },
+  {
+   "id": "055",
+   "label": "step",
+   "title": "File:Oakdale2.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/96/Oakdale2.jpg/960px-Oakdale2.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Oakdale2.jpg",
+   "license": "CC BY-SA 3.0",
+   "artist": "Deb",
+   "split": "dev"
+  },
+  {
+   "id": "102",
+   "label": "step",
+   "title": "File:Caledonian Road and Barnsbury railway station MMB 06.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/91/Caledonian_Road_and_Barnsbury_railway_station_MMB_06.jpg/960px-Caledonian_Road_and_Barnsbury_railway_station_MMB_06.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Caledonian_Road_and_Barnsbury_railway_station_MMB_06.jpg",
+   "license": "CC BY-SA 3.0",
+   "artist": "ma",
+   "split": "dev"
+  },
+  {
+   "id": "105",
+   "label": "step",
+   "title": "File:Casa Laporta d'Alcoi, passam\u00e0.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e8/Casa_Laporta_d%27Alcoi%2C_passam%C3%A0.jpg/960px-Casa_Laporta_d%27Alcoi%2C_passam%C3%A0.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Casa_Laporta_d%27Alcoi,_passam%C3%A0.jpg",
+   "license": "CC BY-SA 4.0",
+   "artist": "Joa",
+   "split": "dev"
+  },
+  {
+   "id": "107",
+   "label": "step",
+   "title": "File:Castillo de Pe\u00f1\u00edscola 97.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6c/Castillo_de_Pe%C3%B1%C3%ADscola_97.jpg/960px-Castillo_de_Pe%C3%B1%C3%ADscola_97.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Castillo_de_Pe%C3%B1%C3%ADscola_97.jpg",
+   "license": "CC BY-SA 4.0",
+   "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Simon_Burchell\" title=\"User:Simon Bur",
+   "split": "dev"
+  },
+  {
+   "id": "060",
+   "label": "none",
+   "title": "File:176 Nile Street dining area kitchen.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/60/176_Nile_Street_dining_area_kitchen.jpg/960px-176_Nile_Street_dining_area_kitchen.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:176_Nile_Street_dining_area_kitchen.jpg",
+   "license": "CC0",
+   "artist": "S",
+   "split": "dev"
+  },
+  {
+   "id": "062",
+   "label": "none",
+   "title": "File:20100725 91fdda1a0e30beb024442WN2YFrbU8K0.jpg",
+   "thumb": "https://upload.wikimedia.org/wikipedia/commons/9/9b/20100725_91fdda1a0e30beb024442WN2YFrbU8K0.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+   "page": "https://commons.wikimedia.org/wiki/File:20100725_91fdda1a0e30beb024442WN2YFrbU8K0.jpg",
+   "license": "Public domain",
+   "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Apanomination&amp;action",
+   "split": "dev"
+  },
+  {
+   "id": "067",
+   "label": "none",
+   "title": "File:Copped Hall dining room mock-up display, Epping, Essex, England 01.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/40/Copped_Hall_dining_room_mock-up_display%2C_Epping%2C_Essex%2C_England_01.jpg/960px-Copped_Hall_dining_room_mock-up_display%2C_Epping%2C_Essex%2C_England_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Copped_Hall_dining_room_mock-up_display,_Epping,_Essex,_England_01.jpg",
+   "license": "CC BY-SA 4.0",
+   "artist": "Acaba",
+   "split": "dev"
+  },
+  {
+   "id": "071",
+   "label": "none",
+   "title": "File:Copped Hall dining room mock-up display, Epping, Essex, England 02.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8d/Copped_Hall_dining_room_mock-up_display%2C_Epping%2C_Essex%2C_England_02.jpg/960px-Copped_Hall_dining_room_mock-up_display%2C_Epping%2C_Essex%2C_England_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Copped_Hall_dining_room_mock-up_display,_Epping,_Essex,_England_02.jpg",
+   "license": "CC BY 4.0",
+   "artist": "Acaba",
+   "split": "dev"
+  },
+  {
+   "id": "072",
+   "label": "none",
+   "title": "File:Copped Hall dining room mock-up display, Epping, Essex, England 03.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2f/Copped_Hall_dining_room_mock-up_display%2C_Epping%2C_Essex%2C_England_03.jpg/960px-Copped_Hall_dining_room_mock-up_display%2C_Epping%2C_Essex%2C_England_03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Copped_Hall_dining_room_mock-up_display,_Epping,_Essex,_England_03.jpg",
+   "license": "CC BY 4.0",
+   "artist": "Acaba",
+   "split": "dev"
+  },
+  {
+   "id": "073",
+   "label": "none",
+   "title": "File:Copped Hall dining room mock-up display, Epping, Essex, England 04.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/42/Copped_Hall_dining_room_mock-up_display%2C_Epping%2C_Essex%2C_England_04.jpg/960px-Copped_Hall_dining_room_mock-up_display%2C_Epping%2C_Essex%2C_England_04.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Copped_Hall_dining_room_mock-up_display,_Epping,_Essex,_England_04.jpg",
+   "license": "CC BY 4.0",
+   "artist": "Acaba",
+   "split": "dev"
+  },
+  {
+   "id": "074",
+   "label": "none",
+   "title": "File:Copped Hall dining room mock-up display, Epping, Essex, England 05.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/da/Copped_Hall_dining_room_mock-up_display%2C_Epping%2C_Essex%2C_England_05.jpg/960px-Copped_Hall_dining_room_mock-up_display%2C_Epping%2C_Essex%2C_England_05.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Copped_Hall_dining_room_mock-up_display,_Epping,_Essex,_England_05.jpg",
+   "license": "CC BY 4.0",
+   "artist": "Acaba",
+   "split": "dev"
+  },
+  {
+   "id": "075",
+   "label": "none",
+   "title": "File:22 West - dining table.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/85/22_West_-_dining_table.jpg/960px-22_West_-_dining_table.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:22_West_-_dining_table.jpg",
+   "license": "CC BY-SA 3.0",
+   "artist": "<a href=\"//commons.wikimedia.org/wiki/User:AgnosticPreachersKid\" class=\"mw-redir",
+   "split": "dev"
+  },
+  {
+   "id": "076",
+   "label": "none",
+   "title": "File:22 West - interior view - Ritz Carlton sign.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/94/22_West_-_interior_view_-_Ritz_Carlton_sign.jpg/960px-22_West_-_interior_view_-_Ritz_Carlton_sign.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:22_West_-_interior_view_-_Ritz_Carlton_sign.jpg",
+   "license": "CC BY-SA 3.0",
+   "artist": "<a href=\"//commons.wikimedia.org/wiki/User:AgnosticPreachersKid\" class=\"mw-redir",
+   "split": "dev"
+  },
+  {
+   "id": "080",
+   "label": "none",
+   "title": "File:6518 - F\u00fcrigen - Festung F\u00fcrigen - Essraum der Mannschaft.JPG",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/62/6518_-_F%C3%BCrigen_-_Festung_F%C3%BCrigen_-_Essraum_der_Mannschaft.JPG/960px-6518_-_F%C3%BCrigen_-_Festung_F%C3%BCrigen_-_Essraum_der_Mannschaft.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:6518_-_F%C3%BCrigen_-_Festung_F%C3%BCrigen_-_Essraum_der_Mannschaft.JPG",
+   "license": "CC BY-SA 2.5",
+   "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Thisisbossi\" title=\"User:Thisisbossi\"",
+   "split": "dev"
+  },
+  {
+   "id": "081",
+   "label": "none",
+   "title": "File:6519 - F\u00fcrigen - Festung F\u00fcrigen - Essraum der Mannschaft.JPG",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/95/6519_-_F%C3%BCrigen_-_Festung_F%C3%BCrigen_-_Essraum_der_Mannschaft.JPG/960px-6519_-_F%C3%BCrigen_-_Festung_F%C3%BCrigen_-_Essraum_der_Mannschaft.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:6519_-_F%C3%BCrigen_-_Festung_F%C3%BCrigen_-_Essraum_der_Mannschaft.JPG",
+   "license": "CC BY-SA 2.5",
+   "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Thisisbossi\" title=\"User:Thisisbossi\"",
+   "split": "dev"
+  },
+  {
+   "id": "088",
+   "label": "none",
+   "title": "File:\u0421\u043a\u0438\u043d\u0430\u043b\u0438 \u0434\u043b\u044f \u043a\u0443\u0445\u043d\u0438.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f8/%D0%A1%D0%BA%D0%B8%D0%BD%D0%B0%D0%BB%D0%B8_%D0%B4%D0%BB%D1%8F_%D0%BA%D1%83%D1%85%D0%BD%D0%B8.jpg/960px-%D0%A1%D0%BA%D0%B8%D0%BD%D0%B0%D0%BB%D0%B8_%D0%B4%D0%BB%D1%8F_%D0%BA%D1%83%D1%85%D0%BD%D0%B8.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:%D0%A1%D0%BA%D0%B8%D0%BD%D0%B0%D0%BB%D0%B8_%D0%B4%D0%BB%D1%8F_%D0%BA%D1%83%D1%85%D0%BD%D0%B8.jpg",
+   "license": "CC BY-SA 3.0",
+   "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Julia_klever&amp;action=",
+   "split": "dev"
+  },
+  {
+   "id": "117",
+   "label": "none",
+   "title": "File:Co-operative Building (51219050164).jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9f/Co-operative_Building_%2851219050164%29.jpg/960px-Co-operative_Building_%2851219050164%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Co-operative_Building_(51219050164).jpg",
+   "license": "CC0",
+   "artist": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/2310",
+   "split": "dev"
+  },
+  {
+   "id": "120",
+   "label": "none",
+   "title": "File:1- TANG TRET (2).jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bd/1-_TANG_TRET_%282%29.jpg/960px-1-_TANG_TRET_%282%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:1-_TANG_TRET_(2).jpg",
+   "license": "CC BY-SA 4.0",
+   "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Moc_hoa_binh&amp;action=",
+   "split": "dev"
+  },
+  {
+   "id": "122",
+   "label": "none",
+   "title": "File:19th century Victorian living room, Auckland - 0816.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1b/19th_century_Victorian_living_room%2C_Auckland_-_0816.jpg/960px-19th_century_Victorian_living_room%2C_Auckland_-_0816.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:19th_century_Victorian_living_room,_Auckland_-_0816.jpg",
+   "license": "CC BY-SA 3.0",
+   "artist": "Jorge Royan",
+   "split": "dev"
+  },
+  {
+   "id": "123",
+   "label": "none",
+   "title": "File:19th century Victorian living room, Auckland - 0825.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/22/19th_century_Victorian_living_room%2C_Auckland_-_0825.jpg/960px-19th_century_Victorian_living_room%2C_Auckland_-_0825.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:19th_century_Victorian_living_room,_Auckland_-_0825.jpg",
+   "license": "CC BY-SA 3.0",
+   "artist": "Jorge Royan",
+   "split": "dev"
+  },
+  {
+   "id": "129",
+   "label": "none",
+   "title": "File:A Kenya (11).jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1a/A_Kenya_%2811%29.jpg/960px-A_Kenya_%2811%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:A_Kenya_(11).jpg",
+   "license": "CC BY-SA 4.0",
+   "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Olashxs&amp;action=edit&",
+   "split": "dev"
+  },
+  {
+   "id": "132",
+   "label": "none",
+   "title": "File:A standard living room in Accra.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/23/A_standard_living_room_in_Accra.jpg/960px-A_standard_living_room_in_Accra.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:A_standard_living_room_in_Accra.jpg",
+   "license": "CC BY-SA 4.0",
+   "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Kwameghana\" class=\"mw-redirect\" title",
+   "split": "dev"
+  },
+  {
+   "id": "135",
+   "label": "none",
+   "title": "File:Accommodation01.jpg",
+   "thumb": "https://upload.wikimedia.org/wikipedia/commons/8/82/Accommodation01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+   "page": "https://commons.wikimedia.org/wiki/File:Accommodation01.jpg",
+   "license": "Public domain",
+   "artist": "Accommodation Cape Town",
+   "split": "dev"
+  },
+  {
+   "id": "137",
+   "label": "none",
+   "title": "File:AlberoNataleLor.JPG",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/89/AlberoNataleLor.JPG/960px-AlberoNataleLor.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:AlberoNataleLor.JPG",
+   "license": "Public domain",
+   "artist": "Loroli</a",
+   "split": "dev"
+  },
+  {
+   "id": "t001",
+   "label": "step",
+   "split": "test",
+   "title": "File:1st Floor Stairs 215.JPG",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/8/88/1st_Floor_Stairs_215.JPG/960px-1st_Floor_Stairs_215.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:1st_Floor_Stairs_215.JPG",
+   "license": "CC BY 3.0",
+   "artist": "Manuel Schn"
+  },
+  {
+   "id": "t006",
+   "label": "step",
+   "split": "test",
+   "title": "File:Atat\u00fcrk Evi Konya 66.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f1/Atat%C3%BCrk_Evi_Konya_66.jpg/960px-Atat%C3%BCrk_Evi_Konya_66.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Atat%C3%BCrk_Evi_Konya_66.jpg",
+   "license": "CC BY-SA 4.0",
+   "artist": "Satirdan kahraman"
+  },
+  {
+   "id": "t007",
+   "label": "step",
+   "split": "test",
+   "title": "File:Atat\u00fcrk Evi Konya 67.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5d/Atat%C3%BCrk_Evi_Konya_67.jpg/960px-Atat%C3%BCrk_Evi_Konya_67.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Atat%C3%BCrk_Evi_Konya_67.jpg",
+   "license": "CC BY-SA 4.0",
+   "artist": "Satirdan kahraman"
+  },
+  {
+   "id": "t008",
+   "label": "step",
+   "split": "test",
+   "title": "File:Atat\u00fcrk Evi Konya 68.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/62/Atat%C3%BCrk_Evi_Konya_68.jpg/960px-Atat%C3%BCrk_Evi_Konya_68.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Atat%C3%BCrk_Evi_Konya_68.jpg",
+   "license": "CC BY-SA 4.0",
+   "artist": "Satirdan kahraman"
+  },
+  {
+   "id": "t010",
+   "label": "step",
+   "split": "test",
+   "title": "File:Atat\u00fcrk Evi Konya 88.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bd/Atat%C3%BCrk_Evi_Konya_88.jpg/960px-Atat%C3%BCrk_Evi_Konya_88.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Atat%C3%BCrk_Evi_Konya_88.jpg",
+   "license": "CC BY-SA 4.0",
+   "artist": "Satirdan kahraman"
+  },
+  {
+   "id": "t011",
+   "label": "step",
+   "split": "test",
+   "title": "File:Attic (227905277).jpeg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/55/Attic_%28227905277%29.jpeg/960px-Attic_%28227905277%29.jpeg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Attic_(227905277).jpeg",
+   "license": "CC BY 3.0",
+   "artist": "<a rel=\"nofollow\" class=\"external text\" href=\"https://500"
+  },
+  {
+   "id": "t012",
+   "label": "step",
+   "split": "test",
+   "title": "File:Back of Silliman Hall with the Silliman University historical marker.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5e/Back_of_Silliman_Hall_with_the_Silliman_University_historical_marker.jpg/960px-Back_of_Silliman_Hall_with_the_Silliman_University_historical_marker.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Back_of_Silliman_Hall_with_the_Silliman_University_historical_marker.jpg",
+   "license": "Public domain",
+   "artist": "<a href=\"https://en.wikipedia.org/wiki/en:National_Historical_Commission_of"
+  },
+  {
+   "id": "t013",
+   "label": "step",
+   "split": "test",
+   "title": "File:Before carpeted stairs removed (6496535731).jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4b/Before_carpeted_stairs_removed_%286496535731%29.jpg/960px-Before_carpeted_stairs_removed_%286496535731%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Before_carpeted_stairs_removed_(6496535731).jpg",
+   "license": "CC BY 2.0",
+   "artist": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/2314"
+  },
+  {
+   "id": "t016",
+   "label": "step",
+   "split": "test",
+   "title": "File:Ansamblu Biertan 29.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/93/Ansamblu_Biertan_29.jpg/960px-Ansamblu_Biertan_29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Ansamblu_Biertan_29.jpg",
+   "license": "CC BY-SA 4.0",
+   "artist": "Nicub"
+  },
+  {
+   "id": "t019",
+   "label": "step",
+   "split": "test",
+   "title": "File:Blond woman in a red dress seated on stairs.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f9/Blond_woman_in_a_red_dress_seated_on_stairs.jpg/960px-Blond_woman_in_a_red_dress_seated_on_stairs.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Blond_woman_in_a_red_dress_seated_on_stairs.jpg",
+   "license": "CC BY 2.0",
+   "artist": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/1590"
+  },
+  {
+   "id": "t022",
+   "label": "step",
+   "split": "test",
+   "title": "File:Byeolmangseong Fortress 18.JPG",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a3/Byeolmangseong_Fortress_18.JPG/960px-Byeolmangseong_Fortress_18.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Byeolmangseong_Fortress_18.JPG",
+   "license": "CC BY-SA 3.0",
+   "artist": "myself (<a href=\"//commons.wikimedia.org/wiki/User:Piotrus\" title=\"User:Piotrus\""
+  },
+  {
+   "id": "t024",
+   "label": "step",
+   "split": "test",
+   "title": "File:Casona recuperada por Socovesa, calle General Lagos, Valdivia.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7b/Casona_recuperada_por_Socovesa%2C_calle_General_Lagos%2C_Valdivia.jpg/960px-Casona_recuperada_por_Socovesa%2C_calle_General_Lagos%2C_Valdivia.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Casona_recuperada_por_Socovesa,_calle_General_Lagos,_Valdivia.jpg",
+   "license": "Public domain",
+   "artist": "Socovesa"
+  },
+  {
+   "id": "t025",
+   "label": "step",
+   "split": "test",
+   "title": "File:2011-09-28 15-34-41-fort-lomont.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2b/2011-09-28_15-34-41-fort-lomont.jpg/960px-2011-09-28_15-34-41-fort-lomont.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:2011-09-28_15-34-41-fort-lomont.jpg",
+   "license": "CC BY 3.0",
+   "artist": "<a href=\"//commons.wikimedia.org/wiki/User:ComputerHotline\" title=\"User:Com"
+  },
+  {
+   "id": "t031",
+   "label": "step",
+   "split": "test",
+   "title": "File:Ajlun Castle Steps.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/32/Ajlun_Castle_Steps.jpg/960px-Ajlun_Castle_Steps.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Ajlun_Castle_Steps.jpg",
+   "license": "CC BY-SA 3.0",
+   "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Cybjorg&amp;action=edit&"
+  },
+  {
+   "id": "t046",
+   "label": "step",
+   "split": "test",
+   "title": "File:Collegium Maius 03.JPG",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/59/Collegium_Maius_03.JPG/960px-Collegium_Maius_03.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Collegium_Maius_03.JPG",
+   "license": "CC BY-SA 3.0",
+   "artist": "Cancre</a"
+  },
+  {
+   "id": "t047",
+   "label": "step",
+   "split": "test",
+   "title": "File:Crest - donjon 03.JPG",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4a/Crest_-_donjon_03.JPG/960px-Crest_-_donjon_03.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Crest_-_donjon_03.JPG",
+   "license": "CC BY-SA 3.0",
+   "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Remi_Mathis\" title=\"User:Remi Mathis\""
+  },
+  {
+   "id": "t048",
+   "label": "step",
+   "split": "test",
+   "title": "File:Daegu hyanggyo dongsomun.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e5/Daegu_hyanggyo_dongsomun.jpg/960px-Daegu_hyanggyo_dongsomun.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Daegu_hyanggyo_dongsomun.jpg",
+   "license": "Public domain",
+   "artist": "Taken by <a href=\"//commons.wikimedia.org/wiki/User:Visviva\" title=\"User:Visviva"
+  },
+  {
+   "id": "t053",
+   "label": "step",
+   "split": "test",
+   "title": "File:11A Company S t20230924 122653.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0c/11A_Company_S_t20230924_122653.jpg/960px-11A_Company_S_t20230924_122653.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:11A_Company_S_t20230924_122653.jpg",
+   "license": "CC BY-SA 4.0",
+   "artist": "<a href=\"//commons.wikimedia.org/wiki/User:CaptJayRuffins\" title=\"User:CaptJayRu"
+  },
+  {
+   "id": "t061",
+   "label": "step",
+   "split": "test",
+   "title": "File:At Stockholm 2019 029.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b5/At_Stockholm_2019_029.jpg/960px-At_Stockholm_2019_029.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:At_Stockholm_2019_029.jpg",
+   "license": "CC BY-SA 4.0",
+   "artist": "Photograph by <a href=\"//commons.wikimedia.org/wiki/User:Mike_Peel\" title=\"User:"
+  },
+  {
+   "id": "t063",
+   "label": "step",
+   "split": "test",
+   "title": "File:Barcelona - Montju\u00efc - Avinguda del Montanyans - View East on Palau Nacional 1929 by Eugeni Pere Cendoya & Enric Cat\u00e0 i Cat\u00e0 under the supervision of Pere Dom\u00e8nech i Roura.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e0/Barcelona_-_Montju%C3%AFc_-_Avinguda_del_Montanyans_-_View_East_on_Palau_Nacional_1929_by_Eugeni_Pere_Cendoya_%26_Enric_Cat%C3%A0_i_Cat%C3%A0_under_the_supervision_of_Pere_Dom%C3%A8nech_i_Roura.jpg/960px-thumbnail.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Barcelona_-_Montju%C3%AFc_-_Avinguda_del_Montanyans_-_View_East_on_Palau_Nacional_1929_by_Eugeni_Pere_Cendoya_%26_Enric_Cat%C3%A0_i_Cat%C3%A0_under_the_supervision_of_Pere_Dom%C3%A8nech_i_Roura.jpg",
+   "license": "CC BY-SA 4.0",
+   "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Txllxt_TxllxT\" title=\"User:Txllxt Txl"
+  },
+  {
+   "id": "t068",
+   "label": "step",
+   "split": "test",
+   "title": "File:Barcelona - Montju\u00efc - Mirador del Palau Nacional - View from Escales (steps) on Palau Nacional 1929, 'La Terra' statue (1928) by Frederic Mar\u00e8s i Deulovol & Amazona (Tallers Lena, original 1929, copy 1992) 01.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a8/Barcelona_-_Montju%C3%AFc_-_Mirador_del_Palau_Nacional_-_View_from_Escales_%28steps%29_on_Palau_Nacional_1929%2C_%27La_Terra%27_statue_%281928%29_by_Frederic_Mar%C3%A8s_i_Deulovol_%26_Amazona_%28Tallers_Lena%2C_original_1929%2C_copy_1992%29_01.jpg/960px-thumbnail.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Barcelona_-_Montju%C3%AFc_-_Mirador_del_Palau_Nacional_-_View_from_Escales_(steps)_on_Palau_Nacional_1929,_%27La_Terra%27_statue_(1928)_by_Frederic_Mar%C3%A8s_i_Deulovol_%26_Amazona_(Tallers_Lena,_original_1929,_copy_1992)_01.jpg",
+   "license": "CC BY-SA 4.0",
+   "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Txllxt_TxllxT\" title=\"User:Txllxt Txl"
+  },
+  {
+   "id": "t095",
+   "label": "step",
+   "split": "test",
+   "title": "File:016 13 Kabale Office of swTws, fully building integrated UDDT, 2002 approx. (7928284790).jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/35/016_13_Kabale_Office_of_swTws%2C_fully_building_integrated_UDDT%2C_2002_approx._%287928284790%29.jpg/960px-016_13_Kabale_Office_of_swTws%2C_fully_building_integrated_UDDT%2C_2002_approx._%287928284790%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:016_13_Kabale_Office_of_swTws,_fully_building_integrated_UDDT,_2002_approx._(7928284790).jpg",
+   "license": "CC BY 2.0",
+   "artist": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/2311"
+  },
+  {
+   "id": "t072",
+   "label": "none",
+   "split": "test",
+   "title": "File:2023-07-30 Vogtsbauernhof Ortenauhaus 006.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/94/2023-07-30_Vogtsbauernhof_Ortenauhaus_006.jpg/960px-2023-07-30_Vogtsbauernhof_Ortenauhaus_006.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:2023-07-30_Vogtsbauernhof_Ortenauhaus_006.jpg",
+   "license": "CC BY-SA 4.0",
+   "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Ahmet_D%C3%BCz\" title=\"User:Ahmet D\u00fcz"
+  },
+  {
+   "id": "t084",
+   "label": "none",
+   "split": "test",
+   "title": "File:Arenal 3b.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9f/Arenal_3b.jpg/960px-Arenal_3b.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Arenal_3b.jpg",
+   "license": "CC BY-SA 4.0",
+   "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:ErasmusFlat&amp;action=e"
+  },
+  {
+   "id": "t085",
+   "label": "none",
+   "split": "test",
+   "title": "File:Armadi inloopkast.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/68/Armadi_inloopkast.jpg/960px-Armadi_inloopkast.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Armadi_inloopkast.jpg",
+   "license": "CC BY-SA 3.0",
+   "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Armadi&amp;action=edit&a"
+  },
+  {
+   "id": "t089",
+   "label": "none",
+   "split": "test",
+   "title": "File:Aydekorasyongroup.jpg",
+   "thumb": "https://upload.wikimedia.org/wikipedia/commons/4/48/Aydekorasyongroup.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+   "page": "https://commons.wikimedia.org/wiki/File:Aydekorasyongroup.jpg",
+   "license": "CC BY-SA 4.0",
+   "artist": "Ade"
+  },
+  {
+   "id": "t090",
+   "label": "none",
+   "split": "test",
+   "title": "File:Bed & Nightstand (49875912823).jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6e/Bed_%26_Nightstand_%2849875912823%29.jpg/960px-Bed_%26_Nightstand_%2849875912823%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Bed_%26_Nightstand_(49875912823).jpg",
+   "license": "CC BY 2.0",
+   "artist": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/8313"
+  },
+  {
+   "id": "t091",
+   "label": "none",
+   "split": "test",
+   "title": "File:Bedroom furniture by Charles Rennie Mackintosh.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6d/Bedroom_furniture_by_Charles_Rennie_Mackintosh.jpg/960px-Bedroom_furniture_by_Charles_Rennie_Mackintosh.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Bedroom_furniture_by_Charles_Rennie_Mackintosh.jpg",
+   "license": "Public domain",
+   "artist": "Karora</a"
+  },
+  {
+   "id": "t092",
+   "label": "none",
+   "split": "test",
+   "title": "File:Bedroom in a cave dwelling, Tenerife.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d5/Bedroom_in_a_cave_dwelling%2C_Tenerife.jpg/960px-Bedroom_in_a_cave_dwelling%2C_Tenerife.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Bedroom_in_a_cave_dwelling,_Tenerife.jpg",
+   "license": "CC BY-SA 4.0",
+   "artist": "A"
+  },
+  {
+   "id": "t098",
+   "label": "none",
+   "split": "test",
+   "title": "File:0X8A2797.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/59/0X8A2797.jpg/960px-0X8A2797.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:0X8A2797.jpg",
+   "license": "CC BY-SA 4.0",
+   "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Divyakantl&amp;action=ed"
+  },
+  {
+   "id": "t099",
+   "label": "none",
+   "split": "test",
+   "title": "File:13DesignStreet Office.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d1/13DesignStreet_Office.jpg/960px-13DesignStreet_Office.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:13DesignStreet_Office.jpg",
+   "license": "CC BY-SA 4.0",
+   "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:FatherofGod&amp;action=e"
+  },
+  {
+   "id": "t100",
+   "label": "none",
+   "split": "test",
+   "title": "File:180228-D-SW162-2040.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d4/180228-D-SW162-2040.jpg/960px-180228-D-SW162-2040.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:180228-D-SW162-2040.jpg",
+   "license": "CC BY 2.0",
+   "artist": "Chairman of the Joint Chiefs of Staff"
+  },
+  {
+   "id": "t105",
+   "label": "none",
+   "split": "test",
+   "title": "File:2005-11 b\u00fcro.JPG",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e4/2005-11_b%C3%BCro.JPG/960px-2005-11_b%C3%BCro.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:2005-11_b%C3%BCro.JPG",
+   "license": "CC BY-SA 3.0",
+   "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Ziko-C\" class=\"mw-redirect\" title=\"Us"
+  },
+  {
+   "id": "t106",
+   "label": "none",
+   "split": "test",
+   "title": "File:2005.09.08 - 43 - Riegersburg.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/32/2005.09.08_-_43_-_Riegersburg.jpg/960px-2005.09.08_-_43_-_Riegersburg.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:2005.09.08_-_43_-_Riegersburg.jpg",
+   "license": "CC0",
+   "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Grubernst&amp;action=edi"
+  },
+  {
+   "id": "t108",
+   "label": "none",
+   "split": "test",
+   "title": "File:2013-08-31 17.14.48 \ucef4\ud4e8\ud130 \ucc45\uc0c1.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a2/2013-08-31_17.14.48_%EC%BB%B4%ED%93%A8%ED%84%B0_%EC%B1%85%EC%83%81.jpg/960px-2013-08-31_17.14.48_%EC%BB%B4%ED%93%A8%ED%84%B0_%EC%B1%85%EC%83%81.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:2013-08-31_17.14.48_%EC%BB%B4%ED%93%A8%ED%84%B0_%EC%B1%85%EC%83%81.jpg",
+   "license": "CC0",
+   "artist": "\ucd5c\uad11\ubaa8 (Ch"
+  },
+  {
+   "id": "t109",
+   "label": "none",
+   "split": "test",
+   "title": "File:20151008 \ucd5c\uad11\ubaa8 SONY DSC-RX10 DSC03753 20151024.JPG",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/aa/20151008_%EC%B5%9C%EA%B4%91%EB%AA%A8_SONY_DSC-RX10_DSC03753_20151024.JPG/960px-20151008_%EC%B5%9C%EA%B4%91%EB%AA%A8_SONY_DSC-RX10_DSC03753_20151024.JPG?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:20151008_%EC%B5%9C%EA%B4%91%EB%AA%A8_SONY_DSC-RX10_DSC03753_20151024.JPG",
+   "license": "CC0",
+   "artist": "\ucd5c\uad11\ubaa8"
+  },
+  {
+   "id": "t110",
+   "label": "none",
+   "split": "test",
+   "title": "File:20201021 161447 - Copy.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/55/20201021_161447_-_Copy.jpg/960px-20201021_161447_-_Copy.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:20201021_161447_-_Copy.jpg",
+   "license": "CC BY-SA 4.0",
+   "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:Vahid.B.O&amp;action=edi"
+  },
+  {
+   "id": "t112",
+   "label": "none",
+   "split": "test",
+   "title": "File:A small airline's dispatch office.jpg",
+   "thumb": "https://upload.wikimedia.org/wikipedia/commons/e/e8/A_small_airline%27s_dispatch_office.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled",
+   "page": "https://commons.wikimedia.org/wiki/File:A_small_airline%27s_dispatch_office.jpg",
+   "license": "Public domain",
+   "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:DeskDriver&amp;action=ed"
+  },
+  {
+   "id": "t116",
+   "label": "none",
+   "split": "test",
+   "title": "File:Added a desk in my study (15388372627).jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/45/Added_a_desk_in_my_study_%2815388372627%29.jpg/960px-Added_a_desk_in_my_study_%2815388372627%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Added_a_desk_in_my_study_(15388372627).jpg",
+   "license": "CC BY-SA 2.0",
+   "artist": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/9345"
+  },
+  {
+   "id": "t117",
+   "label": "none",
+   "split": "test",
+   "title": "File:1983 Seoul Hilton Hotel 02.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b0/1983_Seoul_Hilton_Hotel_02.jpg/960px-1983_Seoul_Hilton_Hotel_02.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:1983_Seoul_Hilton_Hotel_02.jpg",
+   "license": "CC BY-SA 3.0",
+   "artist": "Jong Soung Kimm"
+  },
+  {
+   "id": "t120",
+   "label": "none",
+   "split": "test",
+   "title": "File:AcropoleHotelKhartoum Lobby RomanDeckert02022016.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5e/AcropoleHotelKhartoum_Lobby_RomanDeckert02022016.jpg/960px-AcropoleHotelKhartoum_Lobby_RomanDeckert02022016.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:AcropoleHotelKhartoum_Lobby_RomanDeckert02022016.jpg",
+   "license": "CC BY-SA 4.0",
+   "artist": "<a href=\"//commons.wikimedia.org/wiki/User:RomanDeckert\" title=\"User:RomanDecker"
+  },
+  {
+   "id": "t122",
+   "label": "none",
+   "split": "test",
+   "title": "File:Bucharest - Athenee Palace Hilton lobby 01.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/49/Bucharest_-_Athenee_Palace_Hilton_lobby_01.jpg/960px-Bucharest_-_Athenee_Palace_Hilton_lobby_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Bucharest_-_Athenee_Palace_Hilton_lobby_01.jpg",
+   "license": "CC BY 3.0",
+   "artist": "Joe Mabel"
+  },
+  {
+   "id": "t126",
+   "label": "none",
+   "split": "test",
+   "title": "File:DSC-0415-hotel-colosseo-shkoder-albania-august-2017.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/06/DSC-0415-hotel-colosseo-shkoder-albania-august-2017.jpg/960px-DSC-0415-hotel-colosseo-shkoder-albania-august-2017.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:DSC-0415-hotel-colosseo-shkoder-albania-august-2017.jpg",
+   "license": "CC0",
+   "artist": "Rakoon</a"
+  },
+  {
+   "id": "t134",
+   "label": "none",
+   "split": "test",
+   "title": "File:Highlander Hotel lobby (6350025270).jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c2/Highlander_Hotel_lobby_%286350025270%29.jpg/960px-Highlander_Hotel_lobby_%286350025270%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Highlander_Hotel_lobby_(6350025270).jpg",
+   "license": "CC BY 2.0",
+   "artist": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/3119"
+  },
+  {
+   "id": "t135",
+   "label": "none",
+   "split": "test",
+   "title": "File:Hotel Hall.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0b/Hotel_Hall.jpg/960px-Hotel_Hall.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Hotel_Hall.jpg",
+   "license": "CC BY-SA 4.0",
+   "artist": "<a href=\"//commons.wikimedia.org/w/index.php?title=User:VasoPlevneshi&amp;action"
+  },
+  {
+   "id": "t136",
+   "label": "none",
+   "split": "test",
+   "title": "File:Hotel Lobby, Kathmandu, Nepal 2020.jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f0/Hotel_Lobby%2C_Kathmandu%2C_Nepal_2020.jpg/960px-Hotel_Lobby%2C_Kathmandu%2C_Nepal_2020.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Hotel_Lobby,_Kathmandu,_Nepal_2020.jpg",
+   "license": "CC BY-SA 4.0",
+   "artist": "<a href=\"//commons.wikimedia.org/wiki/User:Gaurav_Dhwaj_Khadka\" title=\"User:Gaur"
+  },
+  {
+   "id": "t138",
+   "label": "none",
+   "split": "test",
+   "title": "File:Hotel Riu Garopa, Sal, Cape Verde Islands (4334056593).jpg",
+   "thumb": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/dd/Hotel_Riu_Garopa%2C_Sal%2C_Cape_Verde_Islands_%284334056593%29.jpg/960px-Hotel_Riu_Garopa%2C_Sal%2C_Cape_Verde_Islands_%284334056593%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+   "page": "https://commons.wikimedia.org/wiki/File:Hotel_Riu_Garopa,_Sal,_Cape_Verde_Islands_(4334056593).jpg",
+   "license": "CC BY-SA 2.0",
+   "artist": "<a rel=\"nofollow\" class=\"external text\" href=\"https://www.flickr.com/people/1855"
+  }
+ ]
+}

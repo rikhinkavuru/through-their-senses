@@ -3,14 +3,17 @@
 import Link from "next/link";
 import { useMemo, useRef, useState } from "react";
 import { TabBar, usePersonCtx } from "@/components/PersonShell";
-import { HelpSheet, QuoteBlock, Toggle } from "@/components/ui";
+import { HelpSheet, QuoteBlock } from "@/components/ui";
+import { LightPicker, lightFromUrl } from "@/components/vision/LightPicker";
 import { VisionView, type VisionSource, type VisionViewHandle } from "@/components/vision/VisionView";
+import { LAMPS } from "@/content/lamps";
 import { quoteFor } from "@/content/quotes";
 import credits from "../../../../../public/scenes/credits.json";
 import { interpolateField, sampleMap } from "@/lib/field";
 import { cap } from "@/lib/pronouns";
 import type { AcceptedFix } from "@/lib/types";
 import { estimateDepth } from "@/lib/vision/depth-client";
+import type { Light } from "@/lib/vision/light";
 import { assess, edgeAtPoint, edgeContrast, findStepEdges, STEP_GUIDELINE, type HazardAssessment, type Segment, type ViewGeometry } from "@/lib/vision/hazards";
 
 // focus: the part of each photo to keep when the screen crops it (x, y from top-left).
@@ -69,9 +72,9 @@ function VerdictMark({ v }: { v: HazardAssessment["verdict"] }) {
 }
 
 export default function Walk() {
-  const { person, grid, p, base, update } = usePersonCtx();
+  const { person, grid, age, diffuseTd, p, base, update } = usePersonCtx();
   const [scene, setScene] = useState<SceneId>("stairs");
-  const [night, setNight] = useState(false);
+  const [light, setLight] = useState<Light>(lightFromUrl);
   const [phase, setPhase] = useState<"aim" | "scanning" | "review">("aim");
   const [status, setStatus] = useState("");
   const [frozen, setFrozen] = useState<{ img: ImageData; url: string; geo: ViewGeometry } | null>(null);
@@ -86,7 +89,7 @@ export default function Walk() {
   const sceneInfo = SCENES.find((s) => s.id === scene);
   const cameraHfov = src[1] > src[0] ? 52 : 68;
   const hfov = sceneInfo ? sceneInfo.hfov : cameraHfov;
-  const source: VisionSource = scene === "camera" ? { kind: "camera", facing: "environment" } : { kind: "image", src: `/scenes/${scene}.jpg`, hfovDeg: hfov, focus: [...(sceneInfo?.focus ?? [0.5, 0.5])] as [number, number] };
+  const source: VisionSource = scene === "camera" ? { kind: "camera", facing: "environment" } : { kind: "image", src: `/scenes/${scene}.jpg`, hfovDeg: hfov, focus: [...(sceneInfo?.focus ?? [0.5, 0.5])] as [number, number], lamps: LAMPS[scene] };
   const verdictText = (v: HazardAssessment["verdict"]) => VERDICT_TEXT[v].replace("her", p.obj);
 
   function geometry(): ViewGeometry | null {
@@ -101,7 +104,7 @@ export default function Walk() {
   }
 
   function judge(seg: Segment, contrast: number, kind: Finding["kind"], geo: ViewGeometry): HazardAssessment {
-    return assess(seg, contrast, geo, td, { night, isStep: kind === "step" });
+    return assess(seg, contrast, geo, td, { light, diffuseTd, isStep: kind === "step" });
   }
 
   async function scan() {
@@ -194,7 +197,9 @@ export default function Walk() {
             grid={grid}
             source={source}
             wipe={0}
-            night={night}
+            light={light}
+            age={age}
+            diffuseTd={diffuseTd}
             cameraHfov={cameraHfov}
             className="absolute inset-0 h-full w-full"
             label={`Live view as ${person.name} sees it`}
@@ -311,14 +316,10 @@ export default function Walk() {
                 </button>
               ))}
             </div>
-            <div className="flex items-center gap-3">
-              <button onClick={scan} className="min-h-14 flex-1 rounded-full bg-white text-[1.05rem] font-bold text-ink active:scale-[0.98]">
-                Check this spot
-              </button>
-              <Toggle on={night} onChange={setNight} dark>
-                Dim light
-              </Toggle>
-            </div>
+            <LightPicker value={light} onChange={setLight} />
+            <button onClick={scan} className="min-h-14 w-full rounded-full bg-white text-[1.05rem] font-bold text-ink active:scale-[0.98]">
+              Check this spot
+            </button>
           </div>
         </div>
       )}

@@ -7,7 +7,8 @@
  * the photo itself, as Weber contrast between thin strips either side of the edge.
  */
 
-import { NIGHT, normalThreshold, thresholdMultiplier, weberContrast } from "./csf";
+import { normalThreshold, thresholdMultiplier, weberContrast } from "./csf";
+import { dimFactor, glaucomaDimFactor, type Light } from "./light";
 
 export interface Segment {
   x0: number;
@@ -15,6 +16,9 @@ export interface Segment {
   x1: number;
   y1: number; // normalized 0-1 image coordinates
   strength: number;
+  /** Depth slope (per row) of the surface just beyond the edge and just before it; see findStepEdges. */
+  slopeFar?: number;
+  slopeNear?: number;
 }
 
 export type Verdict = "hidden" | "hard" | "visible";
@@ -75,7 +79,14 @@ function median(a: number[]): number {
  * against its local ramp (moving median) and its own noise (MAD), keep jumps that
  * are not immediately reversed (a thin rail rises then falls), and link bands.
  */
-export function findStepEdges(depth: Float32Array, w: number, h: number, maxEdges = 6, debug?: { peaks?: number; chains?: number[] }): Segment[] {
+export function findStepEdges(
+  depth: Float32Array,
+  w: number,
+  h: number,
+  maxEdges = 6,
+  debug?: { peaks?: number; chains?: number[] },
+  opts: { stepRule?: boolean } = {},
+): Segment[] {
   let lo = Infinity;
   let hi = -Infinity;
   for (const v of depth) {
@@ -93,8 +104,10 @@ export function findStepEdges(depth: Float32Array, w: number, h: number, maxEdge
   const win = Math.max(6, Math.round(h * 0.03));
   const back = Math.max(4, Math.round(h * 0.035));
   const peaks: { band: number; y: number; s: number }[] = [];
+  const profs: Float32Array[] = [];
   for (let b = 0; b < bands; b++) {
     const prof = new Float32Array(h);
+    profs.push(prof);
     for (let y = 0; y < h; y++) {
       let acc = 0;
       for (let x = b * bw; x < (b + 1) * bw; x++) acc += d[y * w + x];
@@ -161,6 +174,11 @@ export function findStepEdges(depth: Float32Array, w: number, h: number, maxEdge
     debug?.chains?.push(chain.length);
     if (chain.length < Math.max(4, bands * 0.2)) continue;
     chain.sort((a, b) => a.band - b.band);
+    const slopes = chain.map((c) => surfaceSlopes(profs[c.band], c.y, h));
+    const strength = chain.reduce((s, c) => s + c.s, 0) / chain.length;
+    const far = median(slopes.map((q) => q.far));
+    const near = median(slopes.map((q) => q.near));
+    if (opts.stepRule !== false && !looksLikeStep(strength, far, near)) continue;
     const first = chain[0];
     const last = chain[chain.length - 1];
     const slope = Math.abs(last.y - first.y) / Math.max(1, (last.band - first.band + 1) * bw);
@@ -170,7 +188,9 @@ export function findStepEdges(depth: Float32Array, w: number, h: number, maxEdge
       y0: first.y / h,
       x1: ((last.band + 1) * bw) / w,
       y1: last.y / h,
-      strength: chain.reduce((s, c) => s + c.s, 0) / chain.length,
+      strength,
+      slopeFar: far,
+      slopeNear: near,
     });
   }
   segs.sort((a, b) => b.strength * (b.x1 - b.x0) - a.strength * (a.x1 - a.x0));
@@ -181,6 +201,48 @@ export function findStepEdges(depth: Float32Array, w: number, h: number, maxEdge
     if (out.length >= maxEdges) break;
   }
   return out;
+}
+
+/**
+ * A step nosing joins two horizontal surfaces a riser apart (about 17 cm), so the depth
+ * jump is modest and the surfaces either side slope alike in the depth map. A table or
+ * counter edge has a far side 75 cm or more lower (about half the slope) and a larger
+ * jump; a sofa back or sill has a wall beyond it (slope near zero). Thresholds were chosen
+ * on a labelled development set of Commons photos and checked on a separate test set
+ * (scripts/hazard-set.json, scripts/hazard-eval.mts).
+ */
+export const STEP_RULE = { maxJump: 0.1, minSlopeRatio: 0.35, maxSlopeRatio: 1.7 };
+export function looksLikeStep(jump: number, slopeFar: number, slopeNear: number): boolean {
+  if (jump >= STEP_RULE.maxJump || slopeNear <= 0) return false;
+  const r = slopeFar / slopeNear;
+  return r >= STEP_RULE.minSlopeRatio && r <= STEP_RULE.maxSlopeRatio;
+}
+
+/**
+ * Least-squares slope of the depth profile over short runs of rows just above (far
+ * side) and just below (near side) an edge at row y. A horizontal surface (floor, tread,
+ * table top) has relative inverse depth rising steadily towards the bottom of the frame,
+ * with a slope inversely proportional to its height below the eye; a wall facing the
+ * camera has a slope near zero.
+ */
+export function surfaceSlopes(prof: Float32Array, y: number, h: number): { far: number; near: number } {
+  const k = Math.max(5, Math.round(h * 0.025));
+  const gap = 3;
+  const fit = (a: number, b: number) => {
+    a = Math.max(0, a);
+    b = Math.min(h - 1, b);
+    const n = b - a + 1;
+    if (n < 3) return 0;
+    let sx = 0, sy = 0, sxx = 0, sxy = 0;
+    for (let i = a; i <= b; i++) {
+      sx += i;
+      sy += prof[i];
+      sxx += i * i;
+      sxy += i * prof[i];
+    }
+    return (n * sxy - sx * sy) / Math.max(1e-9, n * sxx - sx * sx);
+  };
+  return { far: fit(y - gap - k, y - gap), near: fit(y + gap + 2, y + gap + 2 + k) };
 }
 
 /** Linear luminance of an RGBA ImageData pixel. */
@@ -269,7 +331,7 @@ export function assess(
   contrast: number,
   geo: ViewGeometry,
   td: (xDeg: number, yDeg: number) => number,
-  opts: { night: boolean; isStep: boolean },
+  opts: { light: Light; diffuseTd: number; isStep: boolean },
 ): HazardAssessment {
   const samples: { td: number; x: number; y: number }[] = [];
   for (let i = 0; i <= 8; i++) {
@@ -281,8 +343,8 @@ export function assess(
   const sorted = [...samples].sort((a, b) => a.td - b.td);
   const q = sorted[Math.floor(sorted.length * 0.25)];
   const mid = samples[4];
-  const night = opts.night ? NIGHT.typicalFactor * NIGHT.glaucomaExtraFactor : 1;
-  const threshold = normalThreshold(EDGE_CPD) * thresholdMultiplier(q.td) * night;
+  const light = dimFactor(EDGE_CPD, opts.light) * glaucomaDimFactor(opts.diffuseTd, opts.light);
+  const threshold = normalThreshold(EDGE_CPD) * thresholdMultiplier(q.td) * light;
   const ratio = contrast / threshold;
   const verdict: Verdict = ratio < 1 ? "hidden" : ratio < 3 ? "hard" : "visible";
   return {
