@@ -1,0 +1,1539 @@
+{
+ "generatedBy": "web/scripts/printout-eval.mts",
+ "what": "Synthetic Humphrey-style 24-2 printouts from real UWHVF visits (last visit, both eyes, every library profile), with a Pattern Deviation decoy, photographed in simulation. Not real printouts: no real printout is openly licensed.",
+ "model": "claude-sonnet-5, effort low, via /api/read-printout",
+ "printouts": 54,
+ "readsPerPrintout": 3,
+ "reads": 162,
+ "errors": 2,
+ "values": 8424,
+ "exact": 8087,
+ "exactRate": 0.96,
+ "within1dB": 0.963,
+ "missing": 279,
+ "wrong": 58,
+ "meanAbsErrorWhenRead": 0.03,
+ "valueWhereNoTestPoint": 0,
+ "wrongEye": 0,
+ "wrongAge": 0,
+ "badRows": 20,
+ "readsPerfect": 127,
+ "readsFlagged": 9,
+ "readsWrongButUnflagged": 22,
+ "medianSeconds": 3.6,
+ "maxSeconds": 55.1,
+ "misreads": [
+  "uwhvf-4293-right run 0 r2 #5: -4 read as -3",
+  "uwhvf-4293-right run 0 r2 #6: -3 read as -4",
+  "uwhvf-2402-right run 0 r1 #3: -8 read as -4",
+  "uwhvf-2402-right run 0 r1 #4: -4 read as -6",
+  "uwhvf-2402-right run 0 r5 #5: -33 read as -2",
+  "uwhvf-1028-right run 0 r2 #6: -1 read as -2",
+  "uwhvf-2050-left run 0 r0 #1: -28 read as -27",
+  "uwhvf-481-right run 0 r1 #3: -30 read as -29",
+  "uwhvf-481-right run 0 r1 #4: -29 read as -28",
+  "uwhvf-481-right run 0 r2 #4: -32 read as -31",
+  "uwhvf-481-right run 0 r2 #5: -31 read as -30",
+  "uwhvf-481-right run 0 r2 #6: -30 read as -29",
+  "uwhvf-2896-left run 0 r3 #5: -33 read as -32",
+  "uwhvf-2896-left run 0 r3 #6: -32 read as -24",
+  "uwhvf-2896-left run 0 r3 #7: -24 read as -27",
+  "uwhvf-262-left run 0 r3 #7: -12 read as -24",
+  "uwhvf-262-left run 0 r4 #6: -8 read as -10",
+  "uwhvf-262-left run 0 r4 #7: -10 read as -14",
+  "uwhvf-4293-right run 1 r2 #5: -4 read as -3",
+  "uwhvf-4293-right run 1 r2 #6: -3 read as -4",
+  "uwhvf-68-left run 1 r0 #2: -13 read as -5",
+  "uwhvf-2972-left run 1 r4 #4: -8 read as -9",
+  "uwhvf-2972-left run 1 r4 #5: -9 read as -11",
+  "uwhvf-2972-left run 1 r4 #6: -11 read as -9",
+  "uwhvf-2402-right run 1 r1 #3: -8 read as -4",
+  "uwhvf-2402-right run 1 r1 #4: -4 read as -6",
+  "uwhvf-1028-right run 1 r2 #6: -1 read as -2",
+  "uwhvf-481-right run 1 r1 #3: -30 read as -29",
+  "uwhvf-481-right run 1 r1 #4: -29 read as -28",
+  "uwhvf-2896-left run 1 r3 #5: -33 read as -32",
+  "uwhvf-2896-left run 1 r3 #6: -32 read as -24",
+  "uwhvf-2896-left run 1 r3 #7: -24 read as -27",
+  "uwhvf-2896-left run 1 r5 #5: -33 read as -32",
+  "uwhvf-2896-left run 1 r5 #6: -32 read as -30",
+  "uwhvf-262-left run 1 r3 #7: -12 read as -24",
+  "uwhvf-262-left run 1 r4 #6: -8 read as -10",
+  "uwhvf-262-left run 1 r4 #7: -10 read as -14",
+  "uwhvf-4786-right run 1 r5 #4: -6 read as -5",
+  "uwhvf-4786-right run 1 r5 #5: -4 read as -6",
+  "uwhvf-4786-right run 1 r5 #6: -7 read as -4",
+  "uwhvf-4786-right run 1 r5 #7: -6 read as -7",
+  "uwhvf-4293-right run 2 r2 #5: -4 read as -3",
+  "uwhvf-4293-right run 2 r2 #6: -3 read as -4",
+  "uwhvf-68-left run 2 r0 #2: -13 read as -5",
+  "uwhvf-873-left run 2 r1 #4: -5 read as -2",
+  "uwhvf-873-left run 2 r2 #3: -4 read as -6",
+  "uwhvf-873-left run 2 r2 #4: -6 read as -5",
+  "uwhvf-873-left run 2 r2 #5: -5 read as -3",
+  "uwhvf-2402-right run 2 r1 #3: -8 read as -4",
+  "uwhvf-2402-right run 2 r1 #4: -4 read as -6",
+  "uwhvf-2402-right run 2 r5 #5: -33 read as -2",
+  "uwhvf-1028-right run 2 r2 #6: -1 read as -2",
+  "uwhvf-1028-right run 2 r2 #7: 0 read as -4",
+  "uwhvf-2896-left run 2 r3 #5: -33 read as -32",
+  "uwhvf-2896-left run 2 r3 #6: -32 read as -24",
+  "uwhvf-2896-left run 2 r3 #7: -24 read as -27",
+  "uwhvf-262-left run 2 r3 #7: -12 read as -24",
+  "uwhvf-4786-right run 2 r6 #0: -6 read as -8"
+ ],
+ "perPrintout": [
+  {
+   "name": "uwhvf-5003-right",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 4.4
+  },
+  {
+   "name": "uwhvf-5003-left",
+   "run": 0,
+   "wrong": 0,
+   "missing": 3,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 4.1
+  },
+  {
+   "name": "uwhvf-817-right",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.6
+  },
+  {
+   "name": "uwhvf-817-left",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 4.2
+  },
+  {
+   "name": "uwhvf-4293-right",
+   "run": 0,
+   "wrong": 2,
+   "missing": 1,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 4.4
+  },
+  {
+   "name": "uwhvf-4293-left",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 4.1
+  },
+  {
+   "name": "uwhvf-3219-right",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.5
+  },
+  {
+   "name": "uwhvf-3219-left",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 4
+  },
+  {
+   "name": "uwhvf-68-right",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.9
+  },
+  {
+   "name": "uwhvf-68-left",
+   "run": 0,
+   "wrong": 0,
+   "missing": 6,
+   "eyeRight": true,
+   "flagged": true,
+   "seconds": 7.9
+  },
+  {
+   "name": "uwhvf-2972-right",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 4.2
+  },
+  {
+   "name": "uwhvf-2972-left",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": true,
+   "seconds": 28.2
+  },
+  {
+   "name": "uwhvf-873-right",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.7
+  },
+  {
+   "name": "uwhvf-873-left",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 4.7
+  },
+  {
+   "name": "uwhvf-2402-right",
+   "run": 0,
+   "wrong": 3,
+   "missing": 2,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 2.6
+  },
+  {
+   "name": "uwhvf-2402-left",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.7
+  },
+  {
+   "name": "uwhvf-744-right",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 4
+  },
+  {
+   "name": "uwhvf-744-left",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 2.6
+  },
+  {
+   "name": "uwhvf-2353-right",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.4
+  },
+  {
+   "name": "uwhvf-2353-left",
+   "run": 0,
+   "wrong": 0,
+   "missing": 34,
+   "eyeRight": true,
+   "flagged": true,
+   "seconds": 3.4
+  },
+  {
+   "name": "uwhvf-1028-right",
+   "run": 0,
+   "wrong": 1,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 2.5
+  },
+  {
+   "name": "uwhvf-1028-left",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.7
+  },
+  {
+   "name": "uwhvf-2937-right",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.8
+  },
+  {
+   "name": "uwhvf-2937-left",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.1
+  },
+  {
+   "name": "uwhvf-2839-right",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 4
+  },
+  {
+   "name": "uwhvf-2839-left",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 4
+  },
+  {
+   "name": "uwhvf-2050-right",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 2.7
+  },
+  {
+   "name": "uwhvf-2050-left",
+   "run": 0,
+   "wrong": 1,
+   "missing": 1,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 10.1
+  },
+  {
+   "name": "uwhvf-481-right",
+   "run": 0,
+   "wrong": 5,
+   "missing": 2,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 5.2
+  },
+  {
+   "name": "uwhvf-481-left",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.4
+  },
+  {
+   "name": "uwhvf-1087-right",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.8
+  },
+  {
+   "name": "uwhvf-1087-left",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.7
+  },
+  {
+   "name": "uwhvf-474-right",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 2.8
+  },
+  {
+   "name": "uwhvf-474-left",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 13.8
+  },
+  {
+   "name": "uwhvf-2719-right",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 2.5
+  },
+  {
+   "name": "uwhvf-2719-left",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 5.8
+  },
+  {
+   "name": "uwhvf-2896-right",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.6
+  },
+  {
+   "name": "uwhvf-2896-left",
+   "run": 0,
+   "wrong": 3,
+   "missing": 1,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 9.8
+  },
+  {
+   "name": "uwhvf-1623-right",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.6
+  },
+  {
+   "name": "uwhvf-1623-left",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 2.8
+  },
+  {
+   "name": "uwhvf-262-right",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.6
+  },
+  {
+   "name": "uwhvf-262-left",
+   "run": 0,
+   "wrong": 3,
+   "missing": 2,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 10.1
+  },
+  {
+   "name": "uwhvf-4786-right",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": true,
+   "seconds": 6.9
+  },
+  {
+   "name": "uwhvf-4786-left",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.6
+  },
+  {
+   "name": "uwhvf-830-right",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.6
+  },
+  {
+   "name": "uwhvf-830-left",
+   "run": 0,
+   "wrong": 0,
+   "missing": 34,
+   "eyeRight": true,
+   "flagged": true,
+   "seconds": 3.4
+  },
+  {
+   "name": "uwhvf-3206-right",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.6
+  },
+  {
+   "name": "uwhvf-3206-left",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.4
+  },
+  {
+   "name": "uwhvf-2058-right",
+   "run": 0,
+   "error": "The printout could not be read. Try a sharper photo in good light, or type the numbers.",
+   "seconds": 55.1
+  },
+  {
+   "name": "uwhvf-2058-left",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 2.5
+  },
+  {
+   "name": "uwhvf-4198-right",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.4
+  },
+  {
+   "name": "uwhvf-4198-left",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 8.5
+  },
+  {
+   "name": "uwhvf-138-right",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.2
+  },
+  {
+   "name": "uwhvf-138-left",
+   "run": 0,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.6
+  },
+  {
+   "name": "uwhvf-5003-right",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.6
+  },
+  {
+   "name": "uwhvf-5003-left",
+   "run": 1,
+   "wrong": 0,
+   "missing": 4,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.8
+  },
+  {
+   "name": "uwhvf-817-right",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3
+  },
+  {
+   "name": "uwhvf-817-left",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.9
+  },
+  {
+   "name": "uwhvf-4293-right",
+   "run": 1,
+   "wrong": 2,
+   "missing": 1,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.6
+  },
+  {
+   "name": "uwhvf-4293-left",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.5
+  },
+  {
+   "name": "uwhvf-3219-right",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.4
+  },
+  {
+   "name": "uwhvf-3219-left",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.7
+  },
+  {
+   "name": "uwhvf-68-right",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.5
+  },
+  {
+   "name": "uwhvf-68-left",
+   "run": 1,
+   "wrong": 1,
+   "missing": 1,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 2.6
+  },
+  {
+   "name": "uwhvf-2972-right",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.8
+  },
+  {
+   "name": "uwhvf-2972-left",
+   "run": 1,
+   "wrong": 3,
+   "missing": 1,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 2.7
+  },
+  {
+   "name": "uwhvf-873-right",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.8
+  },
+  {
+   "name": "uwhvf-873-left",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 2.6
+  },
+  {
+   "name": "uwhvf-2402-right",
+   "run": 1,
+   "wrong": 2,
+   "missing": 1,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 2.7
+  },
+  {
+   "name": "uwhvf-2402-left",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.7
+  },
+  {
+   "name": "uwhvf-744-right",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.8
+  },
+  {
+   "name": "uwhvf-744-left",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 2.8
+  },
+  {
+   "name": "uwhvf-2353-right",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.6
+  },
+  {
+   "name": "uwhvf-2353-left",
+   "run": 1,
+   "wrong": 0,
+   "missing": 30,
+   "eyeRight": true,
+   "flagged": true,
+   "seconds": 3.2
+  },
+  {
+   "name": "uwhvf-1028-right",
+   "run": 1,
+   "wrong": 1,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 2.4
+  },
+  {
+   "name": "uwhvf-1028-left",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.6
+  },
+  {
+   "name": "uwhvf-2937-right",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.5
+  },
+  {
+   "name": "uwhvf-2937-left",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.6
+  },
+  {
+   "name": "uwhvf-2839-right",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.6
+  },
+  {
+   "name": "uwhvf-2839-left",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.7
+  },
+  {
+   "name": "uwhvf-2050-right",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 2.7
+  },
+  {
+   "name": "uwhvf-2050-left",
+   "run": 1,
+   "wrong": 0,
+   "missing": 1,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 17.8
+  },
+  {
+   "name": "uwhvf-481-right",
+   "run": 1,
+   "wrong": 2,
+   "missing": 1,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 7.9
+  },
+  {
+   "name": "uwhvf-481-left",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.5
+  },
+  {
+   "name": "uwhvf-1087-right",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.2
+  },
+  {
+   "name": "uwhvf-1087-left",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.8
+  },
+  {
+   "name": "uwhvf-474-right",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 2.7
+  },
+  {
+   "name": "uwhvf-474-left",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 5.9
+  },
+  {
+   "name": "uwhvf-2719-right",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 2.6
+  },
+  {
+   "name": "uwhvf-2719-left",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 6.3
+  },
+  {
+   "name": "uwhvf-2896-right",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.6
+  },
+  {
+   "name": "uwhvf-2896-left",
+   "run": 1,
+   "wrong": 5,
+   "missing": 2,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 11
+  },
+  {
+   "name": "uwhvf-1623-right",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.5
+  },
+  {
+   "name": "uwhvf-1623-left",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 2.5
+  },
+  {
+   "name": "uwhvf-262-right",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.7
+  },
+  {
+   "name": "uwhvf-262-left",
+   "run": 1,
+   "wrong": 3,
+   "missing": 2,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 9.5
+  },
+  {
+   "name": "uwhvf-4786-right",
+   "run": 1,
+   "wrong": 4,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": true,
+   "seconds": 4.6
+  },
+  {
+   "name": "uwhvf-4786-left",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 9.7
+  },
+  {
+   "name": "uwhvf-830-right",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.4
+  },
+  {
+   "name": "uwhvf-830-left",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.3
+  },
+  {
+   "name": "uwhvf-3206-right",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.5
+  },
+  {
+   "name": "uwhvf-3206-left",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.5
+  },
+  {
+   "name": "uwhvf-2058-right",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 5.4
+  },
+  {
+   "name": "uwhvf-2058-left",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 2.6
+  },
+  {
+   "name": "uwhvf-4198-right",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.5
+  },
+  {
+   "name": "uwhvf-4198-left",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 6.7
+  },
+  {
+   "name": "uwhvf-138-right",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.1
+  },
+  {
+   "name": "uwhvf-138-left",
+   "run": 1,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.7
+  },
+  {
+   "name": "uwhvf-5003-right",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.6
+  },
+  {
+   "name": "uwhvf-5003-left",
+   "run": 2,
+   "wrong": 0,
+   "missing": 3,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.6
+  },
+  {
+   "name": "uwhvf-817-right",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 6
+  },
+  {
+   "name": "uwhvf-817-left",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3
+  },
+  {
+   "name": "uwhvf-4293-right",
+   "run": 2,
+   "wrong": 2,
+   "missing": 1,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 2.8
+  },
+  {
+   "name": "uwhvf-4293-left",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.7
+  },
+  {
+   "name": "uwhvf-3219-right",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.7
+  },
+  {
+   "name": "uwhvf-3219-left",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.3
+  },
+  {
+   "name": "uwhvf-68-right",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.7
+  },
+  {
+   "name": "uwhvf-68-left",
+   "run": 2,
+   "wrong": 1,
+   "missing": 1,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 2.6
+  },
+  {
+   "name": "uwhvf-2972-right",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.4
+  },
+  {
+   "name": "uwhvf-2972-left",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 28.1
+  },
+  {
+   "name": "uwhvf-873-right",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.3
+  },
+  {
+   "name": "uwhvf-873-left",
+   "run": 2,
+   "wrong": 4,
+   "missing": 2,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 2.6
+  },
+  {
+   "name": "uwhvf-2402-right",
+   "run": 2,
+   "wrong": 3,
+   "missing": 2,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 2.6
+  },
+  {
+   "name": "uwhvf-2402-left",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.5
+  },
+  {
+   "name": "uwhvf-744-right",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.4
+  },
+  {
+   "name": "uwhvf-744-left",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 2.7
+  },
+  {
+   "name": "uwhvf-2353-right",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.7
+  },
+  {
+   "name": "uwhvf-2353-left",
+   "run": 2,
+   "wrong": 0,
+   "missing": 34,
+   "eyeRight": true,
+   "flagged": true,
+   "seconds": 3.4
+  },
+  {
+   "name": "uwhvf-1028-right",
+   "run": 2,
+   "wrong": 2,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 2.5
+  },
+  {
+   "name": "uwhvf-1028-left",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3
+  },
+  {
+   "name": "uwhvf-2937-right",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.3
+  },
+  {
+   "name": "uwhvf-2937-left",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 2.9
+  },
+  {
+   "name": "uwhvf-2839-right",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.5
+  },
+  {
+   "name": "uwhvf-2839-left",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.7
+  },
+  {
+   "name": "uwhvf-2050-right",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.2
+  },
+  {
+   "name": "uwhvf-2050-left",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 33.5
+  },
+  {
+   "name": "uwhvf-481-right",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 35.7
+  },
+  {
+   "name": "uwhvf-481-left",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.6
+  },
+  {
+   "name": "uwhvf-1087-right",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.2
+  },
+  {
+   "name": "uwhvf-1087-left",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.8
+  },
+  {
+   "name": "uwhvf-474-right",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 2.9
+  },
+  {
+   "name": "uwhvf-474-left",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 4.6
+  },
+  {
+   "name": "uwhvf-2719-right",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 5.1
+  },
+  {
+   "name": "uwhvf-2719-left",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 4
+  },
+  {
+   "name": "uwhvf-2896-right",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.5
+  },
+  {
+   "name": "uwhvf-2896-left",
+   "run": 2,
+   "wrong": 3,
+   "missing": 1,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 5.8
+  },
+  {
+   "name": "uwhvf-1623-right",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.4
+  },
+  {
+   "name": "uwhvf-1623-left",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 8.3
+  },
+  {
+   "name": "uwhvf-262-right",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.7
+  },
+  {
+   "name": "uwhvf-262-left",
+   "run": 2,
+   "wrong": 1,
+   "missing": 1,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.7
+  },
+  {
+   "name": "uwhvf-4786-right",
+   "run": 2,
+   "wrong": 1,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": true,
+   "seconds": 2.6
+  },
+  {
+   "name": "uwhvf-4786-left",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.3
+  },
+  {
+   "name": "uwhvf-830-right",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.4
+  },
+  {
+   "name": "uwhvf-830-left",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 2.9
+  },
+  {
+   "name": "uwhvf-3206-right",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.2
+  },
+  {
+   "name": "uwhvf-3206-left",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 5.2
+  },
+  {
+   "name": "uwhvf-2058-right",
+   "run": 2,
+   "error": "The printout could not be read. Try a sharper photo in good light, or type the numbers.",
+   "seconds": 55
+  },
+  {
+   "name": "uwhvf-2058-left",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 2.9
+  },
+  {
+   "name": "uwhvf-4198-right",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.6
+  },
+  {
+   "name": "uwhvf-4198-left",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 8.4
+  },
+  {
+   "name": "uwhvf-138-right",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.4
+  },
+  {
+   "name": "uwhvf-138-left",
+   "run": 2,
+   "wrong": 0,
+   "missing": 0,
+   "eyeRight": true,
+   "flagged": false,
+   "seconds": 3.6
+  }
+ ]
+}

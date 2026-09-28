@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 import { AudiogramChart } from "@/components/AudiogramChart";
+import { HearingTest } from "@/components/hearing-test/HearingTest";
 import { FieldMap } from "@/components/FieldMap";
 import { Button, Segmented } from "@/components/ui";
 import { toAudiogram, useAudiogramLibrary, useFieldIndex } from "@/lib/data";
@@ -12,6 +13,7 @@ import { newId, savePerson, usePeople } from "@/lib/people";
 import { cap, pronouns, type PronounSet } from "@/lib/pronouns";
 import type { Audiogram, FieldProfile, Grid, Person, SetupMode } from "@/lib/types";
 import { PrintoutEntry } from "./PrintoutEntry";
+import { PrintoutPhoto } from "./PrintoutPhoto";
 
 const STEPS = ["Who", "Vision", "Hearing", "What helps", "Check"] as const;
 
@@ -53,6 +55,9 @@ export function SetupFlow() {
   const audLib = useAudiogramLibrary();
   const fieldIdx = useFieldIndex();
   const [audiogram, setAudiogram] = useState<Audiogram | null>(existing?.audiogram ?? null);
+  const [testing, setTesting] = useState(false);
+  // Bumped when a photo fills a grid, so the typed inputs remount with the new values.
+  const [gridVersion, setGridVersion] = useState(0);
   const [strategies, setStrategies] = useState<string[]>(existing?.strategies ?? []);
   const [extra, setExtra] = useState("");
 
@@ -200,16 +205,28 @@ export function SetupFlow() {
           {fieldSource === "printout" ? (
             <div className="space-y-6">
               <p className="leading-relaxed text-ink/80">
-                On a Humphrey 24-2 report, find the grid labelled <strong>Total Deviation</strong> (numbers, usually below the grey picture). Type each number where it sits. Leave blanks for anything you
-                can’t read. The dots are the blind spot.
+                On a Humphrey 24-2 report, find the grid labelled <strong>Total Deviation</strong> (numbers, usually below the grey picture). Photograph each eye’s printout and the numbers fill in,
+                or type each number where it sits. Leave blanks for anything you can’t read. The dots are the blind spot.
               </p>
               <label className="block max-w-40">
                 <span className="font-bold">Age at the test</span>
                 <input inputMode="numeric" value={testAge} onChange={(e) => setTestAge(e.target.value)} className="mt-2 block h-12 w-full rounded-xl border border-ink/20 bg-white px-4" />
               </label>
               <div className="flex flex-col gap-8 overflow-x-auto">
-                <PrintoutEntry eye="left" grid={left} onChange={setLeft} />
-                <PrintoutEntry eye="right" grid={right} onChange={setRight} />
+                {(["left", "right"] as const).map((eye) => (
+                  <div key={eye} className="space-y-3">
+                    <PrintoutPhoto
+                      eye={eye}
+                      onRead={(g, age) => {
+                        (eye === "left" ? setLeft : setRight)(g);
+                        if (age && !testAge) setTestAge(String(Math.round(age)));
+                        setGridVersion((v) => v + 1);
+                      }}
+                    />
+                    <PrintoutEntry key={`${eye}-${gridVersion}`} eye={eye} grid={eye === "left" ? left : right} onChange={eye === "left" ? setLeft : setRight} />
+                  </div>
+                ))}
+                <p className="text-sm leading-relaxed text-graphite">A photo is sent to Claude (Anthropic) only to read the numbers; we don’t keep it.</p>
               </div>
               <div className="flex items-center gap-5">
                 <FieldMap grid={binocular} size={170} showLabels={false} title="Both eyes together, from the numbers entered" />
@@ -251,8 +268,26 @@ export function SetupFlow() {
         <section className="mt-10 space-y-6">
           <h1 className="text-display font-light tracking-[-0.02em]">{cap(p.poss)} hearing</h1>
           <p className="leading-relaxed text-ink/80">
-            Start from the profile closest to {p.poss} audiogram, then drag the red circles (right ear) and blue crosses (left ear) to match {p.poss} results. Each step is 5 dB.
+            If {p.subj} {p.has} an audiogram, start from the closest profile below, then drag the red circles (right ear) and blue crosses (left ear) to match {p.poss} results. Each step is 5 dB.
           </p>
+          <div className="rounded-2xl border border-ink/15 p-4">
+            <p className="leading-relaxed">No audiogram? Test {p.poss} hearing here together: a beep test on headphones, about 12 minutes for the two of you.</p>
+            <Button kind="secondary" className="mt-3" onClick={() => setTesting(true)}>
+              Test {p.poss} hearing
+            </Button>
+          </div>
+          {testing && (
+            <HearingTest
+              name={who}
+              p={p}
+              defaultHelper={setupBy}
+              onClose={() => setTesting(false)}
+              onDone={(a) => {
+                setAudiogram(a);
+                setTesting(false);
+              }}
+            />
+          )}
           <div className="flex flex-wrap gap-2">
             {audLib?.typical.map((t) => (
               <button key={t.id} onClick={() => setAudiogram(toAudiogram(t))} className="min-h-11 rounded-full bg-ink/[0.06] px-4 text-[0.95rem] hover:bg-ink/[0.1]">
