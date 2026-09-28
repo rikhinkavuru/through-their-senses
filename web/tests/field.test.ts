@@ -61,3 +61,18 @@ describe("gridPoints", () => {
     expect(gridPoints(emptyGrid())).toHaveLength(0);
   });
 });
+
+describe("printout layout against real tests", () => {
+  it("places every tested point of every library field inside the printed 24-2 layout", async () => {
+    const fs = await import("node:fs");
+    const files = fs.readdirSync("public/data/fields").filter((f: string) => f.endsWith(".json"));
+    let outside = 0;
+    for (const f of files) {
+      const field = JSON.parse(fs.readFileSync(`public/data/fields/${f}`, "utf8"));
+      for (const v of field.visits)
+        for (const eye of ["right", "left"] as const)
+          v[eye].forEach((row: (number | null)[], r: number) => row.forEach((x, c) => x !== null && !PRINTOUT_ROWS[r][eye].includes(c) && outside++));
+    }
+    expect(outside).toBe(0);
+  });
+});

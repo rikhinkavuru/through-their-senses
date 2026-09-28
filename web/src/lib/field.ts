@@ -130,14 +130,15 @@ export function lossWords(td: number): string {
  * sits at x = +15 (right eye) or -15 (left eye), y = +-3.
  */
 export const PRINTOUT_ROWS: { right: number[]; left: number[] }[] = [
-  { right: [3, 4, 5, 6], left: [4, 5, 6, 7] },
-  { right: [2, 3, 4, 5, 6, 7], left: [3, 4, 5, 6, 7, 8] },
-  { right: [1, 2, 3, 4, 5, 6, 7, 8], left: [2, 3, 4, 5, 6, 7, 8, 9] },
+  // Only the two middle rows differ between eyes: each has one extra point on the nasal side.
+  { right: [3, 4, 5, 6], left: [3, 4, 5, 6] },
+  { right: [2, 3, 4, 5, 6, 7], left: [2, 3, 4, 5, 6, 7] },
+  { right: [1, 2, 3, 4, 5, 6, 7, 8], left: [1, 2, 3, 4, 5, 6, 7, 8] },
   { right: [0, 1, 2, 3, 4, 5, 6, 7, 8], left: [1, 2, 3, 4, 5, 6, 7, 8, 9] },
   { right: [0, 1, 2, 3, 4, 5, 6, 7, 8], left: [1, 2, 3, 4, 5, 6, 7, 8, 9] },
-  { right: [1, 2, 3, 4, 5, 6, 7, 8], left: [2, 3, 4, 5, 6, 7, 8, 9] },
-  { right: [2, 3, 4, 5, 6, 7], left: [3, 4, 5, 6, 7, 8] },
-  { right: [3, 4, 5, 6], left: [4, 5, 6, 7] },
+  { right: [1, 2, 3, 4, 5, 6, 7, 8], left: [1, 2, 3, 4, 5, 6, 7, 8] },
+  { right: [2, 3, 4, 5, 6, 7], left: [2, 3, 4, 5, 6, 7] },
+  { right: [3, 4, 5, 6], left: [3, 4, 5, 6] },
 ];
 
 export function isBlindSpot(eye: "right" | "left", row: number, col: number): boolean {
