@@ -5,7 +5,8 @@
  *  1. Build a Gaussian pyramid of the frame in linear light.
  *  2. Each Laplacian band is divided by the local mean one octave below to give
  *     local band contrast.
- *  3. Contrast below that person's threshold at that point in the field is removed.
+ *  3. Contrast below that person's threshold at that point in the field is removed, and
+ *     contrast above it is reduced by the threshold (soft thresholding).
  *     Threshold = normal threshold for the band's spatial frequency (Mannos-Sakrison
  *     CSF) x 10^(-TD/10), from the fitted total deviation at that visual angle.
  *  4. Reconstruct. Where loss is deep, every band is removed and only the coarse
@@ -50,8 +51,43 @@ out vec4 o;
 void main() {
   vec2 uv = vUv;
   if (uMirror > 0.5) uv.x = 1.0 - uv.x;
-  vec3 c = texture(uSrc, uCrop.xy * uv + uCrop.zw).rgb;
-  o = vec4(pow(c, vec3(2.2)) * uDim, 1.0);
+  vec3 lin = pow(texture(uSrc, uCrop.xy * uv + uCrop.zw).rgb, vec3(2.2));
+  // In dim light the room darkens but lamps stay bright.
+  float src = smoothstep(0.85, 0.97, dot(lin, vec3(0.2126, 0.7152, 0.0722)));
+  o = vec4(lin * mix(uDim, 1.0, src), 1.0);
+}`;
+
+// Bright light sources only (lamps, windows), for the glare veil.
+const FS_SOURCES = `#version 300 es
+precision highp float;
+in vec2 vUv;
+uniform sampler2D uSrc;
+uniform vec4 uCrop;
+uniform float uMirror;
+out vec4 o;
+void main() {
+  vec2 uv = vUv;
+  if (uMirror > 0.5) uv.x = 1.0 - uv.x;
+  vec3 lin = pow(texture(uSrc, uCrop.xy * uv + uCrop.zw).rgb, vec3(2.2));
+  float l = dot(lin, vec3(0.2126, 0.7152, 0.0722));
+  o = vec4(vec3(l * smoothstep(0.85, 0.97, l)), 1.0);
+}`;
+
+// Glare veil: scattered light falls off roughly as 1/angle^2 (Stiles-Holladay). A sum of
+// octave-spaced Gaussian blurs with equal weights approximates that kernel.
+const FS_VEIL = `#version 300 es
+precision highp float;
+in vec2 vUv;
+uniform sampler2D uS1;
+uniform sampler2D uS2;
+uniform sampler2D uS3;
+uniform sampler2D uS4;
+uniform sampler2D uS5;
+uniform float uGain;
+out vec4 o;
+void main() {
+  float v = texture(uS1, vUv).r + texture(uS2, vUv).r + texture(uS3, vUv).r + texture(uS4, vUv).r + texture(uS5, vUv).r;
+  o = vec4(vec3(uGain * v / 5.0), 1.0);
 }`;
 
 // 3x3 binomial blur sampled from the finer level, then decimated by 2.
@@ -80,7 +116,7 @@ uniform sampler2D uPrev;
 uniform sampler2D uField;
 uniform float uThreshold;   // normal contrast threshold for this band
 uniform float uNightFactor; // extra threshold factor in dim light (1 in daylight)
-uniform float uVeil;        // glare veil luminance added to the local mean
+uniform sampler2D uVeilTex; // glare veil luminance added to the local mean
 uniform vec2 uGaze;         // fixation, normalized (origin bottom-left, GL convention)
 uniform vec2 uFocal;        // focal length in normalized units (x, y)
 uniform float uExtent;      // field map half-extent, degrees
@@ -91,7 +127,7 @@ void main() {
   vec3 up = texture(uGk1, vUv).rgb;
   vec3 prev = texture(uPrev, vUv).rgb;
   vec3 band = gk - up;
-  float mean = max(dot(up, W) + uVeil, 1e-3);
+  float mean = max(dot(up, W) + texture(uVeilTex, vUv).r, 1e-3);
   float c = abs(dot(band, W)) / mean;
 
   vec2 d = (vUv - uGaze) / uFocal;
@@ -101,7 +137,9 @@ void main() {
   float td = (fuv.x < 0.0 || fuv.x > 1.0 || fuv.y < 0.0 || fuv.y > 1.0) ? 0.0 : f.r;
   float m = pow(10.0, -min(td, 0.0) / 10.0) * uNightFactor;
   float t = uThreshold * m;
-  float g = smoothstep(0.7 * t, 1.3 * t, c);
+  // Soft threshold: contrast above threshold survives, reduced by the threshold, so
+  // detail fades smoothly instead of switching on and off (avoids sparkle artifacts).
+  float g = clamp((c - t) / max(c, 1e-4), 0.0, 1.0);
   g = mix(1.0, g, step(1.05, m));
   o = vec4(prev + g * band, 1.0);
 }`;
@@ -112,11 +150,11 @@ in vec2 vUv;
 uniform sampler2D uTheirs;
 uniform sampler2D uTypical;
 uniform float uWipe;
-uniform float uVeil;
+uniform sampler2D uVeilTex;
 out vec4 o;
 void main() {
   bool typical = vUv.x < uWipe;
-  vec3 lin = typical ? texture(uTypical, vUv).rgb : texture(uTheirs, vUv).rgb + vec3(uVeil);
+  vec3 lin = typical ? texture(uTypical, vUv).rgb : texture(uTheirs, vUv).rgb + texture(uVeilTex, vUv).rgb;
   o = vec4(pow(max(lin, 0.0), vec3(1.0 / 2.2)), 1.0);
 }`;
 
@@ -131,12 +169,15 @@ type Prog = { p: WebGLProgram; u: Record<string, WebGLUniformLocation | null> };
 
 export class FieldRenderer {
   private gl: WebGL2RenderingContext;
-  private progs: Record<"copy" | "down" | "recon" | "final", Prog>;
+  private progs: Record<"copy" | "down" | "recon" | "final" | "sources" | "veil", Prog>;
   private vao: WebGLVertexArrayObject;
   private src: WebGLTexture;
   private field: WebGLTexture;
   private gauss: Target[] = [];
   private recon: Target[] = [];
+  private srcPyr: Target[] = [];
+  private veilT: Target | null = null;
+  private black: WebGLTexture;
   private workW = 0;
   private workH = 0;
   private float: boolean;
@@ -151,8 +192,10 @@ export class FieldRenderer {
     this.progs = {
       copy: this.program(FS_COPY, ["uSrc", "uCrop", "uMirror", "uDim"]),
       down: this.program(FS_DOWN, ["uSrc", "uSrcTexel"]),
-      recon: this.program(FS_RECON, ["uGk", "uGk1", "uPrev", "uField", "uThreshold", "uNightFactor", "uVeil", "uGaze", "uFocal", "uExtent"]),
-      final: this.program(FS_FINAL, ["uTheirs", "uTypical", "uWipe", "uVeil"]),
+      recon: this.program(FS_RECON, ["uGk", "uGk1", "uPrev", "uField", "uThreshold", "uNightFactor", "uVeilTex", "uGaze", "uFocal", "uExtent"]),
+      final: this.program(FS_FINAL, ["uTheirs", "uTypical", "uWipe", "uVeilTex"]),
+      sources: this.program(FS_SOURCES, ["uSrc", "uCrop", "uMirror"]),
+      veil: this.program(FS_VEIL, ["uS1", "uS2", "uS3", "uS4", "uS5", "uGain"]),
     };
     const vao = gl.createVertexArray()!;
     gl.bindVertexArray(vao);
@@ -164,6 +207,8 @@ export class FieldRenderer {
     this.vao = vao;
     this.src = this.texture();
     this.field = this.texture();
+    this.black = this.texture();
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array([0, 0, 0, 255]));
   }
 
   private program(fs: string, uniforms: string[]): Prog {
@@ -211,20 +256,23 @@ export class FieldRenderer {
   private ensureTargets(w: number, h: number) {
     if (w === this.workW && h === this.workH) return;
     const gl = this.gl;
-    for (const t of [...this.gauss, ...this.recon]) {
+    for (const t of [...this.gauss, ...this.recon, ...this.srcPyr, ...(this.veilT ? [this.veilT] : [])]) {
       gl.deleteTexture(t.tex);
       gl.deleteFramebuffer(t.fbo);
     }
     this.gauss = [];
     this.recon = [];
+    this.srcPyr = [];
     let lw = w;
     let lh = h;
     while (Math.min(lw, lh) >= MIN_LEVEL_DIM) {
       this.gauss.push(this.target(lw, lh));
       this.recon.push(this.target(lw, lh));
+      this.srcPyr.push(this.target(lw, lh));
       lw = Math.max(1, Math.floor(lw / 2));
       lh = Math.max(1, Math.floor(lh / 2));
     }
+    this.veilT = this.target(Math.max(1, Math.floor(w / 2)), Math.max(1, Math.floor(h / 2)));
     this.workW = w;
     this.workH = h;
   }
@@ -311,13 +359,35 @@ export class FieldRenderer {
       gl.drawArrays(gl.TRIANGLES, 0, 3);
     }
 
+    // Glare veil (dim light only): light sources, blurred at octave scales and summed.
+    let veilTex = this.black;
+    if (params.night && this.veilT && this.srcPyr.length > 6) {
+      const sp = this.progs.sources;
+      this.pass(sp, this.srcPyr[0]);
+      this.bind(0, this.src, sp.u.uSrc);
+      gl.uniform4f(sp.u.uCrop, sx, sy, (1 - sx) / 2, (1 - sy) / 2);
+      gl.uniform1f(sp.u.uMirror, params.mirror ? 1 : 0);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+      for (let k = 1; k < this.srcPyr.length; k++) {
+        this.pass(down, this.srcPyr[k]);
+        this.bind(0, this.srcPyr[k - 1].tex, down.u.uSrc);
+        gl.uniform2f(down.u.uSrcTexel, 1 / this.srcPyr[k - 1].w, 1 / this.srcPyr[k - 1].h);
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+      }
+      const vp = this.progs.veil;
+      this.pass(vp, this.veilT);
+      [2, 3, 4, 5, 6].forEach((lvl, i) => this.bind(i, this.srcPyr[lvl].tex, vp.u[`uS${i + 1}`]));
+      gl.uniform1f(vp.u.uGain, NIGHT.glareGain);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+      veilTex = this.veilT.tex;
+    }
+
     // Pixels per degree at the centre of level 0, in real-world degrees.
     const focalPx = w / 2 / Math.tan(shownHfov / 2);
     const ppd = focalPx * Math.tan(Math.PI / 180);
     const focal: [number, number] = [focalPx / w, focalPx / h];
     const gaze: [number, number] = [params.gaze[0], 1 - params.gaze[1]];
     const nightFactor = params.night ? NIGHT.typicalFactor * NIGHT.glaucomaExtraFactor : 1;
-    const veil = 0;
 
     const n = this.gauss.length;
     const recon = this.progs.recon;
@@ -332,7 +402,7 @@ export class FieldRenderer {
       this.bind(3, this.field, recon.u.uField);
       gl.uniform1f(recon.u.uThreshold, normalThreshold(bandCpd));
       gl.uniform1f(recon.u.uNightFactor, nightFactor);
-      gl.uniform1f(recon.u.uVeil, veil);
+      this.bind(4, veilTex, recon.u.uVeilTex);
       gl.uniform2f(recon.u.uGaze, gaze[0], gaze[1]);
       gl.uniform2f(recon.u.uFocal, focal[0], focal[1]);
       gl.uniform1f(recon.u.uExtent, MAP_EXTENT);
@@ -345,7 +415,7 @@ export class FieldRenderer {
     this.bind(0, this.recon[0].tex, fin.u.uTheirs);
     this.bind(1, this.gauss[0].tex, fin.u.uTypical);
     gl.uniform1f(fin.u.uWipe, params.wipe);
-    gl.uniform1f(fin.u.uVeil, veil);
+    this.bind(2, veilTex, fin.u.uVeilTex);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
     if (this.frames++ < 3) {
       const err = gl.getError();
@@ -360,10 +430,11 @@ export class FieldRenderer {
 
   dispose() {
     const gl = this.gl;
-    for (const t of [...this.gauss, ...this.recon]) {
+    for (const t of [...this.gauss, ...this.recon, ...this.srcPyr, ...(this.veilT ? [this.veilT] : [])]) {
       gl.deleteTexture(t.tex);
       gl.deleteFramebuffer(t.fbo);
     }
+    gl.deleteTexture(this.black);
     gl.deleteTexture(this.src);
     gl.deleteTexture(this.field);
     // Do not call loseContext(): the canvas keeps the same context object, and a

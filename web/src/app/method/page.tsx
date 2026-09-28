@@ -50,7 +50,7 @@ function Section({ id, title, children }: { id: string; title: string; children:
 const STATUS: [string, "Working" | "Approximation" | "Planned", string][] = [
   ["Vision through a real visual field test", "Working", "UWHVF fields or numbers typed from a printout; Peli contrast model on camera or photos."],
   ["Change over the years", "Working", "Pointwise trend across every visit for that eye."],
-  ["Dim light and glare", "Approximation", "A threshold penalty for dim light. Glare from bright windows is not yet modelled."],
+  ["Dim light and glare", "Approximation", "A threshold penalty for dim light, plus a glare veil around bright lamps and windows (scattered light falling off with angle). Tuned from research, not measured for the person."],
   ["Follow-my-eyes (gaze-contingent) view", "Planned", "Phones can’t use front and back cameras together; this needs a laptop webcam and eye tracking."],
   ["Step edges on the walk-through", "Working", "On-device depth model plus contrast measured on the photo. Can mistake rails or table edges for steps."],
   ["Hearing through a real audiogram", "Working", "Cambridge MSBG simulator and a proxy listener, validated against real listeners (below)."],

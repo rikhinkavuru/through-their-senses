@@ -40,6 +40,8 @@ export const NIGHT = {
   sceneLuminance: 0.22,
   typicalFactor: 2.5,
   glaucomaExtraFactor: 1.6,
+  /** Strength of the glare veil from bright sources (tuned visually; glare is a common complaint in glaucoma). */
+  glareGain: 0.2,
 };
 
 /** Weber contrast of an edge between two linear luminances. */

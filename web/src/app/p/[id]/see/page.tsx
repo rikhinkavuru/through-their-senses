@@ -19,6 +19,10 @@ const SCENES = [
 
 type SceneId = (typeof SCENES)[number]["id"] | "camera";
 
+function param(name: string): string | null {
+  return typeof window === "undefined" ? null : new URLSearchParams(window.location.search).get(name);
+}
+
 /** Where each tested point of the field lands on screen, given the shown field of view. */
 function projectPoints(
   grid: ReturnType<typeof gridPoints>,
@@ -40,10 +44,14 @@ function projectPoints(
 
 export default function See() {
   const { person, field, visit, setVisit, grid, p, base } = usePersonCtx();
-  const [scene, setScene] = useState<SceneId>("hallway");
+  // Deep links for filming and testing: ?scene=stairs&wipe=0&night=1&visit=0
+  const [scene, setScene] = useState<SceneId>(() => {
+    const sc = param("scene");
+    return sc && (sc === "camera" || SCENES.some((x) => x.id === sc)) ? (sc as SceneId) : "hallway";
+  });
   const [facing] = useState<"environment" | "user">("environment");
-  const [wipe, setWipe] = useState(0.5);
-  const [night, setNight] = useState(false);
+  const [wipe, setWipe] = useState(() => (param("wipe") !== null ? Math.min(1, Math.max(0, Number(param("wipe")))) : 0.5));
+  const [night, setNight] = useState(() => param("night") === "1");
   const [showPoints, setShowPoints] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [adaptOpen, setAdaptOpen] = useState(false);
@@ -164,7 +172,9 @@ export default function See() {
               Where {p.poss} vision is weaker, detail and contrast fade. Where it is very weak, things disappear into their surroundings. People with glaucoma describe it this way: 0 of 50 patients in one study
               said it looks like the black tunnel usually shown (Crabb et al., 2013).
             </p>
-            <p>Night mode is an approximation of how dim light makes this worse. It is not measured for {p.obj}.</p>
+            <p>
+              Dim light is an approximation: vision needs more contrast in low light, and bright lamps or windows scatter light that washes out what is near them. It is not measured for {p.obj}.
+            </p>
                       {scene !== "camera" &&
               (() => {
                 const c = credits.find((x) => x.id === scene);
