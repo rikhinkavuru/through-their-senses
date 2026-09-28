@@ -56,3 +56,43 @@ def align(ref: list[str], hyp: list[str]) -> list[tuple[str | None, str | None]]
 
 def words_correct(ref: list[str], hyp: list[str]) -> int:
     return sum(1 for r, h in align(ref, hyp) if r is not None and r == h)
+
+
+def _similar(a: str, b: str) -> float:
+    from difflib import SequenceMatcher
+
+    return SequenceMatcher(None, a, b).ratio()
+
+
+def align_for_display(ref: list[str], hyp: list[str]) -> list[tuple[str | None, str | None]]:
+    """Alignment for showing what was heard: substitutions between similar-sounding
+    spellings (fifteen / fifty) are cheaper, so the pairing reads naturally.
+
+    Display only. Word counting uses align(), which the validation also uses.
+    """
+    n, m = len(ref), len(hyp)
+    d = [[0.0] * (m + 1) for _ in range(n + 1)]
+    for i in range(n + 1):
+        d[i][0] = float(i)
+    for j in range(m + 1):
+        d[0][j] = float(j)
+
+    def sub(a: str, b: str) -> float:
+        return 0.0 if a == b else 1.0 - 0.6 * _similar(a, b)
+
+    for i in range(1, n + 1):
+        for j in range(1, m + 1):
+            d[i][j] = min(d[i - 1][j] + 1, d[i][j - 1] + 1, d[i - 1][j - 1] + sub(ref[i - 1], hyp[j - 1]))
+    pairs: list[tuple[str | None, str | None]] = []
+    i, j = n, m
+    while i > 0 or j > 0:
+        if i > 0 and j > 0 and abs(d[i][j] - (d[i - 1][j - 1] + sub(ref[i - 1], hyp[j - 1]))) < 1e-9:
+            pairs.append((ref[i - 1], hyp[j - 1]))
+            i, j = i - 1, j - 1
+        elif i > 0 and abs(d[i][j] - (d[i - 1][j] + 1)) < 1e-9:
+            pairs.append((ref[i - 1], None))
+            i -= 1
+        else:
+            pairs.append((None, hyp[j - 1]))
+            j -= 1
+    return pairs[::-1]

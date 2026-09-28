@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 import { emptyGrid, interpolateField, MAP_SIZE, PRINTOUT_ROWS } from "@/lib/field";
 import { FieldRenderer } from "@/lib/vision/renderer";
 
@@ -46,7 +46,7 @@ function stats(px: Uint8Array) {
 }
 
 export function RendererTest() {
-  const [result, setResult] = useState<string>("running");
+  const out = useRef<HTMLPreElement>(null);
   useEffect(() => {
     const canvas = document.createElement("canvas");
     canvas.width = SIZE;
@@ -84,10 +84,14 @@ export function RendererTest() {
       moderateKeepsSome: levels[2].rms > 0.05 * s0.rms,
       meanPreserved: meanDrift < 0.04,
     };
-    const out = { pass: Object.values(checks).every(Boolean), checks, identityErr, deepFraction, meanDrift, levels, originalRms: s0.rms };
-    (window as unknown as { __rendererTest: unknown }).__rendererTest = out;
-    setResult(JSON.stringify(out, null, 1));
+    const result = { pass: Object.values(checks).every(Boolean), checks, identityErr, deepFraction, meanDrift, levels, originalRms: s0.rms };
+    (window as unknown as { __rendererTest: unknown }).__rendererTest = result;
+    if (out.current) out.current.textContent = JSON.stringify(result, null, 1);
     r.dispose();
   }, []);
-  return <pre className="p-4 text-xs">{result}</pre>;
+  return (
+    <pre ref={out} className="p-4 text-xs">
+      running
+    </pre>
+  );
 }

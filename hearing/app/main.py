@@ -35,7 +35,7 @@ from app.sim import (
     to_fs,
     transcribe,
 )
-from app.text import align, normalize_words, words_correct
+from app.text import align, align_for_display, normalize_words, words_correct
 
 UNCLEAR_P = 0.4  # below this word probability the proxy listener is guessing
 PLAYBACK_FS = 22050
@@ -99,6 +99,23 @@ def _alignment(ref: list[str], heard: list[str]) -> list[dict]:
             status = "misheard"
         rows.append(dict(said=r, heard=h, status=status))
     return rows
+
+
+def _heard_display(ref: list[str], heard: list[str]) -> list[dict]:
+    """Every heard token in order, marked ok / wrong / unclear, for the transcript view."""
+    out: list[dict] = []
+    prev_unclear = False
+    for r, h in align_for_display(ref, heard):
+        if h is None:
+            continue
+        if h == "…":
+            if not prev_unclear:
+                out.append(dict(w="…", s="unclear"))
+            prev_unclear = True
+            continue
+        prev_unclear = False
+        out.append(dict(w=h, s="ok" if h == r else "wrong", said=r))
+    return out
 
 
 def _heard_text(heard: list[str]) -> str:
@@ -207,6 +224,7 @@ async def hear(
             dict(
                 type="her",
                 herText=_heard_text(heard),
+                heardTokens=_heard_display(ref, heard),
                 words=rows,
                 herCorrect=sum(r["status"] == "heard" for r in rows),
                 total=len(rows),

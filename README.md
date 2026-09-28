@@ -19,7 +19,7 @@ Disability simulations can backfire when shown alone, making people rate disable
 | Screen | What happens |
 |---|---|
 | **See** | The camera (or a sample room) through their visual field: detail and contrast fade where their field is weaker, and objects disappear into their surroundings where it’s weakest. Drag to compare with your view; scrub through years of tests; dim-light mode. |
-| **Hear** | Say a sentence. It plays through a model of their hearing; a speech recogniser listening through that model shows what they probably heard (“your pills are on the shelf next to the sink” becomes “your *poles* … next to the *snake*”). Letters fade by how audible each sound is. Quiet room or dinner table, with or without hearing aids. |
+| **Hear** | Say a sentence. It plays through a model of their hearing; a speech recogniser listening through that model shows what they probably heard (in a quiet room, “I’ll pick you up at fifteen past six on Thursday” becomes “I’ll pick you up at *fifty* and have six on Thursday”). Letters fade by how audible each sound is. Quiet room or dinner table, with or without hearing aids. |
 | **Say it better** | Claude writes rewordings; each is spoken by one synthetic voice and scored by the same hearing model, and only the ones that come through better are shown. |
 | **Walk** | Aim the phone where they’d look while walking. An on-device depth model finds step edges; each edge’s contrast is compared with what their vision needs at that spot. Try a contrasting strip and see the verdict change; they decide what to do. |
 | **Sit** | Where to sit at the table so they can hear you and see your face: better-ear side, face in their clear field, not backlit. |

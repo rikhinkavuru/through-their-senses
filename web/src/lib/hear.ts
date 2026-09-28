@@ -19,6 +19,8 @@ export interface HearResult {
   betterEar: "left" | "right";
   audio: { you: string; her?: string };
   herText?: string;
+  /** Every heard word in order (including ones that replace or add to what was said). */
+  heardTokens?: { w: string; s: "ok" | "wrong" | "unclear"; said?: string | null }[];
   herCorrect?: number;
   total?: number;
   typicalCorrect?: number;

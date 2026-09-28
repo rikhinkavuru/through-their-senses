@@ -93,7 +93,7 @@ export default function Hear() {
           if (ev.type === "said") {
             acc.r = { said: ev.said, words: ev.words, betterEar: ev.betterEar, audio: { you: ev.audio.you }, pending: { her: true, typical: snr !== null } };
           } else if (ev.type === "her" && acc.r) {
-            acc.r = { ...acc.r, words: ev.words, herText: ev.herText, herCorrect: ev.herCorrect, total: ev.total, audio: { ...acc.r.audio, her: ev.audio.her }, pending: { ...acc.r.pending, her: false } };
+            acc.r = { ...acc.r, words: ev.words, herText: ev.herText, heardTokens: ev.heardTokens, herCorrect: ev.herCorrect, total: ev.total, audio: { ...acc.r.audio, her: ev.audio.her }, pending: { ...acc.r.pending, her: false } };
           } else if (ev.type === "typical" && acc.r) {
             acc.r = { ...acc.r, typicalCorrect: ev.typicalCorrect, pending: { ...acc.r.pending, typical: false } };
           } else if (ev.type === "done" && acc.r) {
@@ -332,14 +332,18 @@ export default function Hear() {
               <p className="mt-2 animate-pulse text-[1.1rem] text-graphite">Listening through {person.name}’s hearing…</p>
             ) : (
             <p className="mt-1 text-[2rem] font-light leading-[1.25] tracking-[-0.01em]">
-              {result.words.map((w, i) => (
+              {(result.heardTokens ?? []).map((t, i) => (
                 <span key={i}>
-                  {w.status === "heard" ? (
-                    <span>{w.said}</span>
-                  ) : w.status === "misheard" ? (
-                    <span className="italic text-right-ear">{w.heard}</span>
+                  {t.s === "ok" ? (
+                    <span>{t.w}</span>
+                  ) : t.s === "wrong" ? (
+                    <span className="italic text-right-ear" title={t.said ? `said: ${t.said}` : "added"}>
+                      {t.w}
+                    </span>
                   ) : (
-                    <span className="text-graphite">…</span>
+                    <span className="text-graphite" aria-label="unclear">
+                      …
+                    </span>
                   )}{" "}
                 </span>
               ))}
