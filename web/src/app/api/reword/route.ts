@@ -1,8 +1,12 @@
+import { anthropic } from "@ai-sdk/anthropic";
 import { generateText, Output } from "ai";
 import { z } from "zod";
 import { hearingFetch, ttsFetch } from "@/lib/server/hearing";
 
 export const maxDuration = 60;
+
+/** Claude directly when ANTHROPIC_API_KEY is set, otherwise through Vercel AI Gateway. */
+const model = () => (process.env.ANTHROPIC_API_KEY ? anthropic("claude-sonnet-5") : "anthropic/claude-sonnet-5");
 
 const Body = z.object({
   sentence: z.string().min(1).max(300),
@@ -27,7 +31,7 @@ let availability: { ok: boolean; at: number } | null = null;
 export async function GET() {
   if (!availability || Date.now() - availability.at > 10 * 60_000) {
     try {
-      await generateText({ model: "anthropic/claude-sonnet-5", prompt: "Reply with the word ok.", maxOutputTokens: 5 });
+      await generateText({ model: model(), prompt: "Reply with the word ok.", maxOutputTokens: 5 });
       availability = { ok: true, at: Date.now() };
     } catch {
       availability = { ok: false, at: Date.now() };
@@ -44,7 +48,7 @@ export async function POST(request: Request) {
   let candidates: { text: string; why: string }[];
   try {
     const { output } = await generateText({
-      model: "anthropic/claude-sonnet-5",
+      model: model(),
       output: Output.object({ schema: Candidates }),
       temperature: 0.7,
       system:
