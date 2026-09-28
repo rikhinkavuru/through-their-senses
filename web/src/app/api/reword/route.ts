@@ -3,7 +3,7 @@ import { generateText, Output } from "ai";
 import { z } from "zod";
 import { hearingFetch, ttsFetch } from "@/lib/server/hearing";
 
-export const maxDuration = 60;
+export const maxDuration = 120;
 
 /**
  * Claude directly when ANTHROPIC_API_KEY is set, otherwise through Vercel AI Gateway.
@@ -79,24 +79,30 @@ export async function POST(request: Request) {
 
   try {
     // Speak the original and every candidate in the same synthetic voice, then run all of
-    // them through this person's hearing model, so the comparison is fair.
+    // them through this person's hearing model, so the comparison is fair. One request per
+    // sentence: the services scale out, so this takes as long as the slowest sentence.
     const sentences = [b.sentence, ...candidates.map((c) => c.text)];
-    const tts = await ttsFetch("/tts", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ sentences, voice: "af_heart" }),
-      timeoutMs: 40_000,
-    });
-    if (!tts.ok) throw new Error(`tts ${tts.status}`);
-    const { results: spoken } = (await tts.json()) as { results: { text: string; wav: string }[] };
-    const res = await hearingFetch("/score_audio", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ items: spoken, left: b.left, right: b.right, snr: b.snr, aided: b.aided }),
-      timeoutMs: 55_000,
-    });
-    if (!res.ok) throw new Error(`score ${res.status}`);
-    const { results } = (await res.json()) as { results: { text: string; score: number; correct: number; total: number; herText: string }[] };
+    const results = await Promise.all(
+      sentences.map(async (text) => {
+        const tts = await ttsFetch("/tts", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ sentences: [text], voice: "af_heart" }),
+          timeoutMs: 50_000,
+        });
+        if (!tts.ok) throw new Error(`tts ${tts.status}`);
+        const { results: spoken } = (await tts.json()) as { results: { text: string; wav: string }[] };
+        const res = await hearingFetch("/score_audio", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ items: spoken, left: b.left, right: b.right, snr: b.snr, aided: b.aided }),
+          timeoutMs: 55_000,
+        });
+        if (!res.ok) throw new Error(`score ${res.status}`);
+        const { results: r } = (await res.json()) as { results: { text: string; score: number; correct: number; total: number; herText: string }[] };
+        return r[0];
+      }),
+    );
     const [original, ...scored] = results;
     const ranked = scored
       .map((r, i) => ({ ...r, why: candidates[i]?.why ?? "" }))

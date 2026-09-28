@@ -27,7 +27,7 @@ app = FastAPI(title="Through Their Senses TTS")
 
 @app.middleware("http")
 async def require_token(request: Request, call_next):
-    if TOKEN and request.url.path != "/health" and request.headers.get("authorization") != f"Bearer {TOKEN}":
+    if TOKEN and request.url.path not in ("/health", "/warm") and request.headers.get("authorization") != f"Bearer {TOKEN}":
         return JSONResponse({"detail": "unauthorized"}, status_code=401)
     return await call_next(request)
 
@@ -46,6 +46,13 @@ class TtsRequest(BaseModel):
 
 @app.get("/health")
 def health() -> dict:
+    return dict(ok=True)
+
+
+@app.get("/warm")
+def warm() -> dict:
+    """Load the voice model ahead of the first rewording request."""
+    kokoro()
     return dict(ok=True)
 
 
